@@ -108,8 +108,8 @@ test_df = df.drop(train_df.index)
 
 
 ########## Save the different testing and validation data sets. !!!!!!!
-train_df.to_csv('../data/train_data.csv')
-test_df.to_csv('../data/test_data.csv')
+train_df.to_csv('../data/train_data.csv', index=False)
+test_df.to_csv('../data/test_data.csv', index=False)
 
 print("train_df : ", train_df)
 print("test_df : ", test_df)
