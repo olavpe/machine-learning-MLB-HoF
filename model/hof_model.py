@@ -2,14 +2,42 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import LabelEncoder
-from sklearn.metrics import confusion_matrix, roc_curve
+from sklearn.metrics import confusion_matrix, roc_curve, roc_auc_score
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import Model
+from tensorflow.keras.callbacks import CSVLogger
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.utils import to_categorical
 from keras_pandas.Automater import Automater
+
+
+### ------------------ Setting the table ------------------ ###
+
+### Hyper-parameters
+HP = {
+    'EPOCHS': 5,
+    'BATCH_SIZE': 1,
+    'OPTIMIZER': 'adam',
+    'LOSS': 'binary_crossentropy',
+    'METRICS': 'accuracy',
+    'NAME': 'initial',
+    'DATASET': 'raw'
+}
+
+### Adding the information to the log file
+with open("../result/master_log.txt", "a") as file:
+    # log_header = print(HP)
+    # log_header = log_header + "\n"
+    file.write("\n")
+    file.write("\n")
+    print(HP, file=file)
+    # file.write(log_header)
+
+
+### Setting up the logger
+csv_logger = CSVLogger('../result/master_log.txt', append=True, separator=';')
 
 ### Helper functions
 def plot_roc_curve(fper, tper, name):
@@ -23,6 +51,7 @@ def plot_roc_curve(fper, tper, name):
     plt.savefig(file_name)
     plt.show()
 
+
 ### Importing the data
 
 train_df = pd.read_csv('../data/train_data.csv', index_col=False)
@@ -31,6 +60,7 @@ data_type_dict = {'numerical': [ 'G_all', 'finalGame', 'OPS', 'Years_Played',
                                  'Most Valuable Player', 'AS_games', 'Gold Glove',
                                  'Rookie of the Year', 'World Series MVP', 'Silver Slugger'],
                   'categorical': ['HoF']}
+
 
 
 ### Removing the answers for the input data
@@ -58,16 +88,16 @@ model = Sequential([
 ])
 
 model.compile(
-    optimizer='adam',
-    loss='binary_crossentropy',
-    metrics=['accuracy']
+    optimizer= HP['OPTIMIZER'],
+    loss= HP['LOSS'],
+    metrics=[HP['METRICS']]
 )
 
 # Training the model
-# model.fit(train_X, train_y, epochs = 5, batch_size=1, validation_split=.2)
-model.load_weights('model.h5')
+model.fit(train_X, train_y, epochs = HP['EPOCHS'], batch_size=HP['BATCH_SIZE'], validation_split=.2, callbacks=[csv_logger])
+# model.load_weights('model.h5')
 # Testing the model
-model.evaluate(test_X, test_y, verbose = 2)
+evaluation = model.evaluate(test_X, test_y, verbose = 2)
 full_predictions = model.predict_classes(test_X)
 
 ### Examining metrics
@@ -80,12 +110,28 @@ for i in range(0,len(confusion_metrics)):
 
 # full_predictions = full_predictions[:,1]
 fper, tper, thresholds = roc_curve(test_y, full_predictions)
+auroc = roc_curve(test_y, full_predictions)
 print("fper: ", fper)
 print("tper: ", tper)
-plot_roc_curve(fper, tper, "intial_results")
+print("auroc: ", auroc)
+plot_roc_curve(fper, tper, "initial_results")
 # small_predictions = model.predict(test_X[94:104])
 # print(np.argmax(small_predictions, axis=1)) # [7, 2, 1, 0, 4]
 
-# Saving the model
-model.save_weights('model.h5')
+### Saving Metrics in the log file
+metric_dict = {
+    'True Negative': tn,
+    'True Positive': tp,
+    'False Negative': fn,
+    'False Positive': fp,
+    'AUROC': auroc,
+    'Accuracy': evaluation
+}
+with open("../result/master_log.txt", "a") as file:
+    print(metric_dict, file=file)
 
+
+
+# Saving the model
+model_weights_name = HP['NAME'] + '_model.h5'
+model.save_weights(model_weights_name)
