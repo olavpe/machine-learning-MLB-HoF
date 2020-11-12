@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import confusion_matrix, roc_curve, roc_auc_score
 from sklearn.utils import class_weight
-from sklearn.model_selection import KFold, StratifiedKFold, cross_val_score
+from sklearn.model_selection import KFold, StratifiedKFold, cross_val_score, cross_validate
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import Model
@@ -22,7 +22,7 @@ from keras_pandas.Automater import Automater
 HP = {
     'NAME': 'full',
     'INFO': 'Trying with two 16,16 layers',
-    'EPOCHS': 5,
+    'EPOCHS': 1,
     'BATCH_SIZE': 1,
     'OPTIMIZER': 'adam',
     'LOSS': 'binary_crossentropy',
@@ -103,15 +103,20 @@ def create_model():
         metrics=[HP['METRICS']])
     return model
 
-estimator = KerasClassifier(build_fn=create_model, epochs=HP['EPOCHS'],
+classifier = KerasClassifier(build_fn=create_model, epochs=HP['EPOCHS'],
                             batch_size=HP['BATCH_SIZE'], verbose = 2, )
-kfold = StratifiedKFold(n_splits=10, shuffle=True)
-results = cross_val_score(estimator, train_X, train_y, cv=kfold,
+kfold = StratifiedKFold(n_splits=2, shuffle=True)
+results = cross_validate(classifier, train_X, train_y, cv=kfold,
                           fit_params={'callbacks': [csv_logger],
                                       'class_weight': class_weights
-                                      }
+                                      },
+                         return_estimator=True
                           )
-print("Baseline -  mean: ", results.mean(), " std: ", results.std())
+print("Baseline -  mean: ", results['test_score'].mean(), " std: ", results['test_score'].std())
+model_tuple = results['estimator']
+print("model_tuple: ", model_tuple)
+model = results['estimator'][0]
+print("model: ", model)
 
 # Training the model
 # model.fit(train_X, train_y, epochs = HP['EPOCHS'],
@@ -121,7 +126,7 @@ print("Baseline -  mean: ", results.mean(), " std: ", results.std())
 
 # Testing the model
 # evaluation = model.evaluate(test_X, test_y, verbose = 2)
-full_predictions = model.predict_classes(test_X)
+full_predictions = model.predict(test_X)
 
 
 ### ---------------- Examining metrics ---------------- ###
