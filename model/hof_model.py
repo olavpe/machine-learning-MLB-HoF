@@ -17,12 +17,12 @@ from keras_pandas.Automater import Automater
 
 ### Hyper-parameters
 HP = {
+    'NAME': '80-20',
     'EPOCHS': 5,
     'BATCH_SIZE': 1,
     'OPTIMIZER': 'adam',
     'LOSS': 'binary_crossentropy',
     'METRICS': 'accuracy',
-    'NAME': 'initial',
     'DATASET': 'raw'
 }
 
@@ -54,8 +54,9 @@ def plot_roc_curve(fper, tper, name):
 
 ### Importing the data
 
-train_df = pd.read_csv('../data/train_data.csv', index_col=False)
-test_df = pd.read_csv('../data/test_data.csv', index_col=False)
+train_df = pd.read_csv('../data/train_data_' + HP['NAME'] + '.csv', index_col=False)
+test_df = pd.read_csv('../data/test_data_' + HP['NAME'] + '.csv', index_col=False)
+# test_df = pd.read_csv('../data/test_data_60-40.csv', index_col=False)
 data_type_dict = {'numerical': [ 'G_all', 'finalGame', 'OPS', 'Years_Played',
                                  'Most Valuable Player', 'AS_games', 'Gold Glove',
                                  'Rookie of the Year', 'World Series MVP', 'Silver Slugger'],
@@ -110,11 +111,11 @@ for i in range(0,len(confusion_metrics)):
 
 # full_predictions = full_predictions[:,1]
 fper, tper, thresholds = roc_curve(test_y, full_predictions)
-auroc = roc_curve(test_y, full_predictions)
+auroc = roc_auc_score(test_y, full_predictions)
 print("fper: ", fper)
 print("tper: ", tper)
 print("auroc: ", auroc)
-plot_roc_curve(fper, tper, "initial_results")
+plot_roc_curve(fper, tper, HP['NAME'])
 # small_predictions = model.predict(test_X[94:104])
 # print(np.argmax(small_predictions, axis=1)) # [7, 2, 1, 0, 4]
 
