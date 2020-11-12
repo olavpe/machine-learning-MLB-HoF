@@ -3,6 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import confusion_matrix, roc_curve, roc_auc_score
+from sklearn.utils import class_weight
+from sklearn.model_selection import KFold, StratifiedKFold, cross_val_score
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import Model
@@ -10,6 +12,7 @@ from tensorflow.keras.callbacks import CSVLogger
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.utils import to_categorical
+from tensorflow.keras.wrappers.scikit_learn import KerasClassifier
 from keras_pandas.Automater import Automater
 
 
@@ -17,7 +20,8 @@ from keras_pandas.Automater import Automater
 
 ### Hyper-parameters
 HP = {
-    'NAME': '80-20',
+    'NAME': 'full',
+    'INFO': 'Trying with two 16,16 layers',
     'EPOCHS': 5,
     'BATCH_SIZE': 1,
     'OPTIMIZER': 'adam',
@@ -59,7 +63,6 @@ data_type_dict = {'numerical': [ 'G_all', 'finalGame', 'OPS', 'Years_Played',
                                  'Rookie of the Year', 'World Series MVP', 'Silver Slugger'],
                   'categorical': ['HoF']}
 
-
 ### Removing the answers for the input data
 train_X_raw = train_df.drop(columns=['HoF'])
 train_y_raw = train_df['HoF']
@@ -78,25 +81,46 @@ test_y = encoder.fit_transform(test_y_raw)
 
 ### ---------------- Creating and compiling the model ---------------- ###
 
-model = Sequential([
-    Dense(10, activation='relu', input_shape=(10,)),
-    Dense(32, activation='relu'),
-    Dense(1, activation='sigmoid'),
-])
+### Weighting the classes for bias datasets
+class_weights = class_weight.compute_class_weight('balanced', np.unique(train_y), train_y)
+print("class weights: ", class_weights)
+# print("value counts of N in train_y: ", type(train_y))
+print("value counts of Y in train_y: ", train_y.sum())
+print("value counts of N in train_y: ", len(train_y) - train_y.sum())
 
-model.compile(
-    optimizer= HP['OPTIMIZER'],
-    loss= HP['LOSS'],
-    metrics=[HP['METRICS']]
-)
+### Creating model
+def create_model():
+    model = Sequential([
+        Dense(10, activation='relu', input_shape=(10,)),
+        Dense(16, activation='relu'),
+        Dense(16, activation='relu'),
+        Dense(1, activation='sigmoid'),
+    ])
+
+    model.compile(
+        optimizer= HP['OPTIMIZER'],
+        loss= HP['LOSS'],
+        metrics=[HP['METRICS']])
+    return model
+
+estimator = KerasClassifier(build_fn=create_model, epochs=HP['EPOCHS'],
+                            batch_size=HP['BATCH_SIZE'], verbose = 2, )
+kfold = StratifiedKFold(n_splits=10, shuffle=True)
+results = cross_val_score(estimator, train_X, train_y, cv=kfold,
+                          fit_params={'callbacks': [csv_logger],
+                                      'class_weight': class_weights
+                                      }
+                          )
+print("Baseline -  mean: ", results.mean(), " std: ", results.std())
 
 # Training the model
-model.fit(train_X, train_y, epochs = HP['EPOCHS'],
-          batch_size=HP['BATCH_SIZE'], validation_split=.2, callbacks=[csv_logger])
+# model.fit(train_X, train_y, epochs = HP['EPOCHS'],
+#           batch_size=HP['BATCH_SIZE'], validation_split=.2,
+#           class_weight=class_weights, callbacks=[csv_logger])
 # model.load_weights('model.h5')
 
 # Testing the model
-evaluation = model.evaluate(test_X, test_y, verbose = 2)
+# evaluation = model.evaluate(test_X, test_y, verbose = 2)
 full_predictions = model.predict_classes(test_X)
 
 

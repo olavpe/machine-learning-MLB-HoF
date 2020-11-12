@@ -5,7 +5,7 @@ from sklearn.preprocessing import StandardScaler
 
 
 ### Hyper-parameters
-NAME = "80-20"
+NAME = "full"
 PERCENTAGE = 0.8
 
 
@@ -93,7 +93,8 @@ hof_df = df[df['HoF'] == 'Y']
 
 ### Under-sampling the non-HoF players
 reg_seeded_random = RandomState(1)
-sampled_reg_df = reg_df.sample(n = num_sample(PERCENTAGE, hof_df), random_state=reg_seeded_random)
+# sampled_reg_df = reg_df.sample(n = num_sample(PERCENTAGE, hof_df), random_state=reg_seeded_random)
+sampled_reg_df = reg_df
 
 ### Splitting reg and HoF into train and test
 sep_seeded_random = RandomState(1)
