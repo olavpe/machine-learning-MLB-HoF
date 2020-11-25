@@ -25,8 +25,8 @@ HP = {
     'NAME': 'full',
     # 'INFO': 'weightedClass-7,3-layers-trying long run',
     'INFO': 'test',
-    'EPOCHS': 3,
-    'FOLDS': 2,
+    'EPOCHS': 50,
+    'FOLDS': 10,
     'BATCH_SIZE': 1,
     'OPTIMIZER': 'adam',
     'LOSS': 'binary_crossentropy',
@@ -41,7 +41,7 @@ with open("../result/master_log.txt", "a") as file:
     print(HP, file=file)
 
 
-### Setting up the loggers
+### Setting up the CSVlogger and Tensorboard
 csv_logger = CSVLogger('../result/master_log.txt', append=True, separator=';')
 log_dir = "../logs/scalars/" + datetime.now().strftime("%Y%m%d-%H%M%S")
 tensorboard_callback = keras.callbacks.TensorBoard(log_dir=log_dir)
@@ -90,11 +90,9 @@ test_y = encoder.fit_transform(test_y_raw)
 # class_weights = class_weight.compute_class_weight('balanced', np.unique(train_y), train_y)
 class_weights = {0: 1.0, 1: 12.0}
 ### Setting up saving of the model weights
-# model_weights_name = 'model.{epoch:02d}-{val_loss:.2f}.h5'# + HP['NAME'] + '_model.h5'
 model_weights_name = HP['NAME'] + '_model.h5'
 checkpointer = ModelCheckpoint(model_weights_name, monitor='val_loss', verbose=0)
 print("class weights: ", class_weights)
-# print("value counts of N in train_y: ", type(train_y))
 print("value counts of Y in train_y: ", train_y.sum())
 print("value counts of N in train_y: ", len(train_y) - train_y.sum())
 
@@ -132,6 +130,9 @@ print("model_tuple: ", model_tuple)
 model = results['estimator'][len(model_tuple)-1]
 print("model: ", model)
 
+
+### ---------------- Saving the model ---------------- ###
+
 ### Saving Entire Model or Loading 
 # serialize model to JSON
 model_json = model.model.to_json()
@@ -156,7 +157,8 @@ print("Saved model to disk")
 # model.compile(optimizer= HP['OPTIMIZER'], loss= HP['LOSS'], metrics=[HP['METRICS']])
 # print("Loaded model from disk")
 
-# model.load_weights('full_model.h5')
+
+### ---------------- Evaluating the model ---------------- ###
 
 # Testing the model
 # evaluation = model.evaluate(test_X, test_y, verbose = 2)
@@ -170,7 +172,6 @@ print("length of score_y: ", len(y_score))
 
 ### ---------------- Examining metrics ---------------- ###
 
-# tn, fp, fn, tp = confusion_matrix(test_y, full_predictions).ravel()
 tn, fp, fn, tp = confusion_matrix(test_y, full_predictions).ravel()
 confusion_metrics = [tn, fp, fn, tp]
 confusion_label = ["tn", "fp", "fn", "tp"]
@@ -178,8 +179,8 @@ for i in range(0,len(confusion_metrics)):
     print(confusion_label[i], ': ', confusion_metrics[i])
 
 print("y_score: ", y_score)
-print("y_score[:,0]: ", y_score[:,1])
-# print("y_score[1]: ", y_score[1])
+# print("y_score[:,0]: ", y_score[:,1])
+# fper, tper, thresholds = roc_curve(test_y, y_score)
 fper, tper, thresholds = roc_curve(test_y, y_score[:,1])
 print("length of fper: " , len(fper))
 print("length of tper: " , len(tper))
@@ -203,11 +204,6 @@ metric_dict = {
 with open("../result/master_log.txt", "a") as file:
     print(metric_dict, file=file)
 
-
-### ---------------- Saving the model ---------------- ###
-
-# model_weights_name = HP['NAME'] + '_model.h5'
-# model.save_weights(model_weights_name)
 
 ### ---------------- Plotting the data ---------------- ###
 
