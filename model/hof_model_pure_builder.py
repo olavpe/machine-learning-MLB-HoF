@@ -3,14 +3,15 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import LabelEncoder
-from sklearn.metrics import confusion_matrix, roc_curve, roc_auc_score, accuracy_score
+from sklearn.metrics import confusion_matrix, roc_curve, roc_auc_score, accuracy_score, recall_score
 from sklearn.utils import class_weight
 from sklearn.model_selection import KFold, StratifiedKFold, cross_val_score, cross_validate, learning_curve
 import scikitplot as skplt
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import Model
-from tensorflow.keras.callbacks import CSVLogger, ModelCheckpoint
+from tensorflow.keras.metrics import Recall
+from tensorflow.keras.callbacks import CSVLogger, ModelCheckpoint, EarlyStopping
 from tensorflow.keras.models import Sequential, model_from_json
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.utils import to_categorical
@@ -24,13 +25,14 @@ from keras_pandas.Automater import Automater
 HP = {
     'NAME': 'full',
     # 'INFO': 'weightedClass-7,3-layers-trying long run',
-    'INFO': 'testing_builder',
+    'INFO': 'single layer, 15 class weights',
     'EPOCHS': 50,
     'FOLDS': 10,
     'BATCH_SIZE': 1,
     'OPTIMIZER': 'adam',
     'LOSS': 'binary_crossentropy',
-    'METRICS': 'accuracy',
+    'METRICS': ['accuracy', 'Recall'],
+    # 'METRICS': 'accuracy',
     'DATASET': 'raw'
 }
 
@@ -88,7 +90,7 @@ test_y = encoder.fit_transform(test_y_raw)
 
 ### Weighting the classes for bias datasets
 # class_weights = class_weight.compute_class_weight('balanced', np.unique(train_y), train_y)
-class_weights = {0: 1.0, 1: 12.0}
+class_weights = {0: 1.0, 1: 17.0}
 ### Setting up saving of the model weights
 model_weights_name = HP['NAME'] + '_model.h5'
 checkpointer = ModelCheckpoint(model_weights_name, monitor='val_loss', verbose=0)
@@ -96,21 +98,25 @@ print("class weights: ", class_weights)
 print("value counts of Y in train_y: ", train_y.sum())
 print("value counts of N in train_y: ", len(train_y) - train_y.sum())
 
+### Implementing Early Stopping
+stop = EarlyStopping(monitor='Recall', mode='max', verbose=1, patience='10')
+
 ### Creating model
 def create_model():
     model = Sequential([
         Dense(10, activation='relu', input_shape=(10,)),
-        Dense(7, activation='relu'),
-        # Dense(5, activation='relu'),
+        # Dense(7, activation='relu'),
+        Dense(5, activation='relu'),
         # Dense(32, activation='relu'),
-        Dense(3, activation='relu'),
+        # Dense(3, activation='relu'),
         Dense(1, activation='sigmoid'),
     ])
 
     model.compile(
         optimizer= HP['OPTIMIZER'],
         loss= HP['LOSS'],
-        metrics=[HP['METRICS']])
+        # metrics=['accuracy', metrics.])
+        metrics=HP['METRICS'])
     return model
 
 kfold = StratifiedKFold(n_splits=HP['FOLDS'], shuffle=True)
@@ -121,9 +127,9 @@ cv_confusion_mat = []
 
 for train_index, val_index in kfold.split(train_X, train_y):
     model = KerasClassifier(build_fn=create_model, epochs=HP['EPOCHS'],
-                                batch_size=HP['BATCH_SIZE'], verbose = 2, )
-    model.fit(train_X[train_index], train_y[train_index])#,
-              # callbacks=[csv_logger, tensorboard_callback])
+                                batch_size=HP['BATCH_SIZE'], verbose = 2)
+    model.fit(train_X[train_index], train_y[train_index],
+              callbacks=[csv_logger, tensorboard_callback])
     pred = model.predict(train_X[val_index])
     fold_accuracy = accuracy_score(train_y[val_index], pred)
     tn, fp, fn, tp = confusion_matrix(train_y[val_index], pred).ravel()
@@ -177,7 +183,8 @@ metric_dict = {
     'AUROC': tot_auroc,
     'Accuracy': tot_accuracy,
     'Precision': precision,
-    'Recall': recall
+    'Recall': recall,
+    'F1': f1
 }
 with open("../result/master_log.txt", "a") as file:
     print(metric_dict, file=file)
