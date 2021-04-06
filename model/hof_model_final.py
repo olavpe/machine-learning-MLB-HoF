@@ -13,9 +13,7 @@ from tensorflow.keras import Model
 from tensorflow.keras.callbacks import CSVLogger, ModelCheckpoint
 from tensorflow.keras.models import Sequential, model_from_json, load_model
 from tensorflow.keras.layers import Dense
-# from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.wrappers.scikit_learn import KerasClassifier
-# from keras_pandas.Automater import Automater
 
 
 ### ------------------ Setting the table ------------------ ###
@@ -57,22 +55,11 @@ def plot_roc_curve(fper, tper, name):
     plt.show()
 
 def save_model(model, name):
-    # model_json = model.model.to_json()
-    # model_name = "model_" + name +".json"
-    # with open(model_name, "w") as json_file:
-    #     json_file.write(model_json)
-    # # serialize weights to HDF5
     weights_name = "model_" + name +".h5"
     model.model.save_weights(weights_name)
     print("Saved model to disk")
 
 def load_model(model, name):
-    # json_name = "model_" + name + ".json"
-    # json_file = open(json_name, 'r')
-    # loaded_model_json = json_file.read()
-    # json_file.close()
-    # model = model_from_json(loaded_model_json)
-    # # load weights into new model
     model_name = "model_" + name + ".h5"
     model.load_weights(model_name)
     model.compile(optimizer= HP['OPTIMIZER'], loss= HP['LOSS'], metrics=HP['METRICS'])
