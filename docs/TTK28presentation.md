@@ -64,6 +64,7 @@ will make it into the Baseball Hall of Fame (HoF) based on career statistics.
 \item Loss: Binary Cross-entropy
 \item Batch Size: 1
 \item Epochs: 50 
+\item Optimizer: Adam
 \end{itemize}
 
 \column{0.6\textwidth}
@@ -90,7 +91,7 @@ will make it into the Baseball Hall of Fame (HoF) based on career statistics.
 \column{0.5\textwidth}
 \begin{itemize}
 \item Accuracy:  0.95
-\item AUROC:     0.73
+\item AUROC:     0.96
 \item Precision: 0.66
 \item Recall:    0.47
 \item F1:        0.55
