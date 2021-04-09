@@ -1,0 +1,310 @@
+#+TITLE: Hall of Fame Model
+#+STARTUP: headlines
+#+STARTUP: nohideblocks
+#+STARTUP: noindent
+#+OPTIONS: toc:4 h:4
+#+PROPERTY: header-args:emacs-lisp :comments link
+
+* Importing dependencies
+  This project is primarily uses ~Keras~ and ~Sklearn~ for the data analysis
+  itself. For data storage and manipulation ~pandas~ and ~numpy~ are the primary
+  libraries used. The graphics are generated via ~matplotlib~.
+  
+#+begin_src python :session :results output
+  from datetime import datetime
+  import pandas as pd
+  import numpy as np
+  import matplotlib.pyplot as plt
+  import logging
+  from sklearn.preprocessing import LabelEncoder
+  from sklearn.metrics import confusion_matrix, roc_curve, roc_auc_score, accuracy_score, auc
+  from sklearn.utils import class_weight
+  from sklearn.model_selection import KFold, StratifiedKFold, cross_val_score, cross_validate, learning_curve
+  import scikitplot as skplt
+  import tensorflow as tf
+  from tensorflow import keras
+  from tensorflow.keras import Model
+  from tensorflow.keras.callbacks import CSVLogger, ModelCheckpoint
+  from tensorflow.keras.models import Sequential, model_from_json, load_model
+  from tensorflow.keras.layers import Dense
+  from tensorflow.keras.wrappers.scikit_learn import KerasClassifier
+#+end_src
+
+* Logging Setup
+  It was quite hard to keep track of different runs in the project, and noticed
+  I kept loosing track of previous runs and just wanted a log to save some of
+  the metrics and information about the different runs.
+** Simply adding whitespace to log file 
+   Nothing special is happening here, but just making sure there is whitespace
+   between runs in the log file.
+   
+#+begin_src python :session :results output
+  with open("../result/master_log.txt", "a") as file:
+      file.write("\n")
+      file.write("\n")
+      print(HP, file=file)
+#+end_src
+
+** Defining CSVLogger and Tensorboard Settings
+   CSVLogger is used to keep track of the different runs manually, in addition
+   to setting up tensorboard.
+   
+#+begin_src python :session :results output
+  csv_logger = CSVLogger('../result/master_log.txt', append=True, separator=';')
+  log_dir = "../logs/scalars/" + datetime.now().strftime("%Y%m%d-%H%M%S")
+  tensorboard_callback = keras.callbacks.TensorBoard(log_dir=log_dir)
+#+end_src
+
+** STDOUT Logging Settings
+   These are the settings for logging information to the terminal and debugging
+   the output.
+   
+#+begin_src python :session :results output
+  logging.basicConfig(encoding='utf-8', level=logging.INFO)
+#+end_src
+   
+* Hyperparameters
+  In order to more easily configure the model and keep track of the settting,
+  this hyperparameters dictionary is defined here and used throughout the code
+  where needed. 
+
+#+begin_src python :session :results output
+  HP = {
+      'NAME': 'full',
+      'INFO': 'checking_testing_final',
+      'EPOCHS': 50,
+      'FOLDS': 2,
+      'BATCH_SIZE': 1,
+      'OPTIMIZER': 'adam',
+      'LOSS': 'binary_crossentropy',
+      'METRICS': ['accuracy', 'Recall'],
+      'DATASET': 'raw'
+  }
+#+end_src
+
+* Defining Helper Functions 
+** Creating an ROC Plot   
+   This is a plot that takes in the "false positives" (~fper~) and "true
+   positives" (~tper~) and the name of which to save the plot. It generates,
+   shows, and saves an /Receiver Operator Characteristics/ plot which is used
+   for binary classifications problems. A good explanation can be found [[https://towardsdatascience.com/understanding-auc-roc-curve-68b2303cc9c5][here]].
+
+#+begin_src python :session :results output
+  def plot_roc_curve(fper, tper, name):
+      plt.plot(fper, tper, color='orange', label='ROC')
+      plt.plot([0, 1], [0, 1], color='darkblue', linestyle='--')
+      plt.xlabel('False Positive Rate')
+      plt.ylabel('True Positive Rate')
+      plt.title('Receiver Operating Characteristic (ROC) Curve')
+      plt.legend()
+      file_name = '../result/ROC_curve_' + name + datetime.now().strftime("%Y%m%d-%H%M%S") + '.png'
+      plt.savefig(file_name)
+      plt.show()
+#+end_src
+
+** Saving and Loading Models   
+   Simply functions to save and load varieties of this hof_model.
+   
+#+begin_src python :session :results output
+  def save_model(model, name):
+      weights_name = "model_" + name +".h5"
+      model.model.save_weights(weights_name)
+      print("Saved model to disk")
+
+  def load_model(model, name):
+      model_name = "model_" + name + ".h5"
+      model.load_weights(model_name)
+      model.compile(optimizer= HP['OPTIMIZER'], loss= HP['LOSS'], metrics=HP['METRICS'])
+      print("Loaded model from disk")
+      return model
+#+end_src
+
+* Importing Data 
+  Importing the training and test datasets, in addition to defining the column
+  types to be used of throughout the model.
+  
+#+begin_src python :session :results output
+  train_df = pd.read_csv('../data/train_data_' + HP['NAME'] + '.csv', index_col=False)
+  test_df = pd.read_csv('../data/test_data_' + HP['NAME'] + '.csv', index_col=False)
+  data_type_dict = {'numerical': [ 'G_all', 'finalGame', 'OPS', 'Years_Played',
+                                   'Most Valuable Player', 'AS_games', 'Gold Glove',
+                                   'Rookie of the Year', 'World Series MVP', 'Silver Slugger'],
+                    'categorical': ['HoF']}
+#+end_src
+
+  These steps remove the labels from the data sources on both the test and
+  training data. 
+#+begin_src python :session :results output
+  ### Removing the answers for the input data
+  train_X_raw = train_df.drop(columns=['HoF'])
+  train_y_raw = train_df['HoF']
+  test_X_raw = test_df.drop(columns=['HoF'])
+  test_y_raw = test_df['HoF']
+
+  ### Converting pandas arrays to numpy arrays
+  train_X = train_X_raw.to_numpy()
+  test_X = test_X_raw.to_numpy()
+
+  ### Creating the label data for the train and test sets
+  encoder = LabelEncoder()
+  train_y = encoder.fit_transform(train_y_raw)
+  test_y = encoder.fit_transform(test_y_raw)
+#+end_src
+
+* Defining and Compiling the Model
+** Class Weights 
+  One of the ways of dealing with an imbalanced data set is to weight the
+  classes. This suggestion and others are very nicely explained in this [[https://towardsdatascience.com/handling-imbalanced-datasets-in-machine-learning-7a0e84220f28][post]].
+  An error in the one class will have a much higher cost in the cost function.
+  The following backpropagation algorithm will correct the weights based on the
+  ratio between the class weights.
+#+begin_src python :session :results output
+  ### Weighting the classes for bias datasets
+  # class_weights = class_weight.compute_class_weight('balanced', np.unique(train_y), train_y)
+  class_weights = {0: 1.0, 1: 15.0}
+  print("class weights: ", class_weights)
+  print("value counts of Y in train_y: ", train_y.sum())
+  print("value counts of N in train_y: ", len(train_y) - train_y.sum())
+#+end_src
+
+** Checkpointing Model Weights
+   This for setting up the checkpoints while running the model. It is not really
+   in use right now as it is not added in the ~model.fit~ callbacks.
+#+begin_src python :session :results output
+  model_weights_name = HP['NAME'] + '_model.h5'
+  checkpointer = ModelCheckpoint(model_weights_name, monitor='Recall', verbose=0)
+#+end_src
+
+** Defining and Training the Classifier
+   Some different model structures were tested for this model, but there were
+   some '[[https://stats.stackexchange.com/questions/181/how-to-choose-the-number-of-hidden-layers-and-nodes-in-a-feedforward-neural-netw#:~:text=There%20are%20many%20rule-of,size%20of%20the%20output%20layer.][rules of thumb]]' which were considered. For the number of hidden nodes
+   in a layer:
+   - The number of hidden neurons should be between the size of the input layer
+     and the size of the output layer. 
+   - The number of hidden neurons should be 2/3 the size of the input layer,
+     plus the size of the output layer. 
+   - The number of hidden neurons should be less than twice the size of the
+     input layer. 
+
+   A summation of these rules were outlined as the following:
+   1. number of hidden layers equals one
+   2. the number of neurons in that layer is the mean of the neurons in the input and output layers.
+
+#+begin_src python :session :results output
+  def create_model():
+      model = Sequential([
+          Dense(10, activation='relu', input_shape=(10,)),
+          Dense(5, activation='relu'),
+          Dense(1, activation='sigmoid'),
+      ])
+
+      model.compile(
+          optimizer= HP['OPTIMIZER'],
+          loss= HP['LOSS'],
+          metrics=HP['METRICS'])
+      return model
+
+  model = KerasClassifier(build_fn=create_model, epochs=HP['EPOCHS'],
+                              batch_size=HP['BATCH_SIZE'], verbose = 2, )
+  model.fit(train_X, train_y, callbacks=[csv_logger, tensorboard_callback])
+  # model.fit(train_X, train_y, class_weight=class_weight, callbacks=[csv_logger, tensorboard_callback])
+#+end_src
+
+* Saving or Loading the Classifier
+  Both of these blocks can be uncommented to save or load models as desired.
+** Saving the Model 
+#+begin_src python :session :results output
+  ### Saving Entire Model
+  # save_model(model, "test_final_check")
+  # model.model.save("model_test_final_different.h5")
+#+end_src
+
+** Loading the Model 
+#+begin_src python :session :results output
+  ### Loading Entire Model
+  # model = load_model(model, "test_final")
+  # model.load("model_test_final_different.h5")
+#+end_src
+
+* Evaluating and Metrics
+** Predictions and Prediction Probabilities
+  The ~model.predict()~ will return the class predictions for the input data put
+  in the function. The ~model.predict_proba()~ will return the probability
+  predictions for the classes, and is the likelihood of the observation
+  belonging to the different classes.
+  
+#+begin_src python :session :results output
+  # Testing the model
+  pred = model.predict(test_X)
+  y_score = model.predict_proba(test_X, batch_size=HP['BATCH_SIZE'])
+#+end_src
+
+** Metrics
+   Since the data set is imbalanced, there are other metrics to consider beyond
+   the typical accuracy. In this dataset the ratio of HoF players vs. non-HoF
+   players is ~14:1~ after preprocessing. Without class weights there could be a
+   bias towards never selecting the HoF players resulting an accuracy over 90%
+   while always predicting them as non-HoF players.
+#+begin_src python :session :results output
+  # Calculating overall metrics
+  accuracy = accuracy_score(test_y, pred)
+  tn, fp, fn, tp = confusion_matrix(test_y, pred).ravel()
+  confusion_mat = [tn, fp, fn, tp]
+  auroc = roc_auc_score(test_y, y_score[:,0])
+  precision = tp/(tp+fp)
+  recall = tp/(tp+fn)
+  f1 = (2*precision*recall)/(precision+recall)
+
+  # Showing numerical results
+  confusion_label = ["tn", "fp", "fn", "tp"]
+  for i in range(0,len(confusion_mat)):
+      print(confusion_label[i], ': ', confusion_mat[i])
+  print("###### ---------Overall Results --------- ######")
+  print("accuracy: ", accuracy)
+  print("confusion_mat: ", confusion_mat)
+  print("auroc: ", auroc)
+  print("precision: ", precision)
+  print("recall: ", recall)
+  print("f1: ", f1)
+
+  # Saving the metrics
+  metric_dict = {
+      'True Negative': tn,
+      'True Positive': tp,
+      'False Negative': fn,
+      'False Positive': fp,
+      'AUROC': auroc,
+      'Accuracy': accuracy,
+      'Precision': precision,
+      'Recall': recall,
+      'F1': f1
+  }
+  with open("../result/master_log.txt", "a") as file:
+      print(metric_dict, file=file)
+#+end_src
+
+* Plots
+  Three metrics that are smart to include for imbalanced datasets are:
+  - ROC curve
+  - Confusion Matrix
+  - Precision-Recall Matrix
+    
+#+begin_src python :session :results output
+  # ROC curve
+  fper, tper, thresholds = roc_curve(test_y, y_score[:,1])
+  plot_roc_curve(fper, tper, HP['NAME'])
+  man_auroc = auc(fper, tper)
+  print("man_auroc: ", man_auroc)
+
+  # Generating a confusion matrix
+  skplt.metrics.plot_confusion_matrix(test_y, pred, normalize=True)
+  confusion_mat_string = "../result/confusion_mat_" + HP['NAME']+ datetime.now().strftime("%Y%m%d-%H%M%S") + ".png"
+  plt.savefig(confusion_mat_string)
+  plt.show()
+
+  # Generating precision-recall curve
+  skplt.metrics.plot_precision_recall(test_y, y_score)
+  precision_recall_curve_string = "../result/precision_recall_curve_" + HP['NAME'] + datetime.now().strftime("%Y%m%d-%H%M%S") + ".png"
+  plt.savefig(precision_recall_curve_string)
+  plt.show()
+#+end_src
