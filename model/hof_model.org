@@ -43,6 +43,10 @@
   from tensorflow.keras.wrappers.scikit_learn import KerasClassifier
 #+end_src
 
+#+RESULTS:
+: 2021-07-01 12:13:35.128730: W tensorflow/stream_executor/platform/default/dso_loader.cc:60] Could not load dynamic library 'libcudart.so.11.0'; dlerror: libcudart.so.11.0: cannot open shared object file: No such file or directory
+: 2021-07-01 12:13:35.128762: I tensorflow/stream_executor/cuda/cudart_stub.cc:29] Ignore above cudart dlerror if you do not have a GPU set up on your machine.
+
 * Logging Setup
   It was quite hard to keep track of different runs in the project, and noticed
   I kept loosing track of previous runs and just wanted a log to save some of
@@ -58,6 +62,8 @@
       print(HP, file=file)
 #+end_src
 
+#+RESULTS:
+
 ** Defining CSVLogger and Tensorboard Settings
    CSVLogger is used to keep track of the different runs manually, in addition
    to setting up tensorboard.
@@ -68,6 +74,12 @@
   tensorboard_callback = keras.callbacks.TensorBoard(log_dir=log_dir)
 #+end_src
 
+#+RESULTS:
+: 2021-07-01 12:13:43.534150: I tensorflow/core/profiler/lib/profiler_session.cc:136] Profiler session initializing.
+: 2021-07-01 12:13:43.534220: I tensorflow/core/profiler/lib/profiler_session.cc:155] Profiler session started.
+: 2021-07-01 12:13:43.564739: I tensorflow/stream_executor/platform/default/dso_loader.cc:49] Successfully opened dynamic library libcuda.so.1
+: 2021-07-01 12:13:43.587808: I tensorflow/core/profiler/lib/profiler_session.cc:172] Profiler session tear down.
+
 ** STDOUT Logging Settings
    These are the settings for logging information to the terminal and debugging
    the output.
@@ -75,6 +87,8 @@
 #+begin_src python :session SESSION_1 :results output
   logging.basicConfig(encoding='utf-8', level=logging.INFO)
 #+end_src
+
+#+RESULTS:
    
 * Hyperparameters
   In order to more easily configure the model and keep track of the settting,
@@ -94,6 +108,8 @@
       'DATASET': 'raw'
   }
 #+end_src
+
+#+RESULTS:
 
 * Defining Helper Functions 
 ** Creating an ROC Plot   
@@ -115,6 +131,8 @@
       plt.show()
 #+end_src
 
+#+RESULTS:
+
 ** Saving and Loading Models   
    Simply functions to save and load varieties of this hof_model.
    
@@ -132,6 +150,8 @@
       return model
 #+end_src
 
+#+RESULTS:
+
 * Importing Data 
   Importing the training and test datasets, in addition to defining the column
   types to be used of throughout the model.
@@ -144,6 +164,8 @@
                                    'Rookie of the Year', 'World Series MVP', 'Silver Slugger'],
                     'categorical': ['HoF']}
 #+end_src
+
+#+RESULTS:
 
   These steps remove the labels from the data sources on both the test and
   training data. 
@@ -164,6 +186,8 @@
   test_y = encoder.fit_transform(test_y_raw)
 #+end_src
 
+#+RESULTS:
+
 * Defining and Compiling the Model
 ** Class Weights 
   One of the ways of dealing with an imbalanced data set is to weight the
@@ -180,6 +204,11 @@
   print("value counts of N in train_y: ", len(train_y) - train_y.sum())
 #+end_src
 
+#+RESULTS:
+: class weights:  {0: 1.0, 1: 15.0}
+: value counts of Y in train_y:  181
+: value counts of N in train_y:  2552
+
 ** Checkpointing Model Weights
    This for setting up the checkpoints while running the model. It is not really
    in use right now as it is not added in the ~model.fit~ callbacks.
@@ -187,6 +216,8 @@
   model_weights_name = HP['NAME'] + '_model.h5'
   checkpointer = ModelCheckpoint(model_weights_name, monitor='Recall', verbose=0)
 #+end_src
+
+#+RESULTS:
 
 ** Defining and Training the Classifier
    Some different model structures were tested for this model, but there were
@@ -223,6 +254,134 @@
   # model.fit(train_X, train_y, class_weight=class_weight, callbacks=[csv_logger, tensorboard_callback])
 #+end_src
 
+#+RESULTS:
+#+begin_example
+2021-07-01 12:14:11.759961: I tensorflow/compiler/jit/xla_cpu_device.cc:41] Not creating XLA devices, tf_xla_enable_xla_devices not set
+2021-07-01 12:14:11.774593: E tensorflow/stream_executor/cuda/cuda_driver.cc:328] failed call to cuInit: CUDA_ERROR_UNKNOWN: unknown error
+2021-07-01 12:14:11.774676: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:169] retrieving CUDA diagnostic information for host: BigArch
+2021-07-01 12:14:11.774698: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:176] hostname: BigArch
+2021-07-01 12:14:11.775821: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:200] libcuda reported version is: 390.143.0
+2021-07-01 12:14:11.775889: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:204] kernel reported version is: 390.143.0
+2021-07-01 12:14:11.775911: I tensorflow/stream_executor/cuda/cuda_diagnostics.cc:310] kernel version seems to match DSO: 390.143.0
+2021-07-01 12:14:11.777678: I tensorflow/compiler/jit/xla_gpu_device.cc:99] Not creating XLA devices, tf_xla_enable_xla_devices not set
+2021-07-01 12:14:11.923812: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:116] None of the MLIR optimization passes are enabled (registered 2)
+2021-07-01 12:14:11.946133: I tensorflow/core/platform/profile_utils/cpu_utils.cc:112] CPU Frequency: 2295530000 Hz
+Epoch 1/50
+2021-07-01 12:14:12.651743: I tensorflow/core/profiler/lib/profiler_session.cc:136] Profiler session initializing.
+2021-07-01 12:14:12.651780: I tensorflow/core/profiler/lib/profiler_session.cc:155] Profiler session started.
+2021-07-01 12:14:12.655400: I tensorflow/core/profiler/lib/profiler_session.cc:71] Profiler session collecting data.
+2021-07-01 12:14:12.661855: I tensorflow/core/profiler/lib/profiler_session.cc:172] Profiler session tear down.
+2021-07-01 12:14:12.672498: I tensorflow/core/profiler/rpc/client/save_profile.cc:137] Creating directory: ../logs/scalars/20210701-121343/train/plugins/profile/2021_07_01_12_14_12
+2021-07-01 12:14:12.673452: I tensorflow/core/profiler/rpc/client/save_profile.cc:143] Dumped gzipped tool data for trace.json.gz to ../logs/scalars/20210701-121343/train/plugins/profile/2021_07_01_12_14_12/BigArch.trace.json.gz
+2021-07-01 12:14:12.682579: I tensorflow/core/profiler/rpc/client/save_profile.cc:137] Creating directory: ../logs/scalars/20210701-121343/train/plugins/profile/2021_07_01_12_14_12
+2021-07-01 12:14:12.682964: I tensorflow/core/profiler/rpc/client/save_profile.cc:143] Dumped gzipped tool data for memory_profile.json.gz to ../logs/scalars/20210701-121343/train/plugins/profile/2021_07_01_12_14_12/BigArch.memory_profile.json.gz
+2021-07-01 12:14:12.683565: I tensorflow/core/profiler/rpc/client/capture_profile.cc:251] Creating directory: ../logs/scalars/20210701-121343/train/plugins/profile/2021_07_01_12_14_12Dumped tool data for xplane.pb to ../logs/scalars/20210701-121343/train/plugins/profile/2021_07_01_12_14_12/BigArch.xplane.pb
+Dumped tool data for overview_page.pb to ../logs/scalars/20210701-121343/train/plugins/profile/2021_07_01_12_14_12/BigArch.overview_page.pb
+Dumped tool data for input_pipeline.pb to ../logs/scalars/20210701-121343/train/plugins/profile/2021_07_01_12_14_12/BigArch.input_pipeline.pb
+Dumped tool data for tensorflow_stats.pb to ../logs/scalars/20210701-121343/train/plugins/profile/2021_07_01_12_14_12/BigArch.tensorflow_stats.pb
+Dumped tool data for kernel_stats.pb to ../logs/scalars/20210701-121343/train/plugins/profile/2021_07_01_12_14_12/BigArch.kernel_stats.pb
+
+2733/2733 - 2s - loss: 0.2993 - accuracy: 0.9100 - recall: 0.2155
+Epoch 2/50
+2733/2733 - 2s - loss: 0.1430 - accuracy: 0.9433 - recall: 0.2652
+Epoch 3/50
+2733/2733 - 2s - loss: 0.1261 - accuracy: 0.9491 - recall: 0.3646
+Epoch 4/50
+2733/2733 - 2s - loss: 0.1196 - accuracy: 0.9528 - recall: 0.5028
+Epoch 5/50
+2733/2733 - 2s - loss: 0.1163 - accuracy: 0.9535 - recall: 0.4917
+Epoch 6/50
+2733/2733 - 2s - loss: 0.1126 - accuracy: 0.9568 - recall: 0.5193
+Epoch 7/50
+2733/2733 - 2s - loss: 0.1130 - accuracy: 0.9561 - recall: 0.5746
+Epoch 8/50
+2733/2733 - 2s - loss: 0.1083 - accuracy: 0.9568 - recall: 0.5635
+Epoch 9/50
+2733/2733 - 2s - loss: 0.1082 - accuracy: 0.9557 - recall: 0.5525
+Epoch 10/50
+2733/2733 - 2s - loss: 0.1079 - accuracy: 0.9535 - recall: 0.5249
+Epoch 11/50
+2733/2733 - 2s - loss: 0.1068 - accuracy: 0.9576 - recall: 0.5635
+Epoch 12/50
+2733/2733 - 2s - loss: 0.1054 - accuracy: 0.9572 - recall: 0.5470
+Epoch 13/50
+2733/2733 - 2s - loss: 0.1044 - accuracy: 0.9576 - recall: 0.5967
+Epoch 14/50
+2733/2733 - 2s - loss: 0.1029 - accuracy: 0.9583 - recall: 0.5525
+Epoch 15/50
+2733/2733 - 2s - loss: 0.1018 - accuracy: 0.9598 - recall: 0.6077
+Epoch 16/50
+2733/2733 - 2s - loss: 0.1012 - accuracy: 0.9594 - recall: 0.5967
+Epoch 17/50
+2733/2733 - 2s - loss: 0.1000 - accuracy: 0.9605 - recall: 0.6133
+Epoch 18/50
+2733/2733 - 2s - loss: 0.1014 - accuracy: 0.9598 - recall: 0.6077
+Epoch 19/50
+2733/2733 - 2s - loss: 0.0984 - accuracy: 0.9583 - recall: 0.5746
+Epoch 20/50
+2733/2733 - 2s - loss: 0.0975 - accuracy: 0.9605 - recall: 0.6298
+Epoch 21/50
+2733/2733 - 2s - loss: 0.0985 - accuracy: 0.9605 - recall: 0.5746
+Epoch 22/50
+2733/2733 - 2s - loss: 0.0959 - accuracy: 0.9601 - recall: 0.5856
+Epoch 23/50
+2733/2733 - 2s - loss: 0.0963 - accuracy: 0.9619 - recall: 0.6133
+Epoch 24/50
+2733/2733 - 2s - loss: 0.0949 - accuracy: 0.9601 - recall: 0.5912
+Epoch 25/50
+2733/2733 - 2s - loss: 0.0944 - accuracy: 0.9619 - recall: 0.6243
+Epoch 26/50
+2733/2733 - 2s - loss: 0.0943 - accuracy: 0.9630 - recall: 0.6133
+Epoch 27/50
+2733/2733 - 2s - loss: 0.0926 - accuracy: 0.9623 - recall: 0.6243
+Epoch 28/50
+2733/2733 - 2s - loss: 0.0930 - accuracy: 0.9619 - recall: 0.6188
+Epoch 29/50
+2733/2733 - 2s - loss: 0.0913 - accuracy: 0.9594 - recall: 0.5967
+Epoch 30/50
+2733/2733 - 2s - loss: 0.0905 - accuracy: 0.9616 - recall: 0.6077
+Epoch 31/50
+2733/2733 - 2s - loss: 0.0902 - accuracy: 0.9612 - recall: 0.6243
+Epoch 32/50
+2733/2733 - 2s - loss: 0.0898 - accuracy: 0.9619 - recall: 0.6022
+Epoch 33/50
+2733/2733 - 2s - loss: 0.0870 - accuracy: 0.9638 - recall: 0.6243
+Epoch 34/50
+2733/2733 - 2s - loss: 0.0890 - accuracy: 0.9630 - recall: 0.6298
+Epoch 35/50
+2733/2733 - 2s - loss: 0.0871 - accuracy: 0.9645 - recall: 0.6464
+Epoch 36/50
+2733/2733 - 2s - loss: 0.0867 - accuracy: 0.9630 - recall: 0.6409
+Epoch 37/50
+2733/2733 - 2s - loss: 0.0855 - accuracy: 0.9634 - recall: 0.6354
+Epoch 38/50
+2733/2733 - 2s - loss: 0.0855 - accuracy: 0.9645 - recall: 0.6464
+Epoch 39/50
+2733/2733 - 2s - loss: 0.0840 - accuracy: 0.9671 - recall: 0.6685
+Epoch 40/50
+2733/2733 - 2s - loss: 0.0856 - accuracy: 0.9638 - recall: 0.6464
+Epoch 41/50
+2733/2733 - 2s - loss: 0.0838 - accuracy: 0.9641 - recall: 0.6188
+Epoch 42/50
+2733/2733 - 2s - loss: 0.0841 - accuracy: 0.9638 - recall: 0.6519
+Epoch 43/50
+2733/2733 - 2s - loss: 0.0841 - accuracy: 0.9619 - recall: 0.6409
+Epoch 44/50
+2733/2733 - 2s - loss: 0.0820 - accuracy: 0.9649 - recall: 0.6796
+Epoch 45/50
+2733/2733 - 2s - loss: 0.0813 - accuracy: 0.9652 - recall: 0.6519
+Epoch 46/50
+2733/2733 - 2s - loss: 0.0806 - accuracy: 0.9638 - recall: 0.6354
+Epoch 47/50
+2733/2733 - 2s - loss: 0.0820 - accuracy: 0.9660 - recall: 0.6796
+Epoch 48/50
+2733/2733 - 2s - loss: 0.0796 - accuracy: 0.9671 - recall: 0.6796
+Epoch 49/50
+2733/2733 - 2s - loss: 0.0817 - accuracy: 0.9649 - recall: 0.6464
+Epoch 50/50
+2733/2733 - 2s - loss: 0.0822 - accuracy: 0.9641 - recall: 0.6630
+#+end_example
+
 * Saving or Loading the Classifier
   Both of these blocks can be uncommented to save or load models as desired.
 ** Saving the Model 
@@ -239,6 +398,8 @@
   # model.load("model_test_final_different.h5")
 #+end_src
 
+#+RESULTS:
+
 * Evaluating and Metrics
 ** Predictions and Prediction Probabilities
   The ~model.predict()~ will return the class predictions for the input data put
@@ -251,6 +412,14 @@
   pred = model.predict(test_X)
   y_score = model.predict_proba(test_X, batch_size=HP['BATCH_SIZE'])
 #+end_src
+
+#+RESULTS:
+: /home/olav/gitRepos/TTK28-project/venv/lib/python3.8/site-packages/tensorflow/python/keras/engine/sequential.py:450: UserWarning: `model.predict_classes()` is deprecated and will be removed after 2021-01-01. Please use instead:* `np.argmax(model.predict(x), axis=-1)`,   if your model does multi-class classification   (e.g. if it uses a `softmax` last-layer activation).* `(model.predict(x) > 0.5).astype("int32")`,   if your model does binary classification   (e.g. if it uses a `sigmoid` last-layer activation).
+:   warnings.warn('`model.predict_classes()` is deprecated and '
+: 683/683 - 0s
+: /home/olav/gitRepos/TTK28-project/venv/lib/python3.8/site-packages/tensorflow/python/keras/engine/sequential.py:425: UserWarning: `model.predict_proba()` is deprecated and will be removed after 2021-01-01. Please use `model.predict()` instead.
+:   warnings.warn('`model.predict_proba()` is deprecated and '
+: 683/683 - 0s
 
 ** Metrics
    Since the data set is imbalanced, there are other metrics to consider beyond
@@ -296,6 +465,21 @@
       print(metric_dict, file=file)
 #+end_src
 
+#+RESULTS:
+#+begin_example
+tn :  631
+fp :  7
+fn :  24
+tp :  21
+###### ---------Overall Results --------- ######
+accuracy:  0.9546120058565154
+confusion_mat:  [631, 7, 24, 21]
+auroc:  0.04869383490073146
+precision:  0.75
+recall:  0.4666666666666667
+f1:  0.5753424657534245
+#+end_example
+
 * Plots
   Three metrics that are smart to include for imbalanced datasets are:
   - ROC curve
@@ -321,3 +505,5 @@
   plt.savefig(precision_recall_curve_string)
   plt.show()
 #+end_src
+
+#+RESULTS:
