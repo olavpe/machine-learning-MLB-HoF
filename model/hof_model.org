@@ -14,7 +14,7 @@
   org session "SESSION_1". The following Python code blocks are run in
   "SESSION_1" in which the virtual environment should have been activated.
 
-#+BEGIN_SRC emacs-lisp :session SESSION_1
+#+BEGIN_SRC emacs-lisp :session SESSION_1 :exports both
   (pyvenv-activate "~/gitRepos/TTK28-project/venv/")
 #+END_SRC
 
@@ -25,7 +25,7 @@
   itself. For data storage and manipulation ~pandas~ and ~numpy~ are the primary
   libraries used. The graphics are generated via ~matplotlib~.
   
-#+begin_src python :session SESSION_1 :results output
+#+begin_src python :session SESSION_1 :results output :exports both
   from datetime import datetime
   import pandas as pd
   import numpy as np
@@ -57,7 +57,7 @@
    Nothing special is happening here, but just making sure there is whitespace
    between runs in the log file.
    
-#+begin_src python :session SESSION_1 :results output
+#+begin_src python :session SESSION_1 :results output :exports both
   with open("../result/master_log.txt", "a") as file:
       file.write("\n")
       file.write("\n")
@@ -70,7 +70,7 @@
    CSVLogger is used to keep track of the different runs manually, in addition
    to setting up tensorboard.
    
-#+begin_src python :session SESSION_1 :results output
+#+begin_src python :session SESSION_1 :results output :exports both
   csv_logger = CSVLogger('../result/master_log.txt', append=True, separator=';')
   log_dir = "../logs/scalars/" + datetime.now().strftime("%Y%m%d-%H%M%S")
   tensorboard_callback = keras.callbacks.TensorBoard(log_dir=log_dir)
@@ -86,7 +86,7 @@
    These are the settings for logging information to the terminal and debugging
    the output.
    
-#+begin_src python :session SESSION_1 :results output
+#+begin_src python :session SESSION_1 :results output :exports both
   logging.basicConfig(encoding='utf-8', level=logging.INFO)
 #+end_src
 
@@ -97,7 +97,7 @@
   this hyperparameters dictionary is defined here and used throughout the code
   where needed. 
 
-#+begin_src python :session SESSION_1 :results output
+#+begin_src python :session SESSION_1 :results output :exports both
   HP = {
       'NAME': 'full',
       'INFO': 'checking_testing_final',
@@ -120,7 +120,7 @@
    shows, and saves an /Receiver Operator Characteristics/ plot which is used
    for binary classifications problems. A good explanation can be found [[https://towardsdatascience.com/understanding-auc-roc-curve-68b2303cc9c5][here]].
 
-#+begin_src python :session SESSION_1 :results output
+#+begin_src python :session SESSION_1 :results output :exports both
   def plot_roc_curve(fper, tper, name):
       plt.plot(fper, tper, color='orange', label='ROC')
       plt.plot([0, 1], [0, 1], color='darkblue', linestyle='--')
@@ -138,7 +138,7 @@
 ** Saving and Loading Models   
    Simply functions to save and load varieties of this hof_model.
    
-#+begin_src python :session SESSION_1 :results output
+#+begin_src python :session SESSION_1 :results output :exports both
   def save_model(model, name):
       weights_name = "model_" + name +".h5"
       model.model.save_weights(weights_name)
@@ -158,7 +158,7 @@
   Importing the training and test datasets, in addition to defining the column
   types to be used of throughout the model.
   
-#+begin_src python :session SESSION_1 :results output
+#+begin_src python :session SESSION_1 :results output :exports both
   train_df = pd.read_csv('../data/train_data_' + HP['NAME'] + '.csv', index_col=False)
   test_df = pd.read_csv('../data/test_data_' + HP['NAME'] + '.csv', index_col=False)
   data_type_dict = {'numerical': [ 'G_all', 'finalGame', 'OPS', 'Years_Played',
@@ -171,7 +171,7 @@
 
   These steps remove the labels from the data sources on both the test and
   training data. 
-#+begin_src python :session SESSION_1 :results output
+#+begin_src python :session SESSION_1 :results output :exports both
   ### Removing the answers for the input data
   train_X_raw = train_df.drop(columns=['HoF'])
   train_y_raw = train_df['HoF']
@@ -197,7 +197,7 @@
   An error in the one class will have a much higher cost in the cost function.
   The following backpropagation algorithm will correct the weights based on the
   ratio between the class weights.
-#+begin_src python :session SESSION_1 :results output
+#+begin_src python :session SESSION_1 :results output :exports both
   ### Weighting the classes for bias datasets
   # class_weights = class_weight.compute_class_weight('balanced', np.unique(train_y), train_y)
   class_weights = {0: 1.0, 1: 15.0}
@@ -214,7 +214,7 @@
 ** Checkpointing Model Weights
    This for setting up the checkpoints while running the model. It is not really
    in use right now as it is not added in the ~model.fit~ callbacks.
-#+begin_src python :session SESSION_1 :results output
+#+begin_src python :session SESSION_1 :results output :exports both
   model_weights_name = HP['NAME'] + '_model.h5'
   checkpointer = ModelCheckpoint(model_weights_name, monitor='Recall', verbose=0)
 #+end_src
@@ -236,7 +236,7 @@
    1. number of hidden layers equals one
    2. the number of neurons in that layer is the mean of the neurons in the input and output layers.
 
-#+begin_src python :session SESSION_1 :results output
+#+begin_src python :session SESSION_1 :results output :exports both
   def create_model():
       model = Sequential([
           Dense(10, activation='relu', input_shape=(10,)),
@@ -387,14 +387,14 @@ Epoch 50/50
 * Saving or Loading the Classifier
   Both of these blocks can be uncommented to save or load models as desired.
 ** Saving the Model 
-#+begin_src python :session SESSION_1 :results output
+#+begin_src python :session SESSION_1 :results output :exports both
   ### Saving Entire Model
   # save_model(model, "test_final_check")
   # model.model.save("model_test_final_different.h5")
 #+end_src
 
 ** Loading the Model 
-#+begin_src python :session SESSION_1 :results output
+#+begin_src python :session SESSION_1 :results output :exports both
   ### Loading Entire Model
   # model = load_model(model, "test_final")
   # model.load("model_test_final_different.h5")
@@ -409,7 +409,7 @@ Epoch 50/50
   predictions for the classes, and is the likelihood of the observation
   belonging to the different classes.
   
-#+begin_src python :session SESSION_1 :results output
+#+begin_src python :session SESSION_1 :results output :exports both
   # Testing the model
   pred = model.predict(test_X)
   y_score = model.predict_proba(test_X, batch_size=HP['BATCH_SIZE'])
@@ -429,7 +429,7 @@ Epoch 50/50
    players is ~14:1~ after preprocessing. Without class weights there could be a
    bias towards never selecting the HoF players resulting an accuracy over 90%
    while always predicting them as non-HoF players.
-#+begin_src python :session SESSION_1 :results output
+#+begin_src python :session SESSION_1 :results output :exports both
   # Calculating overall metrics
   accuracy = accuracy_score(test_y, pred)
   tn, fp, fn, tp = confusion_matrix(test_y, pred).ravel()
@@ -488,7 +488,7 @@ f1:  0.5753424657534245
   - Confusion Matrix
   - Precision-Recall Matrix
     
-#+begin_src python :session SESSION_1 :results output
+#+begin_src python :session SESSION_1 :results output :exports both
   # ROC curve
   fper, tper, thresholds = roc_curve(test_y, y_score[:,1])
   plot_roc_curve(fper, tper, HP['NAME'])
