@@ -1,2 +1,19 @@
 # Folders to exclude from the project
 # data/
+venv/
+
+data/
+!data/test_data_full.csv
+!data/train_data_full.csv
+!data/examine_data.csv
+!data/final_data.csv
+
+result/
+!result/ROC_curve_latest.png
+!result/confusion_mat_latest.png
+!result/precision_recall_curve_latest.png
+
+model/
+!model/full_model.h5
+
+logs/
