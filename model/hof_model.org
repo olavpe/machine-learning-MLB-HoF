@@ -29,6 +29,8 @@
   from datetime import datetime
   import pandas as pd
   import numpy as np
+  # import matplotlib
+  # matplotlib.use('Qt5Agg')
   import matplotlib.pyplot as plt
   import logging
   from sklearn.preprocessing import LabelEncoder
@@ -130,7 +132,8 @@
       plt.legend()
       file_name = '../result/ROC_curve_' + name + datetime.now().strftime("%Y%m%d-%H%M%S") + '.png'
       plt.savefig(file_name)
-      plt.show()
+      plt.savefig("../result/ROC_curve_latest.png")
+      plt.clf()
 #+end_src
 
 #+RESULTS:
@@ -393,6 +396,8 @@ Epoch 50/50
   # model.model.save("model_test_final_different.h5")
 #+end_src
 
+#+RESULTS:
+
 ** Loading the Model 
 #+begin_src python :session SESSION_1 :results output :exports both
   ### Loading Entire Model
@@ -494,18 +499,36 @@ f1:  0.5753424657534245
   plot_roc_curve(fper, tper, HP['NAME'])
   man_auroc = auc(fper, tper)
   print("man_auroc: ", man_auroc)
+#+end_src
 
-  # Generating a confusion matrix
-  skplt.metrics.plot_confusion_matrix(test_y, pred, normalize=True)
-  confusion_mat_string = "../result/confusion_mat_" + HP['NAME']+ datetime.now().strftime("%Y%m%d-%H%M%S") + ".png"
-  plt.savefig(confusion_mat_string)
-  plt.show()
+[[file:../result/ROC_curve_latest.png]]
 
-  # Generating precision-recall curve
-  skplt.metrics.plot_precision_recall(test_y, y_score)
-  precision_recall_curve_string = "../result/precision_recall_curve_" + HP['NAME'] + datetime.now().strftime("%Y%m%d-%H%M%S") + ".png"
-  plt.savefig(precision_recall_curve_string)
-  plt.show()
+#+RESULTS:
+: man_auroc:  0.9676593521421109
+
+#+begin_src python :session SESSION_1 :results output :exports both :noweb yes
+# Generating a confusion matrix
+skplt.metrics.plot_confusion_matrix(test_y, pred, normalize=True)
+confusion_mat_string = "../result/confusion_mat_" + HP['NAME']+ datetime.now().strftime("%Y%m%d-%H%M%S") + ".png"
+plt.savefig(confusion_mat_string)
+plt.savefig("../result/confusion_mat_latest.png")
+plt.clf()
 #+end_src
 
 #+RESULTS:
+
+[[file:../result/confusion_mat_latest.png]]
+
+
+#+begin_src python :session SESSION_1 :results output :exports both :noweb yes
+# Generating precision-recall curve
+skplt.metrics.plot_precision_recall(test_y, y_score)
+precision_recall_curve_string = "../result/precision_recall_curve_" + HP['NAME'] + datetime.now().strftime("%Y%m%d-%H%M%S") + ".png"
+plt.savefig(precision_recall_curve_string)
+plt.savefig("../result/precision_recall_curve_latest.png")
+plt.clf()
+#+end_src
+
+[[file:../result/precision_recall_curve_latest.png]]
+
+
