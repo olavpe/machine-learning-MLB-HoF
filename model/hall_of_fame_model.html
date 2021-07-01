@@ -1,0 +1,930 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2021-07-01 Thu 18:52 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hall of Fame Model</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Olav Pedersen" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/readtheorg.css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/js/readtheorg.js"></script>
+<style> #content{max-width:1800px;}</style>
+<script type="text/javascript">
+// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
+<!--/*--><![CDATA[/*><!--*/
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+    /*]]>*///-->
+// @license-end
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Hall of Fame Model</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org0acc334">1. Activating Python Environment</a></li>
+<li><a href="#orgbf259b3">2. Importing dependencies</a></li>
+<li><a href="#orgd2c284c">3. Logging Setup</a>
+<ul>
+<li><a href="#org4b93bc5">3.1. Simply adding whitespace to log file</a></li>
+<li><a href="#orgfc3f1d0">3.2. Defining CSVLogger and Tensorboard Settings</a></li>
+<li><a href="#orgc03b8c2">3.3. STDOUT Logging Settings</a></li>
+</ul>
+</li>
+<li><a href="#orgd87ae6d">4. Hyperparameters</a></li>
+<li><a href="#org6f73fe9">5. Defining Helper Functions</a>
+<ul>
+<li><a href="#org2f6302b">5.1. Creating an ROC Plot</a></li>
+<li><a href="#org9b5ad98">5.2. Saving and Loading Models</a></li>
+</ul>
+</li>
+<li><a href="#orgb8ddbbe">6. Importing Data</a></li>
+<li><a href="#org9248f55">7. Defining and Compiling the Model</a>
+<ul>
+<li><a href="#orge0bc05b">7.1. Class Weights</a></li>
+<li><a href="#orgedd5096">7.2. Checkpointing Model Weights</a></li>
+<li><a href="#orgb533103">7.3. Defining and Training the Classifier</a></li>
+</ul>
+</li>
+<li><a href="#org3ced30c">8. Saving or Loading the Classifier</a>
+<ul>
+<li><a href="#org0714ede">8.1. Saving the Model</a></li>
+<li><a href="#org8cbcbb1">8.2. Loading the Model</a></li>
+</ul>
+</li>
+<li><a href="#org0b6e6e1">9. Evaluating and Metrics</a>
+<ul>
+<li><a href="#org867af81">9.1. Predictions and Prediction Probabilities</a></li>
+<li><a href="#orgd69f6b5">9.2. Metrics</a></li>
+</ul>
+</li>
+<li><a href="#orgd6846c5">10. Plots</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org0acc334" class="outline-2">
+<h2 id="org0acc334"><span class="section-number-2">1</span> Activating Python Environment</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+This code block must be run to activate python virtual environment for
+org session "SESSION_1". The following Python code blocks are run in
+"SESSION_1" in which the virtual environment should have been activated.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #5e7e9b;">(</span>pyvenv-activate <span style="color: #5a7273;">"~/gitRepos/TTK28-project/venv/"</span><span style="color: #5e7e9b;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgbf259b3" class="outline-2">
+<h2 id="orgbf259b3"><span class="section-number-2">2</span> Importing dependencies</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+This project is primarily uses <code>Keras</code> and <code>Sklearn</code> for the data analysis
+itself. For data storage and manipulation <code>pandas</code> and <code>numpy</code> are the primary
+libraries used. The graphics are generated via <code>matplotlib</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #5e7e9b; font-weight: bold;">from</span> datetime <span style="color: #5e7e9b; font-weight: bold;">import</span> datetime
+<span style="color: #5e7e9b; font-weight: bold;">import</span> pandas <span style="color: #5e7e9b; font-weight: bold;">as</span> pd
+<span style="color: #5e7e9b; font-weight: bold;">import</span> numpy <span style="color: #5e7e9b; font-weight: bold;">as</span> np
+<span style="color: #48485e;"># </span><span style="color: #48485e;">import matplotlib</span>
+<span style="color: #48485e;"># </span><span style="color: #48485e;">matplotlib.use('Qt5Agg')</span>
+<span style="color: #5e7e9b; font-weight: bold;">import</span> matplotlib.pyplot <span style="color: #5e7e9b; font-weight: bold;">as</span> plt
+<span style="color: #5e7e9b; font-weight: bold;">import</span> logging
+<span style="color: #5e7e9b; font-weight: bold;">from</span> sklearn.preprocessing <span style="color: #5e7e9b; font-weight: bold;">import</span> LabelEncoder
+<span style="color: #5e7e9b; font-weight: bold;">from</span> sklearn.metrics <span style="color: #5e7e9b; font-weight: bold;">import</span> confusion_matrix, roc_curve, roc_auc_score, accuracy_score, auc
+<span style="color: #5e7e9b; font-weight: bold;">from</span> sklearn.utils <span style="color: #5e7e9b; font-weight: bold;">import</span> class_weight
+<span style="color: #5e7e9b; font-weight: bold;">from</span> sklearn.model_selection <span style="color: #5e7e9b; font-weight: bold;">import</span> KFold, StratifiedKFold, cross_val_score, cross_validate, learning_curve
+<span style="color: #5e7e9b; font-weight: bold;">import</span> scikitplot <span style="color: #5e7e9b; font-weight: bold;">as</span> skplt
+<span style="color: #5e7e9b; font-weight: bold;">import</span> tensorflow <span style="color: #5e7e9b; font-weight: bold;">as</span> tf
+<span style="color: #5e7e9b; font-weight: bold;">from</span> tensorflow <span style="color: #5e7e9b; font-weight: bold;">import</span> keras
+<span style="color: #5e7e9b; font-weight: bold;">from</span> tensorflow.keras <span style="color: #5e7e9b; font-weight: bold;">import</span> Model
+<span style="color: #5e7e9b; font-weight: bold;">from</span> tensorflow.keras.callbacks <span style="color: #5e7e9b; font-weight: bold;">import</span> CSVLogger, ModelCheckpoint
+<span style="color: #5e7e9b; font-weight: bold;">from</span> tensorflow.keras.models <span style="color: #5e7e9b; font-weight: bold;">import</span> Sequential, model_from_json, load_model
+<span style="color: #5e7e9b; font-weight: bold;">from</span> tensorflow.keras.layers <span style="color: #5e7e9b; font-weight: bold;">import</span> Dense
+<span style="color: #5e7e9b; font-weight: bold;">from</span> tensorflow.keras.wrappers.scikit_learn <span style="color: #5e7e9b; font-weight: bold;">import</span> KerasClassifier
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd2c284c" class="outline-2">
+<h2 id="orgd2c284c"><span class="section-number-2">3</span> Logging Setup</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+It was quite hard to keep track of different runs in the project, and noticed
+I kept loosing track of previous runs and just wanted a log to save some of
+the metrics and information about the different runs.
+</p>
+</div>
+<div id="outline-container-org4b93bc5" class="outline-3">
+<h3 id="org4b93bc5"><span class="section-number-3">3.1</span> Simply adding whitespace to log file</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+Nothing special is happening here, but just making sure there is whitespace
+between runs in the log file.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #5e7e9b; font-weight: bold;">with</span> <span style="color: #5e7e9b;">open</span><span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">"../result/master_log.txt"</span>, <span style="color: #5a7273;">"a"</span><span style="color: #5e7e9b;">)</span> <span style="color: #5e7e9b; font-weight: bold;">as</span> <span style="color: #5e7e9b;">file</span>:
+    <span style="color: #5e7e9b;">file</span>.write<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">"\n"</span><span style="color: #5e7e9b;">)</span>
+    <span style="color: #5e7e9b;">file</span>.write<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">"\n"</span><span style="color: #5e7e9b;">)</span>
+    <span style="color: #5e7e9b; font-weight: bold;">print</span><span style="color: #5e7e9b;">(</span>HP, <span style="color: #5e7e9b;">file</span>=<span style="color: #5e7e9b;">file</span><span style="color: #5e7e9b;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgfc3f1d0" class="outline-3">
+<h3 id="orgfc3f1d0"><span class="section-number-3">3.2</span> Defining CSVLogger and Tensorboard Settings</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+CSVLogger is used to keep track of the different runs manually, in addition
+to setting up tensorboard.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #7e97af;">csv_logger</span> = CSVLogger<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">'../result/master_log.txt'</span>, append=<span style="color: #cb8986;">True</span>, separator=<span style="color: #5a7273;">';'</span><span style="color: #5e7e9b;">)</span>
+<span style="color: #7e97af;">log_dir</span> = <span style="color: #5a7273;">"../logs/scalars/"</span> + datetime.now<span style="color: #5e7e9b;">()</span>.strftime<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">"%Y%m%d-%H%M%S"</span><span style="color: #5e7e9b;">)</span>
+<span style="color: #7e97af;">tensorboard_callback</span> = keras.callbacks.TensorBoard<span style="color: #5e7e9b;">(</span>log_dir=log_dir<span style="color: #5e7e9b;">)</span>
+</pre>
+</div>
+
+<pre class="example">
+2021-07-01 18:30:30.497801: I tensorflow/core/profiler/lib/profiler_session.cc:136] Profiler session initializing.
+2021-07-01 18:30:30.497852: I tensorflow/core/profiler/lib/profiler_session.cc:155] Profiler session started.
+2021-07-01 18:30:30.497937: I tensorflow/core/profiler/lib/profiler_session.cc:172] Profiler session tear down.
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgc03b8c2" class="outline-3">
+<h3 id="orgc03b8c2"><span class="section-number-3">3.3</span> STDOUT Logging Settings</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+These are the settings for logging information to the terminal and debugging
+the output.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python">logging.basicConfig<span style="color: #5e7e9b;">(</span>encoding=<span style="color: #5a7273;">'utf-8'</span>, level=logging.INFO<span style="color: #5e7e9b;">)</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd87ae6d" class="outline-2">
+<h2 id="orgd87ae6d"><span class="section-number-2">4</span> Hyperparameters</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+In order to more easily configure the model and keep track of the settting,
+this hyperparameters dictionary is defined here and used throughout the code
+where needed. 
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #7e97af;">HP</span> = <span style="color: #5e7e9b;">{</span>
+    <span style="color: #5a7273;">'NAME'</span>: <span style="color: #5a7273;">'full'</span>,
+    <span style="color: #5a7273;">'INFO'</span>: <span style="color: #5a7273;">'checking_testing_final'</span>,
+    <span style="color: #5a7273;">'EPOCHS'</span>: <span style="color: #cb8986;">50</span>,
+    <span style="color: #5a7273;">'FOLDS'</span>: <span style="color: #cb8986;">2</span>,
+    <span style="color: #5a7273;">'BATCH_SIZE'</span>: <span style="color: #cb8986;">1</span>,
+    <span style="color: #5a7273;">'OPTIMIZER'</span>: <span style="color: #5a7273;">'adam'</span>,
+    <span style="color: #5a7273;">'LOSS'</span>: <span style="color: #5a7273;">'binary_crossentropy'</span>,
+    <span style="color: #5a7273;">'METRICS'</span>: <span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'accuracy'</span>, <span style="color: #5a7273;">'Recall'</span><span style="color: #bf6c68;">]</span>,
+    <span style="color: #5a7273;">'DATASET'</span>: <span style="color: #5a7273;">'raw'</span>
+<span style="color: #5e7e9b;">}</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org6f73fe9" class="outline-2">
+<h2 id="org6f73fe9"><span class="section-number-2">5</span> Defining Helper Functions</h2>
+<div class="outline-text-2" id="text-5">
+</div>
+<div id="outline-container-org2f6302b" class="outline-3">
+<h3 id="org2f6302b"><span class="section-number-3">5.1</span> Creating an ROC Plot</h3>
+<div class="outline-text-3" id="text-5-1">
+<p>
+This is a plot that takes in the "false positives" (<code>fper</code>) and "true
+positives" (<code>tper</code>) and the name of which to save the plot. It generates,
+shows, and saves an <i>Receiver Operator Characteristics</i> plot which is used
+for binary classifications problems. A good explanation can be found <a href="https://towardsdatascience.com/understanding-auc-roc-curve-68b2303cc9c5">here</a>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #5e7e9b; font-weight: bold;">def</span> <span style="color: #bf6c68; font-weight: bold;">plot_roc_curve</span><span style="color: #5e7e9b;">(</span>fper, tper, name<span style="color: #5e7e9b;">)</span>:
+    plt.plot<span style="color: #5e7e9b;">(</span>fper, tper, color=<span style="color: #5a7273;">'orange'</span>, label=<span style="color: #5a7273;">'ROC'</span><span style="color: #5e7e9b;">)</span>
+    plt.plot<span style="color: #5e7e9b;">(</span><span style="color: #bf6c68;">[</span><span style="color: #cb8986;">0</span>, <span style="color: #cb8986;">1</span><span style="color: #bf6c68;">]</span>, <span style="color: #bf6c68;">[</span><span style="color: #cb8986;">0</span>, <span style="color: #cb8986;">1</span><span style="color: #bf6c68;">]</span>, color=<span style="color: #5a7273;">'darkblue'</span>, linestyle=<span style="color: #5a7273;">'--'</span><span style="color: #5e7e9b;">)</span>
+    plt.xlabel<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">'False Positive Rate'</span><span style="color: #5e7e9b;">)</span>
+    plt.ylabel<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">'True Positive Rate'</span><span style="color: #5e7e9b;">)</span>
+    plt.title<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">'Receiver Operating Characteristic (ROC) Curve'</span><span style="color: #5e7e9b;">)</span>
+    plt.legend<span style="color: #5e7e9b;">()</span>
+    <span style="color: #7e97af;">file_name</span> = <span style="color: #5a7273;">'../result/ROC_curve_'</span> + name + datetime.now<span style="color: #5e7e9b;">()</span>.strftime<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">"%Y%m%d-%H%M%S"</span><span style="color: #5e7e9b;">)</span> + <span style="color: #5a7273;">'.png'</span>
+    plt.savefig<span style="color: #5e7e9b;">(</span>file_name<span style="color: #5e7e9b;">)</span>
+    plt.savefig<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">"../result/ROC_curve_latest.png"</span><span style="color: #5e7e9b;">)</span>
+    plt.clf<span style="color: #5e7e9b;">()</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org9b5ad98" class="outline-3">
+<h3 id="org9b5ad98"><span class="section-number-3">5.2</span> Saving and Loading Models</h3>
+<div class="outline-text-3" id="text-5-2">
+<p>
+Simply functions to save and load varieties of this hof_model.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #5e7e9b; font-weight: bold;">def</span> <span style="color: #bf6c68; font-weight: bold;">save_model</span><span style="color: #5e7e9b;">(</span>model, name<span style="color: #5e7e9b;">)</span>:
+    <span style="color: #7e97af;">weights_name</span> = <span style="color: #5a7273;">"model_"</span> + name +<span style="color: #5a7273;">".h5"</span>
+    model.model.save_weights<span style="color: #5e7e9b;">(</span>weights_name<span style="color: #5e7e9b;">)</span>
+    <span style="color: #5e7e9b; font-weight: bold;">print</span><span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">"Saved model to disk"</span><span style="color: #5e7e9b;">)</span>
+
+<span style="color: #5e7e9b; font-weight: bold;">def</span> <span style="color: #bf6c68; font-weight: bold;">load_model</span><span style="color: #5e7e9b;">(</span>model, name<span style="color: #5e7e9b;">)</span>:
+    <span style="color: #7e97af;">model_name</span> = <span style="color: #5a7273;">"model_"</span> + name + <span style="color: #5a7273;">".h5"</span>
+    model.load_weights<span style="color: #5e7e9b;">(</span>model_name<span style="color: #5e7e9b;">)</span>
+    model.<span style="color: #5e7e9b;">compile</span><span style="color: #5e7e9b;">(</span>optimizer= HP<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'OPTIMIZER'</span><span style="color: #bf6c68;">]</span>, loss= HP<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'LOSS'</span><span style="color: #bf6c68;">]</span>, metrics=HP<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'METRICS'</span><span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">)</span>
+    <span style="color: #5e7e9b; font-weight: bold;">print</span><span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">"Loaded model from disk"</span><span style="color: #5e7e9b;">)</span>
+    <span style="color: #5e7e9b; font-weight: bold;">return</span> model
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb8ddbbe" class="outline-2">
+<h2 id="orgb8ddbbe"><span class="section-number-2">6</span> Importing Data</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+Importing the training and test datasets, in addition to defining the column
+types to be used of throughout the model.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #7e97af;">train_df</span> = pd.read_csv<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">'../data/train_data_'</span> + HP<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'NAME'</span><span style="color: #bf6c68;">]</span> + <span style="color: #5a7273;">'.csv'</span>, index_col=<span style="color: #cb8986;">False</span><span style="color: #5e7e9b;">)</span>
+<span style="color: #7e97af;">test_df</span> = pd.read_csv<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">'../data/test_data_'</span> + HP<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'NAME'</span><span style="color: #bf6c68;">]</span> + <span style="color: #5a7273;">'.csv'</span>, index_col=<span style="color: #cb8986;">False</span><span style="color: #5e7e9b;">)</span>
+<span style="color: #7e97af;">data_type_dict</span> = <span style="color: #5e7e9b;">{</span><span style="color: #5a7273;">'numerical'</span>: <span style="color: #bf6c68;">[</span> <span style="color: #5a7273;">'G_all'</span>, <span style="color: #5a7273;">'finalGame'</span>, <span style="color: #5a7273;">'OPS'</span>, <span style="color: #5a7273;">'Years_Played'</span>,
+                                 <span style="color: #5a7273;">'Most Valuable Player'</span>, <span style="color: #5a7273;">'AS_games'</span>, <span style="color: #5a7273;">'Gold Glove'</span>,
+                                 <span style="color: #5a7273;">'Rookie of the Year'</span>, <span style="color: #5a7273;">'World Series MVP'</span>, <span style="color: #5a7273;">'Silver Slugger'</span><span style="color: #bf6c68;">]</span>,
+                  <span style="color: #5a7273;">'categorical'</span>: <span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'HoF'</span><span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">}</span>
+</pre>
+</div>
+
+<p>
+These steps remove the labels from the data sources on both the test and
+training data. 
+</p>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #48485e;">### </span><span style="color: #48485e;">Removing the answers for the input data</span>
+<span style="color: #7e97af;">train_X_raw</span> = train_df.drop<span style="color: #5e7e9b;">(</span>columns=<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'HoF'</span><span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">)</span>
+<span style="color: #7e97af;">train_y_raw</span> = train_df<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'HoF'</span><span style="color: #5e7e9b;">]</span>
+<span style="color: #7e97af;">test_X_raw</span> = test_df.drop<span style="color: #5e7e9b;">(</span>columns=<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'HoF'</span><span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">)</span>
+<span style="color: #7e97af;">test_y_raw</span> = test_df<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'HoF'</span><span style="color: #5e7e9b;">]</span>
+
+<span style="color: #48485e;">### </span><span style="color: #48485e;">Converting pandas arrays to numpy arrays</span>
+<span style="color: #7e97af;">train_X</span> = train_X_raw.to_numpy<span style="color: #5e7e9b;">()</span>
+<span style="color: #7e97af;">test_X</span> = test_X_raw.to_numpy<span style="color: #5e7e9b;">()</span>
+
+<span style="color: #48485e;">### </span><span style="color: #48485e;">Creating the label data for the train and test sets</span>
+<span style="color: #7e97af;">encoder</span> = LabelEncoder<span style="color: #5e7e9b;">()</span>
+<span style="color: #7e97af;">train_y</span> = encoder.fit_transform<span style="color: #5e7e9b;">(</span>train_y_raw<span style="color: #5e7e9b;">)</span>
+<span style="color: #7e97af;">test_y</span> = encoder.fit_transform<span style="color: #5e7e9b;">(</span>test_y_raw<span style="color: #5e7e9b;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org9248f55" class="outline-2">
+<h2 id="org9248f55"><span class="section-number-2">7</span> Defining and Compiling the Model</h2>
+<div class="outline-text-2" id="text-7">
+</div>
+<div id="outline-container-orge0bc05b" class="outline-3">
+<h3 id="orge0bc05b"><span class="section-number-3">7.1</span> Class Weights</h3>
+<div class="outline-text-3" id="text-7-1">
+<p>
+One of the ways of dealing with an imbalanced data set is to weight the
+classes. This suggestion and others are very nicely explained in this <a href="https://towardsdatascience.com/handling-imbalanced-datasets-in-machine-learning-7a0e84220f28">post</a>.
+An error in the one class will have a much higher cost in the cost function.
+The following backpropagation algorithm will correct the weights based on the
+ratio between the class weights.
+</p>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #48485e;">### </span><span style="color: #48485e;">Weighting the classes for bias datasets</span>
+<span style="color: #48485e;"># </span><span style="color: #48485e;">class_weights = class_weight.compute_class_weight('balanced', np.unique(train_y), train_y)</span>
+<span style="color: #7e97af;">class_weights</span> = <span style="color: #5e7e9b;">{</span><span style="color: #cb8986;">0</span>: <span style="color: #cb8986;">1</span>.<span style="color: #cb8986;">0</span>, <span style="color: #cb8986;">1</span>: <span style="color: #cb8986;">15</span>.<span style="color: #cb8986;">0</span><span style="color: #5e7e9b;">}</span>
+<span style="color: #5e7e9b; font-weight: bold;">print</span><span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">"class weights: "</span>, class_weights<span style="color: #5e7e9b;">)</span>
+<span style="color: #5e7e9b; font-weight: bold;">print</span><span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">"value counts of Y in train_y: "</span>, train_y.<span style="color: #5e7e9b;">sum</span><span style="color: #bf6c68;">()</span><span style="color: #5e7e9b;">)</span>
+<span style="color: #5e7e9b; font-weight: bold;">print</span><span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">"value counts of N in train_y: "</span>, <span style="color: #5e7e9b;">len</span><span style="color: #bf6c68;">(</span>train_y<span style="color: #bf6c68;">)</span> - train_y.<span style="color: #5e7e9b;">sum</span><span style="color: #bf6c68;">()</span><span style="color: #5e7e9b;">)</span>
+</pre>
+</div>
+
+<pre class="example">
+class weights:  {0: 1.0, 1: 15.0}
+value counts of Y in train_y:  181
+value counts of N in train_y:  2552
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgedd5096" class="outline-3">
+<h3 id="orgedd5096"><span class="section-number-3">7.2</span> Checkpointing Model Weights</h3>
+<div class="outline-text-3" id="text-7-2">
+<p>
+This for setting up the checkpoints while running the model. It is not really
+in use right now as it is not added in the <code>model.fit</code> callbacks.
+</p>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #7e97af;">model_weights_name</span> = HP<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'NAME'</span><span style="color: #5e7e9b;">]</span> + <span style="color: #5a7273;">'_model.h5'</span>
+<span style="color: #7e97af;">checkpointer</span> = ModelCheckpoint<span style="color: #5e7e9b;">(</span>model_weights_name, monitor=<span style="color: #5a7273;">'Recall'</span>, verbose=<span style="color: #cb8986;">0</span><span style="color: #5e7e9b;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb533103" class="outline-3">
+<h3 id="orgb533103"><span class="section-number-3">7.3</span> Defining and Training the Classifier</h3>
+<div class="outline-text-3" id="text-7-3">
+<p>
+Some different model structures were tested for this model, but there were
+some '<a href="https://stats.stackexchange.com/questions/181/how-to-choose-the-number-of-hidden-layers-and-nodes-in-a-feedforward-neural-netw#:~:text=There%20are%20many%20rule-of,size%20of%20the%20output%20layer.">rules of thumb</a>' which were considered. For the number of hidden nodes
+in a layer:
+</p>
+<ul class="org-ul">
+<li>The number of hidden neurons should be between the size of the input layer
+and the size of the output layer.</li>
+<li>The number of hidden neurons should be 2/3 the size of the input layer,
+plus the size of the output layer.</li>
+<li>The number of hidden neurons should be less than twice the size of the
+input layer.</li>
+</ul>
+
+<p>
+A summation of these rules were outlined as the following:
+</p>
+<ol class="org-ol">
+<li>number of hidden layers equals one</li>
+<li>the number of neurons in that layer is the mean of the neurons in the input and output layers.</li>
+</ol>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #5e7e9b; font-weight: bold;">def</span> <span style="color: #bf6c68; font-weight: bold;">create_model</span><span style="color: #5e7e9b;">()</span>:
+    <span style="color: #7e97af;">model</span> = Sequential<span style="color: #5e7e9b;">(</span><span style="color: #bf6c68;">[</span>
+        Dense<span style="color: #5a7273;">(</span><span style="color: #cb8986;">10</span>, activation=<span style="color: #5a7273;">'relu'</span>, input_shape=<span style="color: #aabf7f;">(</span><span style="color: #cb8986;">10</span>,<span style="color: #aabf7f;">)</span><span style="color: #5a7273;">)</span>,
+        Dense<span style="color: #5a7273;">(</span><span style="color: #cb8986;">5</span>, activation=<span style="color: #5a7273;">'relu'</span><span style="color: #5a7273;">)</span>,
+        Dense<span style="color: #5a7273;">(</span><span style="color: #cb8986;">1</span>, activation=<span style="color: #5a7273;">'sigmoid'</span><span style="color: #5a7273;">)</span>,
+    <span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">)</span>
+
+    model.<span style="color: #5e7e9b;">compile</span><span style="color: #5e7e9b;">(</span>
+        optimizer= HP<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'OPTIMIZER'</span><span style="color: #bf6c68;">]</span>,
+        loss= HP<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'LOSS'</span><span style="color: #bf6c68;">]</span>,
+        metrics=HP<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'METRICS'</span><span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">)</span>
+    <span style="color: #5e7e9b; font-weight: bold;">return</span> model
+
+<span style="color: #7e97af;">model</span> = KerasClassifier<span style="color: #5e7e9b;">(</span>build_fn=create_model, epochs=HP<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'EPOCHS'</span><span style="color: #bf6c68;">]</span>,
+                            batch_size=HP<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'BATCH_SIZE'</span><span style="color: #bf6c68;">]</span>, verbose = <span style="color: #cb8986;">2</span>, <span style="color: #5e7e9b;">)</span>
+model.fit<span style="color: #5e7e9b;">(</span>train_X, train_y, callbacks=<span style="color: #bf6c68;">[</span>csv_logger, tensorboard_callback<span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">)</span>
+<span style="color: #48485e;"># </span><span style="color: #48485e;">model.fit(train_X, train_y, class_weight=class_weight, callbacks=[csv_logger, tensorboard_callback])</span>
+</pre>
+</div>
+
+<pre class="example" id="orgad6f6ff">
+Epoch 1/50
+2021-07-01 18:30:38.565293: I tensorflow/core/profiler/lib/profiler_session.cc:136] Profiler session initializing.
+2021-07-01 18:30:38.565330: I tensorflow/core/profiler/lib/profiler_session.cc:155] Profiler session started.
+2021-07-01 18:30:38.592104: I tensorflow/core/profiler/lib/profiler_session.cc:71] Profiler session collecting data.
+2021-07-01 18:30:38.593043: I tensorflow/core/profiler/lib/profiler_session.cc:172] Profiler session tear down.
+2021-07-01 18:30:38.594515: I tensorflow/core/profiler/rpc/client/save_profile.cc:137] Creating directory: ../logs/scalars/20210701-183030/train/plugins/profile/2021_07_01_18_30_38
+2021-07-01 18:30:38.595354: I tensorflow/core/profiler/rpc/client/save_profile.cc:143] Dumped gzipped tool data for trace.json.gz to ../logs/scalars/20210701-183030/train/plugins/profile/2021_07_01_18_30_38/BigArch.trace.json.gz
+2021-07-01 18:30:38.596589: I tensorflow/core/profiler/rpc/client/save_profile.cc:137] Creating directory: ../logs/scalars/20210701-183030/train/plugins/profile/2021_07_01_18_30_38
+2021-07-01 18:30:38.596670: I tensorflow/core/profiler/rpc/client/save_profile.cc:143] Dumped gzipped tool data for memory_profile.json.gz to ../logs/scalars/20210701-183030/train/plugins/profile/2021_07_01_18_30_38/BigArch.memory_profile.json.gz
+2021-07-01 18:30:38.596922: I tensorflow/core/profiler/rpc/client/capture_profile.cc:251] Creating directory: ../logs/scalars/20210701-183030/train/plugins/profile/2021_07_01_18_30_38Dumped tool data for xplane.pb to ../logs/scalars/20210701-183030/train/plugins/profile/2021_07_01_18_30_38/BigArch.xplane.pb
+Dumped tool data for overview_page.pb to ../logs/scalars/20210701-183030/train/plugins/profile/2021_07_01_18_30_38/BigArch.overview_page.pb
+Dumped tool data for input_pipeline.pb to ../logs/scalars/20210701-183030/train/plugins/profile/2021_07_01_18_30_38/BigArch.input_pipeline.pb
+Dumped tool data for tensorflow_stats.pb to ../logs/scalars/20210701-183030/train/plugins/profile/2021_07_01_18_30_38/BigArch.tensorflow_stats.pb
+Dumped tool data for kernel_stats.pb to ../logs/scalars/20210701-183030/train/plugins/profile/2021_07_01_18_30_38/BigArch.kernel_stats.pb
+
+2733/2733 - 2s - loss: 0.2826 - accuracy: 0.9239 - recall: 0.0552
+Epoch 2/50
+2733/2733 - 2s - loss: 0.1443 - accuracy: 0.9426 - recall: 0.2431
+Epoch 3/50
+2733/2733 - 2s - loss: 0.1267 - accuracy: 0.9488 - recall: 0.3702
+Epoch 4/50
+2733/2733 - 2s - loss: 0.1220 - accuracy: 0.9506 - recall: 0.4199
+Epoch 5/50
+2733/2733 - 2s - loss: 0.1174 - accuracy: 0.9517 - recall: 0.4586
+Epoch 6/50
+2733/2733 - 2s - loss: 0.1156 - accuracy: 0.9524 - recall: 0.4751
+Epoch 7/50
+2733/2733 - 2s - loss: 0.1146 - accuracy: 0.9521 - recall: 0.4641
+Epoch 8/50
+2733/2733 - 2s - loss: 0.1109 - accuracy: 0.9550 - recall: 0.5138
+Epoch 9/50
+2733/2733 - 2s - loss: 0.1070 - accuracy: 0.9532 - recall: 0.5138
+Epoch 10/50
+2733/2733 - 2s - loss: 0.1047 - accuracy: 0.9554 - recall: 0.5470
+Epoch 11/50
+2733/2733 - 2s - loss: 0.1000 - accuracy: 0.9576 - recall: 0.5691
+Epoch 12/50
+2733/2733 - 2s - loss: 0.1010 - accuracy: 0.9576 - recall: 0.5414
+Epoch 13/50
+2733/2733 - 2s - loss: 0.0995 - accuracy: 0.9605 - recall: 0.5691
+Epoch 14/50
+2733/2733 - 2s - loss: 0.0970 - accuracy: 0.9579 - recall: 0.5691
+Epoch 15/50
+2733/2733 - 2s - loss: 0.0971 - accuracy: 0.9572 - recall: 0.5691
+Epoch 16/50
+2733/2733 - 2s - loss: 0.0954 - accuracy: 0.9608 - recall: 0.6188
+Epoch 17/50
+2733/2733 - 2s - loss: 0.0943 - accuracy: 0.9612 - recall: 0.6188
+Epoch 18/50
+2733/2733 - 2s - loss: 0.0919 - accuracy: 0.9616 - recall: 0.6133
+Epoch 19/50
+2733/2733 - 2s - loss: 0.0916 - accuracy: 0.9641 - recall: 0.6354
+Epoch 20/50
+2733/2733 - 2s - loss: 0.0907 - accuracy: 0.9630 - recall: 0.6354
+Epoch 21/50
+2733/2733 - 2s - loss: 0.0922 - accuracy: 0.9619 - recall: 0.6133
+Epoch 22/50
+2733/2733 - 2s - loss: 0.0897 - accuracy: 0.9652 - recall: 0.6685
+Epoch 23/50
+2733/2733 - 2s - loss: 0.0894 - accuracy: 0.9641 - recall: 0.6409
+Epoch 24/50
+2733/2733 - 2s - loss: 0.0883 - accuracy: 0.9652 - recall: 0.6630
+Epoch 25/50
+2733/2733 - 2s - loss: 0.0891 - accuracy: 0.9619 - recall: 0.6243
+Epoch 26/50
+2733/2733 - 2s - loss: 0.0873 - accuracy: 0.9645 - recall: 0.6630
+Epoch 27/50
+2733/2733 - 2s - loss: 0.0892 - accuracy: 0.9634 - recall: 0.6409
+Epoch 28/50
+2733/2733 - 2s - loss: 0.0868 - accuracy: 0.9627 - recall: 0.6243
+Epoch 29/50
+2733/2733 - 2s - loss: 0.0855 - accuracy: 0.9645 - recall: 0.6519
+Epoch 30/50
+2733/2733 - 2s - loss: 0.0836 - accuracy: 0.9619 - recall: 0.6409
+Epoch 31/50
+2733/2733 - 2s - loss: 0.0853 - accuracy: 0.9619 - recall: 0.6298
+Epoch 32/50
+2733/2733 - 2s - loss: 0.0849 - accuracy: 0.9667 - recall: 0.6630
+Epoch 33/50
+2733/2733 - 2s - loss: 0.0844 - accuracy: 0.9645 - recall: 0.6630
+Epoch 34/50
+2733/2733 - 2s - loss: 0.0838 - accuracy: 0.9689 - recall: 0.6961
+Epoch 35/50
+2733/2733 - 2s - loss: 0.0839 - accuracy: 0.9652 - recall: 0.6519
+Epoch 36/50
+2733/2733 - 2s - loss: 0.0842 - accuracy: 0.9652 - recall: 0.6740
+Epoch 37/50
+2733/2733 - 2s - loss: 0.0835 - accuracy: 0.9649 - recall: 0.6796
+Epoch 38/50
+2733/2733 - 2s - loss: 0.0825 - accuracy: 0.9660 - recall: 0.6796
+Epoch 39/50
+2733/2733 - 2s - loss: 0.0808 - accuracy: 0.9693 - recall: 0.7017
+Epoch 40/50
+2733/2733 - 2s - loss: 0.0812 - accuracy: 0.9645 - recall: 0.6519
+Epoch 41/50
+2733/2733 - 2s - loss: 0.0811 - accuracy: 0.9645 - recall: 0.6685
+Epoch 42/50
+2733/2733 - 2s - loss: 0.0801 - accuracy: 0.9671 - recall: 0.6961
+Epoch 43/50
+2733/2733 - 2s - loss: 0.0804 - accuracy: 0.9674 - recall: 0.6851
+Epoch 44/50
+2733/2733 - 2s - loss: 0.0800 - accuracy: 0.9671 - recall: 0.6796
+Epoch 45/50
+2733/2733 - 2s - loss: 0.0782 - accuracy: 0.9671 - recall: 0.6740
+Epoch 46/50
+2733/2733 - 2s - loss: 0.0797 - accuracy: 0.9645 - recall: 0.6740
+Epoch 47/50
+2733/2733 - 2s - loss: 0.0805 - accuracy: 0.9671 - recall: 0.6796
+Epoch 48/50
+2733/2733 - 2s - loss: 0.0789 - accuracy: 0.9656 - recall: 0.6630
+Epoch 49/50
+2733/2733 - 2s - loss: 0.0805 - accuracy: 0.9660 - recall: 0.6740
+Epoch 50/50
+2733/2733 - 2s - loss: 0.0776 - accuracy: 0.9685 - recall: 0.6796
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3ced30c" class="outline-2">
+<h2 id="org3ced30c"><span class="section-number-2">8</span> Saving or Loading the Classifier</h2>
+<div class="outline-text-2" id="text-8">
+<p>
+Both of these blocks can be uncommented to save or load models as desired.
+</p>
+</div>
+<div id="outline-container-org0714ede" class="outline-3">
+<h3 id="org0714ede"><span class="section-number-3">8.1</span> Saving the Model</h3>
+<div class="outline-text-3" id="text-8-1">
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #48485e;">### </span><span style="color: #48485e;">Saving Entire Model</span>
+<span style="color: #48485e;"># </span><span style="color: #48485e;">save_model(model, "test_final_check")</span>
+<span style="color: #48485e;"># </span><span style="color: #48485e;">model.model.save("model_test_final_different.h5")</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org8cbcbb1" class="outline-3">
+<h3 id="org8cbcbb1"><span class="section-number-3">8.2</span> Loading the Model</h3>
+<div class="outline-text-3" id="text-8-2">
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #48485e;">### </span><span style="color: #48485e;">Loading Entire Model</span>
+<span style="color: #48485e;"># </span><span style="color: #48485e;">model = load_model(model, "test_final")</span>
+<span style="color: #48485e;"># </span><span style="color: #48485e;">model.load("model_test_final_different.h5")</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org0b6e6e1" class="outline-2">
+<h2 id="org0b6e6e1"><span class="section-number-2">9</span> Evaluating and Metrics</h2>
+<div class="outline-text-2" id="text-9">
+</div>
+<div id="outline-container-org867af81" class="outline-3">
+<h3 id="org867af81"><span class="section-number-3">9.1</span> Predictions and Prediction Probabilities</h3>
+<div class="outline-text-3" id="text-9-1">
+<p>
+The <code>model.predict()</code> will return the class predictions for the input data put
+in the function. The <code>model.predict_proba()</code> will return the probability
+predictions for the classes, and is the likelihood of the observation
+belonging to the different classes.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #48485e;"># </span><span style="color: #48485e;">Testing the model</span>
+<span style="color: #7e97af;">pred</span> = model.predict<span style="color: #5e7e9b;">(</span>test_X<span style="color: #5e7e9b;">)</span>
+<span style="color: #7e97af;">y_score</span> = model.predict_proba<span style="color: #5e7e9b;">(</span>test_X, batch_size=HP<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'BATCH_SIZE'</span><span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">)</span>
+</pre>
+</div>
+
+<pre class="example">
+/home/olav/gitRepos/TTK28-project/venv/lib/python3.8/site-packages/tensorflow/python/keras/engine/sequential.py:450: UserWarning: `model.predict_classes()` is deprecated and will be removed after 2021-01-01. Please use instead:* `np.argmax(model.predict(x), axis=-1)`,   if your model does multi-class classification   (e.g. if it uses a `softmax` last-layer activation).* `(model.predict(x) &gt; 0.5).astype("int32")`,   if your model does binary classification   (e.g. if it uses a `sigmoid` last-layer activation).
+  warnings.warn('`model.predict_classes()` is deprecated and '
+683/683 - 0s
+/home/olav/gitRepos/TTK28-project/venv/lib/python3.8/site-packages/tensorflow/python/keras/engine/sequential.py:425: UserWarning: `model.predict_proba()` is deprecated and will be removed after 2021-01-01. Please use `model.predict()` instead.
+  warnings.warn('`model.predict_proba()` is deprecated and '
+683/683 - 0s
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgd69f6b5" class="outline-3">
+<h3 id="orgd69f6b5"><span class="section-number-3">9.2</span> Metrics</h3>
+<div class="outline-text-3" id="text-9-2">
+<p>
+Since the data set is imbalanced, there are other metrics to consider beyond
+the typical accuracy. In this dataset the ratio of HoF players vs. non-HoF
+players is <code>14:1</code> after preprocessing. Without class weights there could be a
+bias towards never selecting the HoF players resulting an accuracy over 90%
+while always predicting them as non-HoF players.
+</p>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #48485e;"># </span><span style="color: #48485e;">Calculating overall metrics</span>
+<span style="color: #7e97af;">accuracy</span> = accuracy_score<span style="color: #5e7e9b;">(</span>test_y, pred<span style="color: #5e7e9b;">)</span>
+<span style="color: #7e97af;">tn</span>, <span style="color: #7e97af;">fp</span>, <span style="color: #7e97af;">fn</span>, <span style="color: #7e97af;">tp</span> = confusion_matrix<span style="color: #5e7e9b;">(</span>test_y, pred<span style="color: #5e7e9b;">)</span>.ravel<span style="color: #5e7e9b;">()</span>
+<span style="color: #7e97af;">confusion_mat</span> = <span style="color: #5e7e9b;">[</span>tn, fp, fn, tp<span style="color: #5e7e9b;">]</span>
+<span style="color: #7e97af;">auroc</span> = roc_auc_score<span style="color: #5e7e9b;">(</span>test_y, y_score<span style="color: #bf6c68;">[</span>:,<span style="color: #cb8986;">0</span><span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">)</span>
+<span style="color: #7e97af;">precision</span> = tp/<span style="color: #5e7e9b;">(</span>tp+fp<span style="color: #5e7e9b;">)</span>
+<span style="color: #7e97af;">recall</span> = tp/<span style="color: #5e7e9b;">(</span>tp+fn<span style="color: #5e7e9b;">)</span>
+<span style="color: #7e97af;">f1</span> = <span style="color: #5e7e9b;">(</span><span style="color: #cb8986;">2</span>*precision*recall<span style="color: #5e7e9b;">)</span>/<span style="color: #5e7e9b;">(</span>precision+recall<span style="color: #5e7e9b;">)</span>
+
+<span style="color: #48485e;"># </span><span style="color: #48485e;">Showing numerical results</span>
+<span style="color: #7e97af;">confusion_label</span> = <span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">"tn"</span>, <span style="color: #5a7273;">"fp"</span>, <span style="color: #5a7273;">"fn"</span>, <span style="color: #5a7273;">"tp"</span><span style="color: #5e7e9b;">]</span>
+<span style="color: #5e7e9b; font-weight: bold;">for</span> i <span style="color: #5e7e9b; font-weight: bold;">in</span> <span style="color: #5e7e9b;">range</span><span style="color: #5e7e9b;">(</span><span style="color: #cb8986;">0</span>,<span style="color: #5e7e9b;">len</span><span style="color: #bf6c68;">(</span>confusion_mat<span style="color: #bf6c68;">)</span><span style="color: #5e7e9b;">)</span>:
+    <span style="color: #5e7e9b; font-weight: bold;">print</span><span style="color: #5e7e9b;">(</span>confusion_label<span style="color: #bf6c68;">[</span>i<span style="color: #bf6c68;">]</span>, <span style="color: #5a7273;">': '</span>, confusion_mat<span style="color: #bf6c68;">[</span>i<span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">)</span>
+<span style="color: #5e7e9b; font-weight: bold;">print</span><span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">"###### ---------Overall Results --------- ######"</span><span style="color: #5e7e9b;">)</span>
+<span style="color: #5e7e9b; font-weight: bold;">print</span><span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">"accuracy: "</span>, accuracy<span style="color: #5e7e9b;">)</span>
+<span style="color: #5e7e9b; font-weight: bold;">print</span><span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">"confusion_mat: "</span>, confusion_mat<span style="color: #5e7e9b;">)</span>
+<span style="color: #5e7e9b; font-weight: bold;">print</span><span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">"auroc: "</span>, auroc<span style="color: #5e7e9b;">)</span>
+<span style="color: #5e7e9b; font-weight: bold;">print</span><span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">"precision: "</span>, precision<span style="color: #5e7e9b;">)</span>
+<span style="color: #5e7e9b; font-weight: bold;">print</span><span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">"recall: "</span>, recall<span style="color: #5e7e9b;">)</span>
+<span style="color: #5e7e9b; font-weight: bold;">print</span><span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">"f1: "</span>, f1<span style="color: #5e7e9b;">)</span>
+
+<span style="color: #48485e;"># </span><span style="color: #48485e;">Saving the metrics</span>
+<span style="color: #7e97af;">metric_dict</span> = <span style="color: #5e7e9b;">{</span>
+    <span style="color: #5a7273;">'True Negative'</span>: tn,
+    <span style="color: #5a7273;">'True Positive'</span>: tp,
+    <span style="color: #5a7273;">'False Negative'</span>: fn,
+    <span style="color: #5a7273;">'False Positive'</span>: fp,
+    <span style="color: #5a7273;">'AUROC'</span>: auroc,
+    <span style="color: #5a7273;">'Accuracy'</span>: accuracy,
+    <span style="color: #5a7273;">'Precision'</span>: precision,
+    <span style="color: #5a7273;">'Recall'</span>: recall,
+    <span style="color: #5a7273;">'F1'</span>: f1
+<span style="color: #5e7e9b;">}</span>
+<span style="color: #5e7e9b; font-weight: bold;">with</span> <span style="color: #5e7e9b;">open</span><span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">"../result/master_log.txt"</span>, <span style="color: #5a7273;">"a"</span><span style="color: #5e7e9b;">)</span> <span style="color: #5e7e9b; font-weight: bold;">as</span> <span style="color: #5e7e9b;">file</span>:
+    <span style="color: #5e7e9b; font-weight: bold;">print</span><span style="color: #5e7e9b;">(</span>metric_dict, <span style="color: #5e7e9b;">file</span>=<span style="color: #5e7e9b;">file</span><span style="color: #5e7e9b;">)</span>
+</pre>
+</div>
+
+<pre class="example" id="orgccc1f94">
+tn :  622
+fp :  16
+fn :  15
+tp :  30
+###### ---------Overall Results --------- ######
+accuracy:  0.9546120058565154
+confusion_mat:  [622, 16, 15, 30]
+auroc:  0.03234064785788924
+precision:  0.6521739130434783
+recall:  0.6666666666666666
+f1:  0.6593406593406593
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd6846c5" class="outline-2">
+<h2 id="orgd6846c5"><span class="section-number-2">10</span> Plots</h2>
+<div class="outline-text-2" id="text-10">
+<p>
+Three metrics that are smart to include for imbalanced datasets are:
+</p>
+<ul class="org-ul">
+<li>ROC curve</li>
+<li>Confusion Matrix</li>
+<li>Precision-Recall Matrix</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #48485e;"># </span><span style="color: #48485e;">ROC curve</span>
+<span style="color: #7e97af;">fper</span>, <span style="color: #7e97af;">tper</span>, <span style="color: #7e97af;">thresholds</span> = roc_curve<span style="color: #5e7e9b;">(</span>test_y, y_score<span style="color: #bf6c68;">[</span>:,<span style="color: #cb8986;">1</span><span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">)</span>
+plot_roc_curve<span style="color: #5e7e9b;">(</span>fper, tper, HP<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'NAME'</span><span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">)</span>
+<span style="color: #7e97af;">man_auroc</span> = auc<span style="color: #5e7e9b;">(</span>fper, tper<span style="color: #5e7e9b;">)</span>
+<span style="color: #5e7e9b; font-weight: bold;">print</span><span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">"man_auroc: "</span>, man_auroc<span style="color: #5e7e9b;">)</span>
+</pre>
+</div>
+
+
+<div id="org9b80bc4" class="figure">
+<p><img src="../result/ROC_curve_latest.png" alt="ROC_curve_latest.png" />
+</p>
+</div>
+
+<pre class="example">
+man_auroc:  0.9676593521421109
+</pre>
+
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #48485e;"># </span><span style="color: #48485e;">Generating a confusion matrix</span>
+skplt.metrics.plot_confusion_matrix<span style="color: #5e7e9b;">(</span>test_y, pred, normalize=<span style="color: #cb8986;">True</span><span style="color: #5e7e9b;">)</span>
+<span style="color: #7e97af;">confusion_mat_string</span> = <span style="color: #5a7273;">"../result/confusion_mat_"</span> + HP<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'NAME'</span><span style="color: #5e7e9b;">]</span>+ datetime.now<span style="color: #5e7e9b;">()</span>.strftime<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">"%Y%m%d-%H%M%S"</span><span style="color: #5e7e9b;">)</span> + <span style="color: #5a7273;">".png"</span>
+plt.savefig<span style="color: #5e7e9b;">(</span>confusion_mat_string<span style="color: #5e7e9b;">)</span>
+plt.savefig<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">"../result/confusion_mat_latest.png"</span><span style="color: #5e7e9b;">)</span>
+plt.clf<span style="color: #5e7e9b;">()</span>
+</pre>
+</div>
+
+
+<div id="org60bd25c" class="figure">
+<p><img src="../result/confusion_mat_latest.png" alt="confusion_mat_latest.png" />
+</p>
+</div>
+
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #48485e;"># </span><span style="color: #48485e;">Generating precision-recall curve</span>
+skplt.metrics.plot_precision_recall<span style="color: #5e7e9b;">(</span>test_y, y_score<span style="color: #5e7e9b;">)</span>
+<span style="color: #7e97af;">precision_recall_curve_string</span> = <span style="color: #5a7273;">"../result/precision_recall_curve_"</span> + HP<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'NAME'</span><span style="color: #5e7e9b;">]</span> + datetime.now<span style="color: #5e7e9b;">()</span>.strftime<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">"%Y%m%d-%H%M%S"</span><span style="color: #5e7e9b;">)</span> + <span style="color: #5a7273;">".png"</span>
+plt.savefig<span style="color: #5e7e9b;">(</span>precision_recall_curve_string<span style="color: #5e7e9b;">)</span>
+plt.savefig<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">"../result/precision_recall_curve_latest.png"</span><span style="color: #5e7e9b;">)</span>
+plt.clf<span style="color: #5e7e9b;">()</span>
+</pre>
+</div>
+
+
+<div id="org170f78c" class="figure">
+<p><img src="../result/precision_recall_curve_latest.png" alt="precision_recall_curve_latest.png" />
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Olav Pedersen</p>
+<p class="date">Created: 2021-07-01 Thu 18:52</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
