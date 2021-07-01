@@ -2,7 +2,7 @@
 #+STARTUP: headlines
 #+STARTUP: nohideblocks
 #+STARTUP: noindent
-#+OPTIONS: toc:4 h:4
+#+OPTIONS: toc:4 h:4 ^:nil _:nil
 #+PROPERTY: header-args:emacs-lisp :comments link
 
 
