@@ -4,7 +4,9 @@
 #+STARTUP: noindent
 #+OPTIONS: toc:4 h:4 ^:nil _:nil
 #+PROPERTY: header-args:emacs-lisp :comments link
-
+#+SETUPFILE: https://fniessen.github.io/org-html-themes/org/theme-readtheorg.setup
+#+EXPORT_FILE_NAME: hall_of_fame_model.html
+#+HTML_HEAD: <style> #content{max-width:1800px;}</style>
 
 * Activating Python Environment
 
