@@ -532,3 +532,8 @@ plt.clf()
 [[file:../result/precision_recall_curve_latest.png]]
 
 
+
+* Local Variables                                          :noexport:ARCHIVE:
+# Local Variables:
+# after-save-hook: org-html-export-to-html
+# End:
