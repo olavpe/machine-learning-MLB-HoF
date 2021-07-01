@@ -1,0 +1,531 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2021-07-02 Fri 01:22 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Filtering the Data from the Aggregated Player Data</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Olav Pedersen" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/readtheorg.css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/js/readtheorg.js"></script>
+<style> #content{max-width:1800px;}</style>
+<script type="text/javascript">
+// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
+<!--/*--><![CDATA[/*><!--*/
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+    /*]]>*///-->
+// @license-end
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Filtering the Data from the Aggregated Player Data</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org8d2b54e">1. Activating Python Environment</a></li>
+<li><a href="#orgac4e644">2. Importing dependencies</a></li>
+<li><a href="#orgd90bbd8">3. Hyperparameters</a></li>
+<li><a href="#org681b25b">4. Helper Function</a></li>
+<li><a href="#org38f9c25">5. Importing and Cleaning the Data</a></li>
+<li><a href="#orgaabb694">6. Creating Additional Statistics</a></li>
+<li><a href="#orgb87f30c">7. Fulfilling criteria for HoF eligibility</a></li>
+<li><a href="#orgd07df20">8. Preparing to Feed Data into Model</a>
+<ul>
+<li><a href="#orge605294">8.1. Selecting Variables to use in training</a></li>
+<li><a href="#org4e01db7">8.2. Standardizing the Data</a></li>
+<li><a href="#orge3dddff">8.3. Converting HoF back to strings</a></li>
+<li><a href="#orgae653eb">8.4. Splitting dataset by HoF players</a></li>
+<li><a href="#org4fb57c5">8.5. Under-sampling the non-HoF players</a></li>
+<li><a href="#org3c3b917">8.6. Splitting reg and HoF into train and test</a></li>
+<li><a href="#org0c55091">8.7. Merging the test and training datasets</a></li>
+</ul>
+</li>
+<li><a href="#orgbffbd0f">9. Save the different testing and validation data sets</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org8d2b54e" class="outline-2">
+<h2 id="org8d2b54e"><span class="section-number-2">1</span> Activating Python Environment</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+This code block must be run to activate python virtual environment for
+org session "SESSION_1". The following Python code blocks are run in
+"SESSION_1" in which the virtual environment should have been activated.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-emacs-lisp"><span style="color: #5e7e9b;">(</span>pyvenv-activate <span style="color: #5a7273;">"~/gitRepos/TTK28-project/venv/"</span><span style="color: #5e7e9b;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgac4e644" class="outline-2">
+<h2 id="orgac4e644"><span class="section-number-2">2</span> Importing dependencies</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+This filtering of data typically uses <code>pandas</code> and <code>numpy</code> for data storage
+and manipulation. Additionally a the Random function is used for picking out
+the data. The data is standardized using <code>Sklearn</code> and the <code>StandardScalar</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #5e7e9b; font-weight: bold;">import</span> pandas <span style="color: #5e7e9b; font-weight: bold;">as</span> pd
+<span style="color: #5e7e9b; font-weight: bold;">import</span> numpy <span style="color: #5e7e9b; font-weight: bold;">as</span> np
+<span style="color: #5e7e9b; font-weight: bold;">from</span> numpy.random <span style="color: #5e7e9b; font-weight: bold;">import</span> RandomState
+<span style="color: #5e7e9b; font-weight: bold;">from</span> sklearn.preprocessing <span style="color: #5e7e9b; font-weight: bold;">import</span> StandardScaler
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd90bbd8" class="outline-2">
+<h2 id="orgd90bbd8"><span class="section-number-2">3</span> Hyperparameters</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+In order to more easily configure the model and keep track of the setting,
+this hyperparameters dictionary is defined here and used throughout the code
+where needed. 
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #7e97af;">NAME</span> = <span style="color: #5a7273;">"full"</span>
+<span style="color: #7e97af;">PERCENTAGE</span> = <span style="color: #cb8986;">0</span>.<span style="color: #cb8986;">8</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org681b25b" class="outline-2">
+<h2 id="org681b25b"><span class="section-number-2">4</span> Helper Function</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+This function determines the number of samples to extract based on a
+percentage how imbalanced the dataset should be.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #5e7e9b; font-weight: bold;">def</span> <span style="color: #bf6c68; font-weight: bold;">num_sample</span><span style="color: #5e7e9b;">(</span>percentage, hof_df<span style="color: #5e7e9b;">)</span>:
+    <span style="color: #7e97af;">hof_length</span> = <span style="color: #5e7e9b;">len</span><span style="color: #5e7e9b;">(</span>hof_df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'G_all'</span><span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">)</span>
+    <span style="color: #5e7e9b; font-weight: bold;">return</span> <span style="color: #5e7e9b;">int</span><span style="color: #5e7e9b;">(</span><span style="color: #bf6c68;">(</span>percentage * hof_length<span style="color: #bf6c68;">)</span>/<span style="color: #bf6c68;">(</span><span style="color: #cb8986;">1</span> - percentage<span style="color: #bf6c68;">)</span><span style="color: #5e7e9b;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org38f9c25" class="outline-2">
+<h2 id="org38f9c25"><span class="section-number-2">5</span> Importing and Cleaning the Data</h2>
+<div class="outline-text-2" id="text-5">
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #7e97af;">df</span> = pd.read_csv<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">'../data/final_data.csv'</span><span style="color: #5e7e9b;">)</span>
+</pre>
+</div>
+
+<p>
+Fixing Last Game Played date into a <code>float32</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #48485e;"># </span><span style="color: #48485e;">Splits the final Game date and convert to string</span>
+<span style="color: #7e97af;">finalGameYear</span> = df<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'finalGame'</span><span style="color: #5e7e9b;">]</span>.<span style="color: #5e7e9b;">str</span>.split<span style="color: #5e7e9b;">(</span>pat=<span style="color: #5a7273;">"-"</span>, expand=<span style="color: #cb8986;">True</span><span style="color: #5e7e9b;">)[</span><span style="color: #cb8986;">0</span><span style="color: #5e7e9b;">]</span>
+<span style="color: #7e97af;">df</span><span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'finalGame'</span><span style="color: #5e7e9b;">]</span> = finalGameYear
+<span style="color: #48485e;"># </span><span style="color: #48485e;">Removing NaN fields from the dataset</span>
+<span style="color: #7e97af;">df</span> = df<span style="color: #5e7e9b;">[</span>finalGameYear.notnull<span style="color: #bf6c68;">()</span><span style="color: #5e7e9b;">]</span>
+<span style="color: #48485e;"># </span><span style="color: #48485e;">Adding back to dataset as ints</span>
+<span style="color: #7e97af;">df</span><span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'finalGame'</span><span style="color: #5e7e9b;">]</span> = df<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'finalGame'</span><span style="color: #5e7e9b;">]</span>.astype<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">'float32'</span><span style="color: #5e7e9b;">)</span>
+</pre>
+</div>
+
+<p>
+Fixing parts that cannot have NaN.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #48485e;"># </span><span style="color: #48485e;">Replacing NaN in each column with 0 and adding back as type</span>
+<span style="color: #7e97af;">award_names</span> = <span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'Most Valuable Player'</span>, <span style="color: #5a7273;">'World Series MVP'</span>, <span style="color: #5a7273;">'AS_games'</span>, <span style="color: #5a7273;">'Gold Glove'</span>,
+               <span style="color: #5a7273;">'Rookie of the Year'</span>, <span style="color: #5a7273;">'Silver Slugger'</span>,<span style="color: #5a7273;">'G'</span>, <span style="color: #5a7273;">'AB'</span>, <span style="color: #5a7273;">'R'</span>, <span style="color: #5a7273;">'H'</span>, <span style="color: #5a7273;">'2B'</span>, <span style="color: #5a7273;">'3B'</span>,
+               <span style="color: #5a7273;">'HR'</span>, <span style="color: #5a7273;">'RBI'</span>, <span style="color: #5a7273;">'SB'</span>, <span style="color: #5a7273;">'BB'</span>, <span style="color: #5a7273;">'SO'</span>, <span style="color: #5a7273;">'IBB'</span>, <span style="color: #5a7273;">'HBP'</span>, <span style="color: #5a7273;">'SH'</span>, <span style="color: #5a7273;">'SF'</span><span style="color: #5e7e9b;">]</span>
+<span style="color: #5e7e9b; font-weight: bold;">for</span> col <span style="color: #5e7e9b; font-weight: bold;">in</span> award_names:
+    <span style="color: #7e97af;">df</span><span style="color: #5e7e9b;">[</span>col<span style="color: #5e7e9b;">]</span> = df<span style="color: #5e7e9b;">[</span>col<span style="color: #5e7e9b;">]</span>.fillna<span style="color: #5e7e9b;">(</span><span style="color: #cb8986;">0</span><span style="color: #5e7e9b;">)</span>
+    <span style="color: #7e97af;">df</span><span style="color: #5e7e9b;">[</span>col<span style="color: #5e7e9b;">]</span> = df<span style="color: #5e7e9b;">[</span>col<span style="color: #5e7e9b;">]</span>.astype<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">'float32'</span><span style="color: #5e7e9b;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgaabb694" class="outline-2">
+<h2 id="orgaabb694"><span class="section-number-2">6</span> Creating Additional Statistics</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+In order to aggregate the data into stats which are considered features/stats
+which express the skill of a batter. It would be possible to use all the
+features individually, but with a smaller and imbalanced dataset it would be
+nice not to have to include more features than necessary. These stats are 1B,
+SLG, OBS, OPS.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #7e97af;">df</span><span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'1B'</span><span style="color: #5e7e9b;">]</span> = df<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'H'</span><span style="color: #5e7e9b;">]</span> - df<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'2B'</span><span style="color: #5e7e9b;">]</span> - df<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'3B'</span><span style="color: #5e7e9b;">]</span> - df<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'HR'</span><span style="color: #5e7e9b;">]</span>
+<span style="color: #7e97af;">df</span><span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'SLG'</span><span style="color: #5e7e9b;">]</span> = <span style="color: #5e7e9b;">(</span>df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'1B'</span><span style="color: #bf6c68;">]</span> + <span style="color: #cb8986;">2</span>*df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'2B'</span><span style="color: #bf6c68;">]</span> + <span style="color: #cb8986;">3</span>*df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'3B'</span><span style="color: #bf6c68;">]</span> + <span style="color: #cb8986;">4</span>*df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'HR'</span><span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">)</span>/df<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'AB'</span><span style="color: #5e7e9b;">]</span>
+<span style="color: #7e97af;">df</span><span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'OBS'</span><span style="color: #5e7e9b;">]</span> = <span style="color: #5e7e9b;">(</span>df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'H'</span><span style="color: #bf6c68;">]</span> + df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'BB'</span><span style="color: #bf6c68;">]</span> + df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'HBP'</span><span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">)</span>/<span style="color: #5e7e9b;">(</span>df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'AB'</span><span style="color: #bf6c68;">]</span> + df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'BB'</span><span style="color: #bf6c68;">]</span>+ df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'HBP'</span><span style="color: #bf6c68;">]</span>+ df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'SF'</span><span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">)</span>
+<span style="color: #7e97af;">df</span><span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'OPS'</span><span style="color: #5e7e9b;">]</span> = df<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'SLG'</span><span style="color: #5e7e9b;">]</span> + df<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'OBS'</span><span style="color: #5e7e9b;">]</span>
+
+<span style="color: #7e97af;">new_stats</span> = <span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'1B'</span>, <span style="color: #5a7273;">'SLG'</span>, <span style="color: #5a7273;">'OBS'</span>, <span style="color: #5a7273;">'OPS'</span><span style="color: #5e7e9b;">]</span>
+<span style="color: #5e7e9b; font-weight: bold;">for</span> col <span style="color: #5e7e9b; font-weight: bold;">in</span> new_stats:
+    <span style="color: #7e97af;">df</span><span style="color: #5e7e9b;">[</span>col<span style="color: #5e7e9b;">]</span> = df<span style="color: #5e7e9b;">[</span>col<span style="color: #5e7e9b;">]</span>.fillna<span style="color: #5e7e9b;">(</span><span style="color: #cb8986;">0</span><span style="color: #5e7e9b;">)</span>
+    <span style="color: #7e97af;">df</span><span style="color: #5e7e9b;">[</span>col<span style="color: #5e7e9b;">]</span> = df<span style="color: #5e7e9b;">[</span>col<span style="color: #5e7e9b;">]</span>.astype<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">'float32'</span><span style="color: #5e7e9b;">)</span>
+
+<span style="color: #7e97af;">stat_names</span> = <span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'G'</span>, <span style="color: #5a7273;">'AB'</span>, <span style="color: #5a7273;">'R'</span>, <span style="color: #5a7273;">'H'</span>, <span style="color: #5a7273;">'2B'</span>, <span style="color: #5a7273;">'3B'</span>, <span style="color: #5a7273;">'HR'</span>, <span style="color: #5a7273;">'RBI'</span>, <span style="color: #5a7273;">'SB'</span>,
+              <span style="color: #5a7273;">'BB'</span>, <span style="color: #5a7273;">'SO'</span>, <span style="color: #5a7273;">'IBB'</span>, <span style="color: #5a7273;">'HBP'</span>, <span style="color: #5a7273;">'SH'</span>, <span style="color: #5a7273;">'SF'</span>, <span style="color: #5a7273;">'1B'</span>, <span style="color: #5a7273;">'OPS'</span>, <span style="color: #5a7273;">'SLG'</span>, <span style="color: #5a7273;">'OBS'</span><span style="color: #5e7e9b;">]</span>
+<span style="color: #5e7e9b; font-weight: bold;">for</span> name <span style="color: #5e7e9b; font-weight: bold;">in</span> stat_names:
+    <span style="color: #7e97af;">string</span> = <span style="color: #5a7273;">'number of NaN values in '</span>+ name
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgb87f30c" class="outline-2">
+<h2 id="orgb87f30c"><span class="section-number-2">7</span> Fulfilling criteria for HoF eligibility</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+Removing players who have played less than 10 years as these players are not
+eligible for the MLB Hall of Fame.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #7e97af;">df</span> = df<span style="color: #5e7e9b;">[</span>df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'Years_Played'</span><span style="color: #bf6c68;">]</span> &gt;= <span style="color: #cb8986;">10</span><span style="color: #5e7e9b;">]</span> <span style="color: #48485e;"># </span><span style="color: #48485e;">10 years</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgd07df20" class="outline-2">
+<h2 id="orgd07df20"><span class="section-number-2">8</span> Preparing to Feed Data into Model</h2>
+<div class="outline-text-2" id="text-8">
+</div>
+<div id="outline-container-orge605294" class="outline-3">
+<h3 id="orge605294"><span class="section-number-3">8.1</span> Selecting Variables to use in training</h3>
+<div class="outline-text-3" id="text-8-1">
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #7e97af;">pre_std_df</span> = df
+<span style="color: #7e97af;">df</span> = df<span style="color: #5e7e9b;">[</span><span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'G_all'</span>, <span style="color: #5a7273;">'finalGame'</span>, <span style="color: #5a7273;">'OPS'</span>,
+         <span style="color: #5a7273;">'Years_Played'</span>, <span style="color: #5a7273;">'Most Valuable Player'</span>, <span style="color: #5a7273;">'AS_games'</span>,
+         <span style="color: #5a7273;">'Gold Glove'</span>, <span style="color: #5a7273;">'Rookie of the Year'</span>, <span style="color: #5a7273;">'World Series MVP'</span>, <span style="color: #5a7273;">'Silver Slugger'</span>,<span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">]</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4e01db7" class="outline-3">
+<h3 id="org4e01db7"><span class="section-number-3">8.2</span> Standardizing the Data</h3>
+<div class="outline-text-3" id="text-8-2">
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #7e97af;">df</span> = pd.DataFrame<span style="color: #5e7e9b;">(</span>StandardScaler<span style="color: #bf6c68;">()</span>.fit_transform<span style="color: #bf6c68;">(</span>df<span style="color: #bf6c68;">)</span>, columns=df.columns<span style="color: #5e7e9b;">)</span>
+<span style="color: #48485e;">### </span><span style="color: #48485e;">Adding back the HoF data</span>
+df.insert<span style="color: #5e7e9b;">(</span>df.shape<span style="color: #bf6c68;">[</span><span style="color: #cb8986;">1</span><span style="color: #bf6c68;">]</span>, <span style="color: #5a7273;">'HoF'</span>, pre_std_df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'HoF'</span><span style="color: #bf6c68;">]</span>.to_numpy<span style="color: #bf6c68;">()</span><span style="color: #5e7e9b;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge3dddff" class="outline-3">
+<h3 id="orge3dddff"><span class="section-number-3">8.3</span> Converting HoF back to strings</h3>
+<div class="outline-text-3" id="text-8-3">
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #7e97af;">df</span><span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'HoF'</span><span style="color: #5e7e9b;">]</span> = df<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'HoF'</span><span style="color: #5e7e9b;">]</span>.replace<span style="color: #5e7e9b;">(</span><span style="color: #cb8986;">1</span>.<span style="color: #cb8986;">0</span>, <span style="color: #5a7273;">'Y'</span>, regex=<span style="color: #cb8986;">True</span><span style="color: #5e7e9b;">)</span>
+<span style="color: #7e97af;">df</span><span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'HoF'</span><span style="color: #5e7e9b;">]</span> = df<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'HoF'</span><span style="color: #5e7e9b;">]</span>.replace<span style="color: #5e7e9b;">(</span>np.nan, <span style="color: #5a7273;">'N'</span>, regex=<span style="color: #cb8986;">True</span><span style="color: #5e7e9b;">)</span>
+<span style="color: #7e97af;">df</span><span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'HoF'</span><span style="color: #5e7e9b;">]</span> = df<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'HoF'</span><span style="color: #5e7e9b;">]</span>.replace<span style="color: #5e7e9b;">(</span><span style="color: #cb8986;">0</span>.<span style="color: #cb8986;">0</span>, <span style="color: #5a7273;">'N'</span>, regex=<span style="color: #cb8986;">True</span><span style="color: #5e7e9b;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgae653eb" class="outline-3">
+<h3 id="orgae653eb"><span class="section-number-3">8.4</span> Splitting dataset by HoF players</h3>
+<div class="outline-text-3" id="text-8-4">
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #7e97af;">reg_df</span> = df<span style="color: #5e7e9b;">[</span>df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'HoF'</span><span style="color: #bf6c68;">]</span> == <span style="color: #5a7273;">'N'</span><span style="color: #5e7e9b;">]</span>
+<span style="color: #7e97af;">hof_df</span> = df<span style="color: #5e7e9b;">[</span>df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'HoF'</span><span style="color: #bf6c68;">]</span> == <span style="color: #5a7273;">'Y'</span><span style="color: #5e7e9b;">]</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org4fb57c5" class="outline-3">
+<h3 id="org4fb57c5"><span class="section-number-3">8.5</span> Under-sampling the non-HoF players</h3>
+<div class="outline-text-3" id="text-8-5">
+<p>
+Currently, the non-HoF players are not undersampled.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #7e97af;">reg_seeded_random</span> = RandomState<span style="color: #5e7e9b;">(</span><span style="color: #cb8986;">1</span><span style="color: #5e7e9b;">)</span>
+<span style="color: #48485e;"># </span><span style="color: #48485e;">sampled_reg_df = reg_df.sample(n = num_sample(PERCENTAGE, hof_df), random_state=reg_seeded_random)</span>
+<span style="color: #7e97af;">sampled_reg_df</span> = reg_df
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org3c3b917" class="outline-3">
+<h3 id="org3c3b917"><span class="section-number-3">8.6</span> Splitting reg and HoF into train and test</h3>
+<div class="outline-text-3" id="text-8-6">
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #7e97af;">sep_seeded_random</span> = RandomState<span style="color: #5e7e9b;">(</span><span style="color: #cb8986;">1</span><span style="color: #5e7e9b;">)</span>
+<span style="color: #7e97af;">train_frac</span> = <span style="color: #cb8986;">0</span>.<span style="color: #cb8986;">8</span>
+<span style="color: #7e97af;">train_reg_df</span> = sampled_reg_df.sample<span style="color: #5e7e9b;">(</span>frac=train_frac, random_state=sep_seeded_random<span style="color: #5e7e9b;">)</span>
+<span style="color: #7e97af;">test_reg_df</span> = sampled_reg_df.drop<span style="color: #5e7e9b;">(</span>train_reg_df.index<span style="color: #5e7e9b;">)</span>
+<span style="color: #7e97af;">train_hof_df</span> = hof_df.sample<span style="color: #5e7e9b;">(</span>frac=train_frac, random_state=sep_seeded_random<span style="color: #5e7e9b;">)</span>
+<span style="color: #7e97af;">test_hof_df</span> = hof_df.drop<span style="color: #5e7e9b;">(</span>train_hof_df.index<span style="color: #5e7e9b;">)</span>
+
+<span style="color: #5e7e9b; font-weight: bold;">print</span><span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">'length of train_reg_df: '</span>, <span style="color: #5e7e9b;">len</span><span style="color: #bf6c68;">(</span>train_reg_df<span style="color: #bf6c68;">)</span><span style="color: #5e7e9b;">)</span>
+<span style="color: #5e7e9b; font-weight: bold;">print</span><span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">'length of test_reg_df: '</span>, <span style="color: #5e7e9b;">len</span><span style="color: #bf6c68;">(</span>test_reg_df<span style="color: #bf6c68;">)</span><span style="color: #5e7e9b;">)</span>
+<span style="color: #5e7e9b; font-weight: bold;">print</span><span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">'length of train_hof_df: '</span>, <span style="color: #5e7e9b;">len</span><span style="color: #bf6c68;">(</span>train_hof_df<span style="color: #bf6c68;">)</span><span style="color: #5e7e9b;">)</span>
+<span style="color: #5e7e9b; font-weight: bold;">print</span><span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">'length of test_hof_df: '</span>, <span style="color: #5e7e9b;">len</span><span style="color: #bf6c68;">(</span>test_hof_df<span style="color: #bf6c68;">)</span><span style="color: #5e7e9b;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org0c55091" class="outline-3">
+<h3 id="org0c55091"><span class="section-number-3">8.7</span> Merging the test and training datasets</h3>
+<div class="outline-text-3" id="text-8-7">
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #7e97af;">train_df</span> = pd.concat<span style="color: #5e7e9b;">(</span><span style="color: #bf6c68;">[</span>train_hof_df, train_reg_df<span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">)</span>
+<span style="color: #7e97af;">test_df</span> = pd.concat<span style="color: #5e7e9b;">(</span><span style="color: #bf6c68;">[</span>test_hof_df, test_reg_df<span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">)</span>
+<span style="color: #48485e;"># </span><span style="color: #48485e;">Shuffling the data</span>
+<span style="color: #7e97af;">train_df</span> = train_df.sample<span style="color: #5e7e9b;">(</span>frac = <span style="color: #cb8986;">1</span>, random_state=sep_seeded_random<span style="color: #5e7e9b;">)</span>
+<span style="color: #7e97af;">test_df</span> = test_df.sample<span style="color: #5e7e9b;">(</span>frac = <span style="color: #cb8986;">1</span>, random_state=sep_seeded_random<span style="color: #5e7e9b;">)</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgbffbd0f" class="outline-2">
+<h2 id="orgbffbd0f"><span class="section-number-2">9</span> Save the different testing and validation data sets</h2>
+<div class="outline-text-2" id="text-9">
+<div class="org-src-container">
+<pre class="src src-python">train_df.to_csv<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">'../data/train_data_'</span> + NAME + <span style="color: #5a7273;">'.csv'</span>, index=<span style="color: #cb8986;">False</span><span style="color: #5e7e9b;">)</span>
+test_df.to_csv<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">'../data/test_data_'</span> + NAME + <span style="color: #5a7273;">'.csv'</span>, index=<span style="color: #cb8986;">False</span><span style="color: #5e7e9b;">)</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Olav Pedersen</p>
+<p class="date">Created: 2021-07-02 Fri 01:22</p>
+<p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

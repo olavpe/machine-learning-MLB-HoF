@@ -1,0 +1,207 @@
+#+TITLE: Filtering the Data from the Aggregated Player Data
+#+STARTUP: headlines
+#+STARTUP: nohideblocks
+#+STARTUP: noindent
+#+OPTIONS: toc:4 h:4 ^:nil _:nil
+#+PROPERTY: header-args:emacs-lisp :comments link
+#+SETUPFILE: https://fniessen.github.io/org-html-themes/org/theme-readtheorg.setup
+#+EXPORT_FILE_NAME: filter_data.html
+#+HTML_HEAD: <style> #content{max-width:1800px;}</style>
+
+* Activating Python Environment
+
+  This code block must be run to activate python virtual environment for
+  org session "SESSION_1". The following Python code blocks are run in
+  "SESSION_1" in which the virtual environment should have been activated.
+
+#+BEGIN_SRC emacs-lisp :session SESSION_1 :exports both
+  (pyvenv-activate "~/gitRepos/TTK28-project/venv/")
+#+END_SRC
+
+#+RESULTS:
+
+* Importing dependencies
+  This filtering of data typically uses ~pandas~ and ~numpy~ for data storage
+  and manipulation. Additionally a the Random function is used for picking out
+  the data. The data is standardized using ~Sklearn~ and the ~StandardScalar~.
+  
+#+begin_src python :session SESSION_1 :results output :exports both
+import pandas as pd
+import numpy as np
+from numpy.random import RandomState
+from sklearn.preprocessing import StandardScaler
+#+end_src
+
+#+RESULTS:
+
+* Hyperparameters
+  In order to more easily configure the model and keep track of the setting,
+  this hyperparameters dictionary is defined here and used throughout the code
+  where needed. 
+
+#+begin_src python :session SESSION_1 :results output :exports both
+NAME = "full"
+PERCENTAGE = 0.8
+#+end_src
+
+#+RESULTS:
+
+* Helper Function
+   
+   This function determines the number of samples to extract based on a
+   percentage how imbalanced the dataset should be.
+
+#+begin_src python :session SESSION_1 :results output :exports both
+def num_sample(percentage, hof_df):
+    hof_length = len(hof_df['G_all'])
+    return int((percentage * hof_length)/(1 - percentage))
+#+end_src
+
+#+RESULTS:
+
+* Importing and Cleaning the Data
+   
+#+begin_src python :session SESSION_1 :results output :exports both
+df = pd.read_csv('../data/final_data.csv')
+#+end_src
+
+  Fixing Last Game Played date into a ~float32~.
+
+#+begin_src python :session SESSION_1 :results output :exports both
+# Splits the final Game date and convert to string
+finalGameYear = df['finalGame'].str.split(pat="-", expand=True)[0]
+df['finalGame'] = finalGameYear
+# Removing NaN fields from the dataset
+df = df[finalGameYear.notnull()]
+# Adding back to dataset as ints
+df['finalGame'] = df['finalGame'].astype('float32')
+#+end_src
+
+  Fixing parts that cannot have NaN.
+
+#+begin_src python :session SESSION_1 :results output :exports both
+# Replacing NaN in each column with 0 and adding back as type
+award_names = ['Most Valuable Player', 'World Series MVP', 'AS_games', 'Gold Glove',
+               'Rookie of the Year', 'Silver Slugger','G', 'AB', 'R', 'H', '2B', '3B',
+               'HR', 'RBI', 'SB', 'BB', 'SO', 'IBB', 'HBP', 'SH', 'SF']
+for col in award_names:
+    df[col] = df[col].fillna(0)
+    df[col] = df[col].astype('float32')
+#+end_src
+
+* Creating Additional Statistics
+  
+  In order to aggregate the data into stats which are considered features/stats
+  which express the skill of a batter. It would be possible to use all the
+  features individually, but with a smaller and imbalanced dataset it would be
+  nice not to have to include more features than necessary. These stats are 1B,
+  SLG, OBS, OPS.
+   
+#+begin_src python :session SESSION_1 :results output :exports both
+df['1B'] = df['H'] - df['2B'] - df['3B'] - df['HR']
+df['SLG'] = (df['1B'] + 2*df['2B'] + 3*df['3B'] + 4*df['HR'])/df['AB']
+df['OBS'] = (df['H'] + df['BB'] + df['HBP'])/(df['AB'] + df['BB']+ df['HBP']+ df['SF'])
+df['OPS'] = df['SLG'] + df['OBS']
+
+new_stats = ['1B', 'SLG', 'OBS', 'OPS']
+for col in new_stats:
+    df[col] = df[col].fillna(0)
+    df[col] = df[col].astype('float32')
+
+stat_names = ['G', 'AB', 'R', 'H', '2B', '3B', 'HR', 'RBI', 'SB',
+              'BB', 'SO', 'IBB', 'HBP', 'SH', 'SF', '1B', 'OPS', 'SLG', 'OBS']
+for name in stat_names:
+    string = 'number of NaN values in '+ name
+#+end_src
+
+* Fulfilling criteria for HoF eligibility
+  
+  Removing players who have played less than 10 years as these players are not
+  eligible for the MLB Hall of Fame.
+   
+#+begin_src python :session SESSION_1 :results output :exports both
+df = df[df['Years_Played'] >= 10] # 10 years
+#+end_src
+
+* Preparing to Feed Data into Model
+  
+** Selecting Variables to use in training 
+   
+ #+begin_src python :session SESSION_1 :results output :exports both
+pre_std_df = df
+df = df[['G_all', 'finalGame', 'OPS',
+         'Years_Played', 'Most Valuable Player', 'AS_games',
+         'Gold Glove', 'Rookie of the Year', 'World Series MVP', 'Silver Slugger',]]
+ #+end_src
+ 
+** Standardizing the Data
+   
+ #+begin_src python :session SESSION_1 :results output :exports both
+df = pd.DataFrame(StandardScaler().fit_transform(df), columns=df.columns)
+### Adding back the HoF data
+df.insert(df.shape[1], 'HoF', pre_std_df['HoF'].to_numpy())
+ #+end_src
+ 
+** Converting HoF back to strings
+   
+ #+begin_src python :session SESSION_1 :results output :exports both
+df['HoF'] = df['HoF'].replace(1.0, 'Y', regex=True)
+df['HoF'] = df['HoF'].replace(np.nan, 'N', regex=True)
+df['HoF'] = df['HoF'].replace(0.0, 'N', regex=True)
+ #+end_src
+ 
+** Splitting dataset by HoF players
+   
+ #+begin_src python :session SESSION_1 :results output :exports both
+reg_df = df[df['HoF'] == 'N']
+hof_df = df[df['HoF'] == 'Y']
+ #+end_src
+ 
+** Under-sampling the non-HoF players
+   
+   Currently, the non-HoF players are not undersampled.
+   
+ #+begin_src python :session SESSION_1 :results output :exports both
+reg_seeded_random = RandomState(1)
+# sampled_reg_df = reg_df.sample(n = num_sample(PERCENTAGE, hof_df), random_state=reg_seeded_random)
+sampled_reg_df = reg_df
+ #+end_src
+ 
+** Splitting reg and HoF into train and test
+   
+ #+begin_src python :session SESSION_1 :results output :exports both
+sep_seeded_random = RandomState(1)
+train_frac = 0.8
+train_reg_df = sampled_reg_df.sample(frac=train_frac, random_state=sep_seeded_random)
+test_reg_df = sampled_reg_df.drop(train_reg_df.index)
+train_hof_df = hof_df.sample(frac=train_frac, random_state=sep_seeded_random)
+test_hof_df = hof_df.drop(train_hof_df.index)
+
+print('length of train_reg_df: ', len(train_reg_df))
+print('length of test_reg_df: ', len(test_reg_df))
+print('length of train_hof_df: ', len(train_hof_df))
+print('length of test_hof_df: ', len(test_hof_df))
+ #+end_src
+ 
+** Merging the test and training datasets
+   
+ #+begin_src python :session SESSION_1 :results output :exports both
+train_df = pd.concat([train_hof_df, train_reg_df])
+test_df = pd.concat([test_hof_df, test_reg_df])
+# Shuffling the data
+train_df = train_df.sample(frac = 1, random_state=sep_seeded_random)
+test_df = test_df.sample(frac = 1, random_state=sep_seeded_random)
+ #+end_src
+
+* Save the different testing and validation data sets 
+   
+ #+begin_src python :session SESSION_1 :results output :exports both
+train_df.to_csv('../data/train_data_' + NAME + '.csv', index=False)
+test_df.to_csv('../data/test_data_' + NAME + '.csv', index=False)
+ #+end_src
+ 
+ 
+* Local Variables                                          :noexport:ARCHIVE:
+# Local Variables:
+# after-save-hook: org-html-export-to-html
+# End:
