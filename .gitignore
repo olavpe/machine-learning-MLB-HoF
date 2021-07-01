@@ -15,5 +15,6 @@ result/
 
 model/
 !model/full_model.h5
+!model/hall_of_fame_model.html
 
 logs/
