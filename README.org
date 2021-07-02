@@ -36,9 +36,9 @@
    as HTML. The HTML files in the ~/model~ and ~/src~ are hosted at the
    following links:
 
-   - Extracting data from Lahman's raw data: [[file:///home/olav/gitRepos/personalsite/static/standalone_hof/extract_data.html][extract_data]]
-   - Data manipulation, feature creation and feature selection: [[file:///home/olav/gitRepos/personalsite/static/standalone_hof/filter_data.html][filter_data]]
-   - Creation of the model and training of the neural network: [[file:///home/olav/gitRepos/personalsite/static/standalone_hof/hall_of_fame_model.html][hof_model]]
+   - Extracting data from Lahman's raw data: [[https://www.olavpedersen.com/standalone_hof/extract_data.html][extract_data]]
+   - Data manipulation, feature creation and feature selection: [[https://www.olavpedersen.com/standalone_hof/filter_data.html][filter_data]]
+   - Creation of the model and training of the neural network: [[https://www.olavpedersen.com/standalone_hof/hall_of_fame_model.html][hof_model]]
    
 ** Dependencies 
 
