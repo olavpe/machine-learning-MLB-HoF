@@ -30,6 +30,15 @@
 
    Finally, the model is created and trained in ~/model/hof_model_final.py~ or
    ~/model/hof_model.org~. The model weights are stored in ~/model/~.
+
+   Part of the goal in this project was to use ~org~ files for Reproducible
+   Research. In part to show how easy it can be to export to other format such
+   as HTML. The HTML files in the ~/model~ and ~/src~ are hosted at the
+   following links:
+
+   - Extracting data from Lahman's raw data: [[file:///home/olav/gitRepos/personalsite/static/standalone_hof/extract_data.html][extract_data]]
+   - Data manipulation, feature creation and feature selection: [[file:///home/olav/gitRepos/personalsite/static/standalone_hof/filter_data.html][filter_data]]
+   - Creation of the model and training of the neural network: [[file:///home/olav/gitRepos/personalsite/static/standalone_hof/hall_of_fame_model.html][hof_model]]
    
 ** Dependencies 
 
@@ -41,7 +50,7 @@
 ** Usage 
 
    In the ~org~ files the function ~org-babel-execute-buffer~ or in Spacemacs
-   use the keybinding ~, b b~, will execute all the of the code blocks in the
+   use the keybinding ~, b b~ , will execute all the of the code blocks in the
    current buffer. The ~org-mode~ files include the activation of the python
    virtual environment, but if running it as a python script you have to
    activate the virtual environment in the terminal.
