@@ -1,0 +1,58 @@
+#+TITLE: Machine Learning Project: Determine MLB Hall of Fame Players
+
+** Table of Contents                                                    :TOC:
+  - [[#overview][Overview]]
+  - [[#dependencies][Dependencies]]
+  - [[#usage][Usage]]
+  - [[#author][Author]]
+  - [[#credit][Credit]]
+
+** Overview
+
+   This project was started as course work for TTK28 at NTNU. It was heavily
+   inspired by [[https://github.com/rh2835][rh2835]] project called [[https://github.com/rh2835/Baseball-Analytics][Baseball-Analytics]]. Since the course
+   involved using neural networks, the majority of code used from Rui Hu's
+   project was used for importing data, cleaning data, and feature creation. The
+   data used in both projects come from the [[http://www.seanlahman.com/baseball-archive/statistics/][Lahman's Baseball Database]] created
+   by Sean Lahman which comprises batting and pitching statistics from 1871
+   until today. The data used in this project was from version 2020 which
+   contains data through the end of the 2019 season.
+
+   The files which are involved in manipulating data and importing data are
+   stored in ~src~. The raw data can be found in ~/data/core/~. From here the
+   ~extract_data.py~ or ~extract_data.org~, will aggregate and collect some data
+   which will produce the ~final_data.csv~.
+
+   After a master data frame was created such as ~final_data.csv~, the data is
+   further prepared and cleaned before being able to feed it into a neural
+   network. The ~filter_data.py~ or ~filter_data.org~ will select the features
+   and create additional statistics and generate the test and training dataset.
+
+   Finally, the model is created and trained in ~/model/hof_model_final.py~ or
+   ~/model/hof_model.org~. The model weights are stored in ~/model/~.
+   
+** Dependencies 
+
+   The dependencies for the ~org-mode~ function requires a functioning ~Emacs~
+   install. The python packages required can be found in ~requirements.txt~. 
+
+** COMMENT Setup 
+  
+** Usage 
+
+   In the ~org~ files the function ~org-babel-execute-buffer~ or in Spacemacs
+   use the keybinding ~, b b~, will execute all the of the code blocks in the
+   current buffer. The ~org-mode~ files include the activation of the python
+   virtual environment, but if running it as a python script you have to
+   activate the virtual environment in the terminal.
+  
+** Author 
+
+   Olav Landmark Pedersen
+  
+** Credit 
+
+   This project would not be possible without:
+
+   - [[http://www.seanlahman.com/baseball-archive/statistics/][Sean Lahman's Baseball Database]] 
+   - Rui Hu's (rh2835) [[https://github.com/rh2835/Baseball-Analytics][Baseball-Analytics]]
