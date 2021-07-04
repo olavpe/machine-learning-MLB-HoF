@@ -6,7 +6,8 @@ from sklearn.preprocessing import StandardScaler
 
 ### Hyper-parameters
 NAME = "full"
-PERCENTAGE = 0.8
+DATA_BALANCE_PERCENTAGE = 0.8
+TRAINING_DATA_FRACTION = 0.8
 
 
 ### ---------------- Helper Functions ---------------- ###
@@ -93,15 +94,14 @@ hof_df = df[df['HoF'] == 'Y']
 
 ### Under-sampling the non-HoF players
 reg_seeded_random = RandomState(1)
-# sampled_reg_df = reg_df.sample(n = num_sample(PERCENTAGE, hof_df), random_state=reg_seeded_random)
+# sampled_reg_df = reg_df.sample(n = num_sample(DATA_BALANCE_PERCENTAGE, hof_df), random_state=reg_seeded_random)
 sampled_reg_df = reg_df
 
 ### Splitting reg and HoF into train and test
 sep_seeded_random = RandomState(1)
-train_frac = 0.8
-train_reg_df = sampled_reg_df.sample(frac=train_frac, random_state=sep_seeded_random)
+train_reg_df = sampled_reg_df.sample(frac=TRAINING_DATA_FRACTION, random_state=sep_seeded_random)
 test_reg_df = sampled_reg_df.drop(train_reg_df.index)
-train_hof_df = hof_df.sample(frac=train_frac, random_state=sep_seeded_random)
+train_hof_df = hof_df.sample(frac=TRAINING_DATA_FRACTION, random_state=sep_seeded_random)
 test_hof_df = hof_df.drop(train_hof_df.index)
 
 print('length of train_reg_df: ', len(train_reg_df))
@@ -118,8 +118,8 @@ test_df = test_df.sample(frac = 1, random_state=sep_seeded_random)
 
 # ### Directly separating into test and training data
 # sep_seeded_random = RandomState(1)
-# train_frac = 0.8
-# train_df = df.sample(frac=train_frac, random_state=sep_seeded_random)
+# TRAINING_DATA_FRACTION = 0.8
+# train_df = df.sample(frac=TRAINING_DATA_FRACTION, random_state=sep_seeded_random)
 # test_df = df.drop(train_df.index)
 
 
