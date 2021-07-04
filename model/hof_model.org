@@ -24,13 +24,13 @@
   This project is primarily uses ~Keras~ and ~Sklearn~ for the data analysis
   itself. For data storage and manipulation ~pandas~ and ~numpy~ are the primary
   libraries used. The graphics are generated via ~matplotlib~.
-  
+
 #+begin_src python :session SESSION_1 :results output :exports both
   from datetime import datetime
   import pandas as pd
   import numpy as np
-  # import matplotlib
-  # matplotlib.use('Qt5Agg')
+  import matplotlib
+  matplotlib.use('PS')
   import matplotlib.pyplot as plt
   import logging
   from sklearn.preprocessing import LabelEncoder
@@ -132,7 +132,7 @@
       plt.legend()
       file_name = '../result/ROC_curve_' + name + datetime.now().strftime("%Y%m%d-%H%M%S") + '.png'
       plt.savefig(file_name)
-      plt.savefig("ROC_curve_latest.png")
+      plt.savefig("../result/ROC_curve_latest.png")
       plt.clf()
 #+end_src
 
@@ -509,12 +509,12 @@ f1:  0.5753424657534245
 #+RESULTS:
 : man_auroc:  0.9676593521421109
 
-#+begin_src python :session SESSION_1 :results output :exports both :noweb yes
+#+begin_src python :session SESSION_1 :results output :exports both
 # Generating a confusion matrix
 skplt.metrics.plot_confusion_matrix(test_y, pred, normalize=True)
 confusion_mat_string = "../result/confusion_mat_" + HP['NAME']+ datetime.now().strftime("%Y%m%d-%H%M%S") + ".png"
 plt.savefig(confusion_mat_string)
-plt.savefig("confusion_mat_latest.png")
+plt.savefig("../result/confusion_mat_latest.png")
 plt.clf()
 #+end_src
 
@@ -523,16 +523,17 @@ plt.clf()
 [[file:confusion_mat_latest.png]]
 
 
-#+begin_src python :session SESSION_1 :results output :exports both :noweb yes
+#+begin_src python :session SESSION_1 :results output :exports both
 # Generating precision-recall curve
 skplt.metrics.plot_precision_recall(test_y, y_score)
 precision_recall_curve_string = "../result/precision_recall_curve_" + HP['NAME'] + datetime.now().strftime("%Y%m%d-%H%M%S") + ".png"
 plt.savefig(precision_recall_curve_string)
-plt.savefig("precision_recall_curve_latest.png")
+plt.savefig("../result/precision_recall_curve_latest.png")
 plt.clf()
 #+end_src
 
 #+RESULTS:
+
 
 [[file:precision_recall_curve_latest.png]]
 
