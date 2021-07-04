@@ -24,7 +24,7 @@
   This filtering of data typically uses ~pandas~ and ~numpy~ for data storage
   and manipulation. Additionally a the Random function is used for picking out
   the data. The data is standardized using ~Sklearn~ and the ~StandardScalar~.
-  
+
 #+begin_src python :session SESSION_1 :results output :exports both
 import pandas as pd
 import numpy as np
@@ -37,7 +37,7 @@ from sklearn.preprocessing import StandardScaler
 * Hyperparameters
   In order to more easily configure the model and keep track of the setting,
   this hyperparameters dictionary is defined here and used throughout the code
-  where needed. 
+  where needed.
 
 #+begin_src python :session SESSION_1 :results output :exports both
 NAME = "full"
@@ -47,7 +47,7 @@ PERCENTAGE = 0.8
 #+RESULTS:
 
 * Helper Function
-   
+
    This function determines the number of samples to extract based on a
    percentage how imbalanced the dataset should be.
 
@@ -60,7 +60,7 @@ def num_sample(percentage, hof_df):
 #+RESULTS:
 
 * Importing and Cleaning the Data
-   
+
 #+begin_src python :session SESSION_1 :results output :exports both
 df = pd.read_csv('../data/final_data.csv')
 #+end_src
@@ -90,13 +90,13 @@ for col in award_names:
 #+end_src
 
 * Creating Additional Statistics
-  
+
   In order to aggregate the data into stats which are considered features/stats
   which express the skill of a batter. It would be possible to use all the
   features individually, but with a smaller and imbalanced dataset it would be
   nice not to have to include more features than necessary. These stats are 1B,
   SLG, OBS, OPS.
-   
+
 #+begin_src python :session SESSION_1 :results output :exports both
 df['1B'] = df['H'] - df['2B'] - df['3B'] - df['HR']
 df['SLG'] = (df['1B'] + 2*df['2B'] + 3*df['3B'] + 4*df['HR'])/df['AB']
@@ -115,60 +115,60 @@ for name in stat_names:
 #+end_src
 
 * Fulfilling criteria for HoF eligibility
-  
+
   Removing players who have played less than 10 years as these players are not
   eligible for the MLB Hall of Fame.
-   
+
 #+begin_src python :session SESSION_1 :results output :exports both
 df = df[df['Years_Played'] >= 10] # 10 years
 #+end_src
 
 * Preparing to Feed Data into Model
-  
-** Selecting Variables to use in training 
-   
+
+** Selecting Variables to use in training
+
  #+begin_src python :session SESSION_1 :results output :exports both
 pre_std_df = df
 df = df[['G_all', 'finalGame', 'OPS',
          'Years_Played', 'Most Valuable Player', 'AS_games',
          'Gold Glove', 'Rookie of the Year', 'World Series MVP', 'Silver Slugger',]]
  #+end_src
- 
+
 ** Standardizing the Data
-   
+
  #+begin_src python :session SESSION_1 :results output :exports both
 df = pd.DataFrame(StandardScaler().fit_transform(df), columns=df.columns)
 ### Adding back the HoF data
 df.insert(df.shape[1], 'HoF', pre_std_df['HoF'].to_numpy())
  #+end_src
- 
+
 ** Converting HoF back to strings
-   
+
  #+begin_src python :session SESSION_1 :results output :exports both
 df['HoF'] = df['HoF'].replace(1.0, 'Y', regex=True)
 df['HoF'] = df['HoF'].replace(np.nan, 'N', regex=True)
 df['HoF'] = df['HoF'].replace(0.0, 'N', regex=True)
  #+end_src
- 
+
 ** Splitting dataset by HoF players
-   
+
  #+begin_src python :session SESSION_1 :results output :exports both
 reg_df = df[df['HoF'] == 'N']
 hof_df = df[df['HoF'] == 'Y']
  #+end_src
- 
+
 ** Under-sampling the non-HoF players
-   
+
    Currently, the non-HoF players are not undersampled.
-   
+
  #+begin_src python :session SESSION_1 :results output :exports both
 reg_seeded_random = RandomState(1)
 # sampled_reg_df = reg_df.sample(n = num_sample(PERCENTAGE, hof_df), random_state=reg_seeded_random)
 sampled_reg_df = reg_df
  #+end_src
- 
+
 ** Splitting reg and HoF into train and test
-   
+
  #+begin_src python :session SESSION_1 :results output :exports both
 sep_seeded_random = RandomState(1)
 train_frac = 0.8
@@ -182,9 +182,9 @@ print('length of test_reg_df: ', len(test_reg_df))
 print('length of train_hof_df: ', len(train_hof_df))
 print('length of test_hof_df: ', len(test_hof_df))
  #+end_src
- 
+
 ** Merging the test and training datasets
-   
+
  #+begin_src python :session SESSION_1 :results output :exports both
 train_df = pd.concat([train_hof_df, train_reg_df])
 test_df = pd.concat([test_hof_df, test_reg_df])
@@ -193,8 +193,8 @@ train_df = train_df.sample(frac = 1, random_state=sep_seeded_random)
 test_df = test_df.sample(frac = 1, random_state=sep_seeded_random)
  #+end_src
 
-* Save the different testing and validation data sets 
-   
+* Save the different testing and validation data sets
+
  #+begin_src python :session SESSION_1 :results output :exports both
 train_df.to_csv('../data/train_data_' + NAME + '.csv', index=False)
 test_df.to_csv('../data/test_data_' + NAME + '.csv', index=False)

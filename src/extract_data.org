@@ -22,17 +22,17 @@
 
 * Importing dependencies
   This project only uses ~pandas~ and built in python functions for data manipulation.
-  
+
 #+begin_src python :session SESSION_1 :results output :exports both
   import pandas as pd
 #+end_src
 
 #+RESULTS:
 
-* Importing Raw Data 
+* Importing Raw Data
   Importing the datasets from the raw Sean Lahman's Baseball Database, from
   those files that contain relevant data for determining MLB Hall of Fame Players.
-  
+
 #+begin_src python :session SESSION_1 :results output :exports both
 master_df = pd.read_csv('../data/core/People.csv',
                         usecols=['playerID','nameFirst','nameLast','bats','throws','debut','finalGame'])
@@ -49,17 +49,17 @@ appearances_df = pd.read_csv('../data/core/Appearances.csv')
 #+RESULTS:
 
 * Cleaning and Joining the Different Datasets
-  
+
   Since data is spread over several files and is stored differently in the
   different files, the following sub sections attempt at extracting the relevant
   information and aggreating it for each player.
-  
+
 ** Batting Data
 
    This adds the batting stats for the different players. The ~player_stats~
    dictionary is where the player information is aggregated until setting it to
    the ~master_df~.
-   
+
 #+begin_src python :session SESSION_1 :results output :exports both
 player_stats = {} #key: playerID  value: player stats
 years_played = {} #key: playerID  value: yearID
@@ -113,9 +113,9 @@ for k,v in years_played.items():
 #+RESULTS:
 
 ** Awards Data
-   
+
    Selecting 5 of the ~awardID~ to be used as features.
-   
+
 #+begin_src python :session SESSION_1 :results output :exports both
 awards_df['awardID'].unique()
 mvp = awards_df[awards_df['awardID'] == 'Most Valuable Player']
@@ -146,10 +146,10 @@ for index,v in enumerate(awards_list):
 #+end_src
 
 #+RESULTS:
- 
+
 ** All-Start Data
    Add a count of appearances in All-Star game for players in ~player_stats~.
-   
+
 #+begin_src python :session SESSION_1 :results output :exports both
 allstar_list = []
 
@@ -163,11 +163,11 @@ for i,row in allstar_df.iterrows():
 #+end_src
 
 #+RESULTS:
- 
+
 ** Hall of Fame Data
-   
+
    Adding Hall of Fame information to ~master_df~.
-   
+
 #+begin_src python :session SESSION_1 :results output :exports both
 hof_df = hof_df[(hof_df['inducted'] == 'Y') & (hof_df['category'] == 'Player')]
 
@@ -184,7 +184,7 @@ for i,row in hof_df.iterrows():
    Until now, I have collected data from batting_df, fielding_df, awards_df,
    allstar_df, and hof_df into the player_stats dictionary. Then, I will
    convert it to a dataframe stats_df.
-   
+
 #+begin_src python :session SESSION_1 :results output :exports both
 stats_df = pd.DataFrame.from_dict(player_stats,orient='index')
 
@@ -197,10 +197,10 @@ master_df = master_df.join(stats_df, on='playerID', how='inner',
 #+RESULTS:
 
 ** Appearance Data
-   
+
    Aggregating information about appearances at each position for players for
    different years.
-   
+
 #+begin_src python :session SESSION_1 :results output :exports both
 pos_dict = {}
 
@@ -283,9 +283,9 @@ pos_df = pd.DataFrame.from_dict(pos_dict,orient='index')
 #+RESULTS:
 
 * Joining and Saving the Datasets
-   
+
   Simply adding appearance data to the ~master_df~.
-  
+
 #+begin_src python :session SESSION_1 :results output :exports both
 ## join pos_df and master_df
 master_df = master_df.join(pos_df,on='playerID',how='right')
