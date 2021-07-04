@@ -3,12 +3,12 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2021-07-02 Fri 01:14 -->
+<!-- 2021-07-04 Sun 13:16 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Extracting from Lahman's Raw Data</title>
 <meta name="generator" content="Org mode" />
-<meta name="author" content="Olav Pedersen" />
+<meta name="author" content="Olav Landmark Pedersen" />
 <style type="text/css">
  <!--/*--><![CDATA[/*><!--*/
   .title  { text-align: center;
@@ -230,26 +230,27 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgd412fed">1. Activating Python Environment</a></li>
-<li><a href="#org8aac0f8">2. Importing dependencies</a></li>
-<li><a href="#org0a84f4d">3. Importing Raw Data</a></li>
-<li><a href="#org5856435">4. Cleaning and Joining the Different Datasets</a>
+<li><a href="#org3c23e5e">1. Activating Python Environment</a></li>
+<li><a href="#orgd845e32">2. Importing dependencies</a></li>
+<li><a href="#org81842bc">3. Importing Raw Data</a></li>
+<li><a href="#org759d5a2">4. Cleaning and Joining the Different Datasets</a>
 <ul>
-<li><a href="#org3c77b04">4.1. Batting Data</a></li>
-<li><a href="#org08a8325">4.2. Awards Data</a></li>
-<li><a href="#org7bbabc5">4.3. All-Start Data</a></li>
-<li><a href="#orgff4024b">4.4. Hall of Fame Data</a></li>
-<li><a href="#org1119883">4.5. Player Data</a></li>
-<li><a href="#orgafdfb83">4.6. Appearance Data</a></li>
+<li><a href="#org767b33f">4.1. Batting Data</a></li>
+<li><a href="#org0436658">4.2. Awards Data</a></li>
+<li><a href="#org017a928">4.3. All-Start Data</a></li>
+<li><a href="#org5660366">4.4. Hall of Fame Data</a></li>
+<li><a href="#org26d7a5b">4.5. Player Data</a></li>
+<li><a href="#orga213086">4.6. Appearance Data</a></li>
 </ul>
 </li>
-<li><a href="#org92b55ff">5. Joining and Saving the Datasets</a></li>
+<li><a href="#org5418f5c">5. Joining and Saving the Datasets</a></li>
+<li><a href="#org3765858">6. Links to Other Files in Project</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-orgd412fed" class="outline-2">
-<h2 id="orgd412fed"><span class="section-number-2">1</span> Activating Python Environment</h2>
+<div id="outline-container-org3c23e5e" class="outline-2">
+<h2 id="org3c23e5e"><span class="section-number-2">1</span> Activating Python Environment</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 This code block must be run to activate python virtual environment for
@@ -264,8 +265,8 @@ org session "SESSION_1". The following Python code blocks are run in
 </div>
 </div>
 
-<div id="outline-container-org8aac0f8" class="outline-2">
-<h2 id="org8aac0f8"><span class="section-number-2">2</span> Importing dependencies</h2>
+<div id="outline-container-orgd845e32" class="outline-2">
+<h2 id="orgd845e32"><span class="section-number-2">2</span> Importing dependencies</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 This project only uses <code>pandas</code> and built in python functions for data manipulation.
@@ -278,8 +279,8 @@ This project only uses <code>pandas</code> and built in python functions for dat
 </div>
 </div>
 
-<div id="outline-container-org0a84f4d" class="outline-2">
-<h2 id="org0a84f4d"><span class="section-number-2">3</span> Importing Raw Data</h2>
+<div id="outline-container-org81842bc" class="outline-2">
+<h2 id="org81842bc"><span class="section-number-2">3</span> Importing Raw Data</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 Importing the datasets from the raw Sean Lahman's Baseball Database, from
@@ -302,8 +303,8 @@ those files that contain relevant data for determining MLB Hall of Fame Players.
 </div>
 </div>
 
-<div id="outline-container-org5856435" class="outline-2">
-<h2 id="org5856435"><span class="section-number-2">4</span> Cleaning and Joining the Different Datasets</h2>
+<div id="outline-container-org759d5a2" class="outline-2">
+<h2 id="org759d5a2"><span class="section-number-2">4</span> Cleaning and Joining the Different Datasets</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 Since data is spread over several files and is stored differently in the
@@ -312,8 +313,8 @@ information and aggreating it for each player.
 </p>
 </div>
 
-<div id="outline-container-org3c77b04" class="outline-3">
-<h3 id="org3c77b04"><span class="section-number-3">4.1</span> Batting Data</h3>
+<div id="outline-container-org767b33f" class="outline-3">
+<h3 id="org767b33f"><span class="section-number-3">4.1</span> Batting Data</h3>
 <div class="outline-text-3" id="text-4-1">
 <p>
 This adds the batting stats for the different players. The <code>player_stats</code>
@@ -374,8 +375,8 @@ the <code>master_df</code>.
 </div>
 </div>
 
-<div id="outline-container-org08a8325" class="outline-3">
-<h3 id="org08a8325"><span class="section-number-3">4.2</span> Awards Data</h3>
+<div id="outline-container-org0436658" class="outline-3">
+<h3 id="org0436658"><span class="section-number-3">4.2</span> Awards Data</h3>
 <div class="outline-text-3" id="text-4-2">
 <p>
 Selecting 5 of the <code>awardID</code> to be used as features.
@@ -413,8 +414,8 @@ Selecting 5 of the <code>awardID</code> to be used as features.
 </div>
 </div>
 
-<div id="outline-container-org7bbabc5" class="outline-3">
-<h3 id="org7bbabc5"><span class="section-number-3">4.3</span> All-Start Data</h3>
+<div id="outline-container-org017a928" class="outline-3">
+<h3 id="org017a928"><span class="section-number-3">4.3</span> All-Start Data</h3>
 <div class="outline-text-3" id="text-4-3">
 <p>
 Add a count of appearances in All-Star game for players in <code>player_stats</code>.
@@ -435,8 +436,8 @@ Add a count of appearances in All-Star game for players in <code>player_stats</c
 </div>
 </div>
 
-<div id="outline-container-orgff4024b" class="outline-3">
-<h3 id="orgff4024b"><span class="section-number-3">4.4</span> Hall of Fame Data</h3>
+<div id="outline-container-org5660366" class="outline-3">
+<h3 id="org5660366"><span class="section-number-3">4.4</span> Hall of Fame Data</h3>
 <div class="outline-text-3" id="text-4-4">
 <p>
 Adding Hall of Fame information to <code>master_df</code>.
@@ -455,8 +456,8 @@ Adding Hall of Fame information to <code>master_df</code>.
 </div>
 </div>
 
-<div id="outline-container-org1119883" class="outline-3">
-<h3 id="org1119883"><span class="section-number-3">4.5</span> Player Data</h3>
+<div id="outline-container-org26d7a5b" class="outline-3">
+<h3 id="org26d7a5b"><span class="section-number-3">4.5</span> Player Data</h3>
 <div class="outline-text-3" id="text-4-5">
 <p>
 Until now, I have collected data from batting_df, fielding_df, awards_df,
@@ -476,8 +477,8 @@ convert it to a dataframe stats_df.
 </div>
 </div>
 
-<div id="outline-container-orgafdfb83" class="outline-3">
-<h3 id="orgafdfb83"><span class="section-number-3">4.6</span> Appearance Data</h3>
+<div id="outline-container-orga213086" class="outline-3">
+<h3 id="orga213086"><span class="section-number-3">4.6</span> Appearance Data</h3>
 <div class="outline-text-3" id="text-4-6">
 <p>
 Aggregating information about appearances at each position for players for
@@ -567,8 +568,8 @@ different years.
 </div>
 </div>
 
-<div id="outline-container-org92b55ff" class="outline-2">
-<h2 id="org92b55ff"><span class="section-number-2">5</span> Joining and Saving the Datasets</h2>
+<div id="outline-container-org5418f5c" class="outline-2">
+<h2 id="org5418f5c"><span class="section-number-2">5</span> Joining and Saving the Datasets</h2>
 <div class="outline-text-2" id="text-5">
 <p>
 Simply adding appearance data to the <code>master_df</code>.
@@ -582,10 +583,21 @@ master_df.to_csv<span style="color: #5e7e9b;">(</span><span style="color: #5a727
 </div>
 </div>
 </div>
+
+<div id="outline-container-org3765858" class="outline-2">
+<h2 id="org3765858"><span class="section-number-2">6</span> Links to Other Files in Project</h2>
+<div class="outline-text-2" id="text-6">
+<ol class="org-ol">
+<li><a href="https://www.olavpedersen.com/standalone_hof/extract_data.html">extract_data</a>: Extracting data from Lahman's raw data.</li>
+<li><a href="https://www.olavpedersen.com/standalone_hof/filter_data.html">filter_data</a>: Data manipulation, feature creation and feature selection.</li>
+<li><a href="https://www.olavpedersen.com/standalone_hof/hall_of_fame_model.html">hof_model</a>: Creation of the model and training of the neural network.</li>
+</ol>
+</div>
+</div>
 </div>
 <div id="postamble" class="status">
-<p class="author">Author: Olav Pedersen</p>
-<p class="date">Created: 2021-07-02 Fri 01:14</p>
+<p class="author">Author: Olav Landmark Pedersen</p>
+<p class="date">Created: 2021-07-04 Sun 13:16</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

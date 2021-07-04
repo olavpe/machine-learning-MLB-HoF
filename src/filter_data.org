@@ -199,8 +199,14 @@ test_df = test_df.sample(frac = 1, random_state=sep_seeded_random)
 train_df.to_csv('../data/train_data_' + NAME + '.csv', index=False)
 test_df.to_csv('../data/test_data_' + NAME + '.csv', index=False)
  #+end_src
- 
- 
+
+* Links to Other Files in Project
+
+  1. [[https://www.olavpedersen.com/standalone_hof/extract_data.html][extract_data]]: Extracting data from Lahman's raw data.
+  2. [[https://www.olavpedersen.com/standalone_hof/filter_data.html][filter_data]]: Data manipulation, feature creation and feature selection.
+  3. [[https://www.olavpedersen.com/standalone_hof/hall_of_fame_model.html][hof_model]]: Creation of the model and training of the neural network.
+
+
 * Local Variables                                          :noexport:ARCHIVE:
 # Local Variables:
 # after-save-hook: org-html-export-to-html

@@ -537,6 +537,11 @@ plt.clf()
 [[file:precision_recall_curve_latest.png]]
 
 
+* Links to Other Files in Project
+
+  1. [[https://www.olavpedersen.com/standalone_hof/extract_data.html][extract_data]]: Extracting data from Lahman's raw data.
+  2. [[https://www.olavpedersen.com/standalone_hof/filter_data.html][filter_data]]: Data manipulation, feature creation and feature selection.
+  3. [[https://www.olavpedersen.com/standalone_hof/hall_of_fame_model.html][hof_model]]: Creation of the model and training of the neural network.
 
 * Local Variables                                          :noexport:ARCHIVE:
 # Local Variables:
