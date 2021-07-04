@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2021-07-04 Sun 13:16 -->
+<!-- 2021-07-04 Sun 20:08 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Filtering the Data from the Aggregated Player Data</title>
@@ -230,32 +230,32 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org7c2ecba">1. Activating Python Environment</a></li>
-<li><a href="#org9918df0">2. Importing dependencies</a></li>
-<li><a href="#org254fd48">3. Hyperparameters</a></li>
-<li><a href="#org5c9c3e1">4. Helper Function</a></li>
-<li><a href="#org6c1b09f">5. Importing and Cleaning the Data</a></li>
-<li><a href="#org0fb4503">6. Creating Additional Statistics</a></li>
-<li><a href="#org219a308">7. Fulfilling criteria for HoF eligibility</a></li>
-<li><a href="#org652817e">8. Preparing to Feed Data into Model</a>
+<li><a href="#org1f50da0">1. Activating Python Environment</a></li>
+<li><a href="#org952f8af">2. Importing dependencies</a></li>
+<li><a href="#org8cd340d">3. Hyperparameters</a></li>
+<li><a href="#orgade2ac3">4. Helper Function</a></li>
+<li><a href="#org7c47ada">5. Importing and Cleaning the Data</a></li>
+<li><a href="#org3d50ca0">6. Creating Additional Statistics</a></li>
+<li><a href="#orgdf1b917">7. Fulfilling criteria for HoF eligibility</a></li>
+<li><a href="#orgf05a264">8. Preparing to Feed Data into Model</a>
 <ul>
-<li><a href="#org6e3460e">8.1. Selecting Variables to use in training</a></li>
-<li><a href="#org8b0c294">8.2. Standardizing the Data</a></li>
-<li><a href="#org7089c4a">8.3. Converting HoF back to strings</a></li>
-<li><a href="#org9fd018d">8.4. Splitting dataset by HoF players</a></li>
-<li><a href="#org24e776b">8.5. Under-sampling the non-HoF players</a></li>
-<li><a href="#orgf47f197">8.6. Splitting reg and HoF into train and test</a></li>
-<li><a href="#org6119273">8.7. Merging the test and training datasets</a></li>
+<li><a href="#org311fe58">8.1. Selecting Variables to use in training</a></li>
+<li><a href="#orga5afc12">8.2. Standardizing the Data</a></li>
+<li><a href="#org84a2f86">8.3. Converting HoF back to strings</a></li>
+<li><a href="#org593cb66">8.4. Splitting dataset by HoF players</a></li>
+<li><a href="#orged1f1e2">8.5. Under-sampling the non-HoF players</a></li>
+<li><a href="#org400f47d">8.6. Splitting reg and HoF into train and test</a></li>
+<li><a href="#org5d1466a">8.7. Merging the test and training datasets</a></li>
 </ul>
 </li>
-<li><a href="#org4225dac">9. Save the different testing and validation data sets</a></li>
-<li><a href="#org7ab21a3">10. Links to Other Files in Project</a></li>
+<li><a href="#orga0f8a57">9. Save the different testing and validation data sets</a></li>
+<li><a href="#orga651bb5">10. Links to Other Files in Project</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org7c2ecba" class="outline-2">
-<h2 id="org7c2ecba"><span class="section-number-2">1</span> Activating Python Environment</h2>
+<div id="outline-container-org1f50da0" class="outline-2">
+<h2 id="org1f50da0"><span class="section-number-2">1</span> Activating Python Environment</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 This code block must be run to activate python virtual environment for
@@ -270,8 +270,8 @@ org session "SESSION_1". The following Python code blocks are run in
 </div>
 </div>
 
-<div id="outline-container-org9918df0" class="outline-2">
-<h2 id="org9918df0"><span class="section-number-2">2</span> Importing dependencies</h2>
+<div id="outline-container-org952f8af" class="outline-2">
+<h2 id="org952f8af"><span class="section-number-2">2</span> Importing dependencies</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 This filtering of data typically uses <code>pandas</code> and <code>numpy</code> for data storage
@@ -289,8 +289,8 @@ the data. The data is standardized using <code>Sklearn</code> and the <code>Stan
 </div>
 </div>
 
-<div id="outline-container-org254fd48" class="outline-2">
-<h2 id="org254fd48"><span class="section-number-2">3</span> Hyperparameters</h2>
+<div id="outline-container-org8cd340d" class="outline-2">
+<h2 id="org8cd340d"><span class="section-number-2">3</span> Hyperparameters</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 In order to more easily configure the model and keep track of the setting,
@@ -300,14 +300,15 @@ where needed.
 
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #7e97af;">NAME</span> = <span style="color: #5a7273;">"full"</span>
-<span style="color: #7e97af;">PERCENTAGE</span> = <span style="color: #cb8986;">0</span>.<span style="color: #cb8986;">8</span>
+<span style="color: #7e97af;">DATA_BALANCE_PERCENTAGE</span> = <span style="color: #cb8986;">0</span>.<span style="color: #cb8986;">8</span>
+<span style="color: #7e97af;">TRAINING_DATA_FRACTION</span> = <span style="color: #cb8986;">0</span>.<span style="color: #cb8986;">8</span>
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org5c9c3e1" class="outline-2">
-<h2 id="org5c9c3e1"><span class="section-number-2">4</span> Helper Function</h2>
+<div id="outline-container-orgade2ac3" class="outline-2">
+<h2 id="orgade2ac3"><span class="section-number-2">4</span> Helper Function</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 This function determines the number of samples to extract based on a
@@ -323,13 +324,18 @@ percentage how imbalanced the dataset should be.
 </div>
 </div>
 
-<div id="outline-container-org6c1b09f" class="outline-2">
-<h2 id="org6c1b09f"><span class="section-number-2">5</span> Importing and Cleaning the Data</h2>
+<div id="outline-container-org7c47ada" class="outline-2">
+<h2 id="org7c47ada"><span class="section-number-2">5</span> Importing and Cleaning the Data</h2>
 <div class="outline-text-2" id="text-5">
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #7e97af;">df</span> = pd.read_csv<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">'../data/final_data.csv'</span><span style="color: #5e7e9b;">)</span>
 </pre>
 </div>
+
+<pre class="example">
+sys:1: DtypeWarning: Columns (25) have mixed types.Specify dtype option on import or set low_memory=False.
+</pre>
+
 
 <p>
 Fixing Last Game Played date into a <code>float32</code>.
@@ -363,8 +369,8 @@ Fixing parts that cannot have NaN.
 </div>
 </div>
 
-<div id="outline-container-org0fb4503" class="outline-2">
-<h2 id="org0fb4503"><span class="section-number-2">6</span> Creating Additional Statistics</h2>
+<div id="outline-container-org3d50ca0" class="outline-2">
+<h2 id="org3d50ca0"><span class="section-number-2">6</span> Creating Additional Statistics</h2>
 <div class="outline-text-2" id="text-6">
 <p>
 In order to aggregate the data into stats which are considered features/stats
@@ -394,8 +400,8 @@ SLG, OBS, OPS.
 </div>
 </div>
 
-<div id="outline-container-org219a308" class="outline-2">
-<h2 id="org219a308"><span class="section-number-2">7</span> Fulfilling criteria for HoF eligibility</h2>
+<div id="outline-container-orgdf1b917" class="outline-2">
+<h2 id="orgdf1b917"><span class="section-number-2">7</span> Fulfilling criteria for HoF eligibility</h2>
 <div class="outline-text-2" id="text-7">
 <p>
 Removing players who have played less than 10 years as these players are not
@@ -409,12 +415,12 @@ eligible for the MLB Hall of Fame.
 </div>
 </div>
 
-<div id="outline-container-org652817e" class="outline-2">
-<h2 id="org652817e"><span class="section-number-2">8</span> Preparing to Feed Data into Model</h2>
+<div id="outline-container-orgf05a264" class="outline-2">
+<h2 id="orgf05a264"><span class="section-number-2">8</span> Preparing to Feed Data into Model</h2>
 <div class="outline-text-2" id="text-8">
 </div>
-<div id="outline-container-org6e3460e" class="outline-3">
-<h3 id="org6e3460e"><span class="section-number-3">8.1</span> Selecting Variables to use in training</h3>
+<div id="outline-container-org311fe58" class="outline-3">
+<h3 id="org311fe58"><span class="section-number-3">8.1</span> Selecting Variables to use in training</h3>
 <div class="outline-text-3" id="text-8-1">
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #7e97af;">pre_std_df</span> = df
@@ -426,8 +432,8 @@ eligible for the MLB Hall of Fame.
 </div>
 </div>
 
-<div id="outline-container-org8b0c294" class="outline-3">
-<h3 id="org8b0c294"><span class="section-number-3">8.2</span> Standardizing the Data</h3>
+<div id="outline-container-orga5afc12" class="outline-3">
+<h3 id="orga5afc12"><span class="section-number-3">8.2</span> Standardizing the Data</h3>
 <div class="outline-text-3" id="text-8-2">
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #7e97af;">df</span> = pd.DataFrame<span style="color: #5e7e9b;">(</span>StandardScaler<span style="color: #bf6c68;">()</span>.fit_transform<span style="color: #bf6c68;">(</span>df<span style="color: #bf6c68;">)</span>, columns=df.columns<span style="color: #5e7e9b;">)</span>
@@ -438,8 +444,8 @@ df.insert<span style="color: #5e7e9b;">(</span>df.shape<span style="color: #bf6c
 </div>
 </div>
 
-<div id="outline-container-org7089c4a" class="outline-3">
-<h3 id="org7089c4a"><span class="section-number-3">8.3</span> Converting HoF back to strings</h3>
+<div id="outline-container-org84a2f86" class="outline-3">
+<h3 id="org84a2f86"><span class="section-number-3">8.3</span> Converting HoF back to strings</h3>
 <div class="outline-text-3" id="text-8-3">
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #7e97af;">df</span><span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'HoF'</span><span style="color: #5e7e9b;">]</span> = df<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'HoF'</span><span style="color: #5e7e9b;">]</span>.replace<span style="color: #5e7e9b;">(</span><span style="color: #cb8986;">1</span>.<span style="color: #cb8986;">0</span>, <span style="color: #5a7273;">'Y'</span>, regex=<span style="color: #cb8986;">True</span><span style="color: #5e7e9b;">)</span>
@@ -450,8 +456,8 @@ df.insert<span style="color: #5e7e9b;">(</span>df.shape<span style="color: #bf6c
 </div>
 </div>
 
-<div id="outline-container-org9fd018d" class="outline-3">
-<h3 id="org9fd018d"><span class="section-number-3">8.4</span> Splitting dataset by HoF players</h3>
+<div id="outline-container-org593cb66" class="outline-3">
+<h3 id="org593cb66"><span class="section-number-3">8.4</span> Splitting dataset by HoF players</h3>
 <div class="outline-text-3" id="text-8-4">
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #7e97af;">reg_df</span> = df<span style="color: #5e7e9b;">[</span>df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'HoF'</span><span style="color: #bf6c68;">]</span> == <span style="color: #5a7273;">'N'</span><span style="color: #5e7e9b;">]</span>
@@ -461,8 +467,8 @@ df.insert<span style="color: #5e7e9b;">(</span>df.shape<span style="color: #bf6c
 </div>
 </div>
 
-<div id="outline-container-org24e776b" class="outline-3">
-<h3 id="org24e776b"><span class="section-number-3">8.5</span> Under-sampling the non-HoF players</h3>
+<div id="outline-container-orged1f1e2" class="outline-3">
+<h3 id="orged1f1e2"><span class="section-number-3">8.5</span> Under-sampling the non-HoF players</h3>
 <div class="outline-text-3" id="text-8-5">
 <p>
 Currently, the non-HoF players are not undersampled.
@@ -470,22 +476,21 @@ Currently, the non-HoF players are not undersampled.
 
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #7e97af;">reg_seeded_random</span> = RandomState<span style="color: #5e7e9b;">(</span><span style="color: #cb8986;">1</span><span style="color: #5e7e9b;">)</span>
-<span style="color: #48485e;"># </span><span style="color: #48485e;">sampled_reg_df = reg_df.sample(n = num_sample(PERCENTAGE, hof_df), random_state=reg_seeded_random)</span>
+<span style="color: #48485e;"># </span><span style="color: #48485e;">sampled_reg_df = reg_df.sample(n = num_sample(DATA_BALANCE_PERCENTAGE, hof_df), random_state=reg_seeded_random)</span>
 <span style="color: #7e97af;">sampled_reg_df</span> = reg_df
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgf47f197" class="outline-3">
-<h3 id="orgf47f197"><span class="section-number-3">8.6</span> Splitting reg and HoF into train and test</h3>
+<div id="outline-container-org400f47d" class="outline-3">
+<h3 id="org400f47d"><span class="section-number-3">8.6</span> Splitting reg and HoF into train and test</h3>
 <div class="outline-text-3" id="text-8-6">
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #7e97af;">sep_seeded_random</span> = RandomState<span style="color: #5e7e9b;">(</span><span style="color: #cb8986;">1</span><span style="color: #5e7e9b;">)</span>
-<span style="color: #7e97af;">train_frac</span> = <span style="color: #cb8986;">0</span>.<span style="color: #cb8986;">8</span>
-<span style="color: #7e97af;">train_reg_df</span> = sampled_reg_df.sample<span style="color: #5e7e9b;">(</span>frac=train_frac, random_state=sep_seeded_random<span style="color: #5e7e9b;">)</span>
+<span style="color: #7e97af;">train_reg_df</span> = sampled_reg_df.sample<span style="color: #5e7e9b;">(</span>frac=TRAINING_DATA_FRACTION, random_state=sep_seeded_random<span style="color: #5e7e9b;">)</span>
 <span style="color: #7e97af;">test_reg_df</span> = sampled_reg_df.drop<span style="color: #5e7e9b;">(</span>train_reg_df.index<span style="color: #5e7e9b;">)</span>
-<span style="color: #7e97af;">train_hof_df</span> = hof_df.sample<span style="color: #5e7e9b;">(</span>frac=train_frac, random_state=sep_seeded_random<span style="color: #5e7e9b;">)</span>
+<span style="color: #7e97af;">train_hof_df</span> = hof_df.sample<span style="color: #5e7e9b;">(</span>frac=TRAINING_DATA_FRACTION, random_state=sep_seeded_random<span style="color: #5e7e9b;">)</span>
 <span style="color: #7e97af;">test_hof_df</span> = hof_df.drop<span style="color: #5e7e9b;">(</span>train_hof_df.index<span style="color: #5e7e9b;">)</span>
 
 <span style="color: #5e7e9b; font-weight: bold;">print</span><span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">'length of train_reg_df: '</span>, <span style="color: #5e7e9b;">len</span><span style="color: #bf6c68;">(</span>train_reg_df<span style="color: #bf6c68;">)</span><span style="color: #5e7e9b;">)</span>
@@ -494,11 +499,18 @@ Currently, the non-HoF players are not undersampled.
 <span style="color: #5e7e9b; font-weight: bold;">print</span><span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">'length of test_hof_df: '</span>, <span style="color: #5e7e9b;">len</span><span style="color: #bf6c68;">(</span>test_hof_df<span style="color: #bf6c68;">)</span><span style="color: #5e7e9b;">)</span>
 </pre>
 </div>
+
+<pre class="example">
+length of train_reg_df:  2552
+length of test_reg_df:  638
+length of train_hof_df:  181
+length of test_hof_df:  45
+</pre>
 </div>
 </div>
 
-<div id="outline-container-org6119273" class="outline-3">
-<h3 id="org6119273"><span class="section-number-3">8.7</span> Merging the test and training datasets</h3>
+<div id="outline-container-org5d1466a" class="outline-3">
+<h3 id="org5d1466a"><span class="section-number-3">8.7</span> Merging the test and training datasets</h3>
 <div class="outline-text-3" id="text-8-7">
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #7e97af;">train_df</span> = pd.concat<span style="color: #5e7e9b;">(</span><span style="color: #bf6c68;">[</span>train_hof_df, train_reg_df<span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">)</span>
@@ -512,8 +524,8 @@ Currently, the non-HoF players are not undersampled.
 </div>
 </div>
 
-<div id="outline-container-org4225dac" class="outline-2">
-<h2 id="org4225dac"><span class="section-number-2">9</span> Save the different testing and validation data sets</h2>
+<div id="outline-container-orga0f8a57" class="outline-2">
+<h2 id="orga0f8a57"><span class="section-number-2">9</span> Save the different testing and validation data sets</h2>
 <div class="outline-text-2" id="text-9">
 <div class="org-src-container">
 <pre class="src src-python">train_df.to_csv<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">'../data/train_data_'</span> + NAME + <span style="color: #5a7273;">'.csv'</span>, index=<span style="color: #cb8986;">False</span><span style="color: #5e7e9b;">)</span>
@@ -523,8 +535,8 @@ test_df.to_csv<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;
 </div>
 </div>
 
-<div id="outline-container-org7ab21a3" class="outline-2">
-<h2 id="org7ab21a3"><span class="section-number-2">10</span> Links to Other Files in Project</h2>
+<div id="outline-container-orga651bb5" class="outline-2">
+<h2 id="orga651bb5"><span class="section-number-2">10</span> Links to Other Files in Project</h2>
 <div class="outline-text-2" id="text-10">
 <ol class="org-ol">
 <li><a href="https://www.olavpedersen.com/standalone_hof/extract_data.html">extract_data</a>: Extracting data from Lahman's raw data.</li>
@@ -536,7 +548,7 @@ test_df.to_csv<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Olav Landmark Pedersen</p>
-<p class="date">Created: 2021-07-04 Sun 13:16</p>
+<p class="date">Created: 2021-07-04 Sun 20:08</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
