@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2021-07-07 Wed 14:34 -->
+<!-- 2021-07-07 Wed 15:12 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Hall of Fame Model</title>
@@ -230,68 +230,68 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org01935aa">1. Activating Python Environment</a></li>
-<li><a href="#orgd6f13c7">2. Importing dependencies</a></li>
-<li><a href="#org38a15d2">3. Logging Setup</a>
+<li><a href="#orgf096bb2">1. Activating Python Environment</a></li>
+<li><a href="#org79de2d9">2. Importing dependencies</a></li>
+<li><a href="#orgc89bc8e">3. Logging Setup</a>
 <ul>
-<li><a href="#orgafac135">3.1. Simply adding whitespace to log file</a></li>
-<li><a href="#orgcb01fa8">3.2. Defining CSVLogger and Tensorboard Settings</a></li>
-<li><a href="#org8f2417d">3.3. STDOUT Logging Settings</a></li>
+<li><a href="#org3d86781">3.1. Simply adding whitespace to log file</a></li>
+<li><a href="#org989b0f1">3.2. Defining CSVLogger and Tensorboard Settings</a></li>
+<li><a href="#orgedddc18">3.3. STDOUT Logging Settings</a></li>
 </ul>
 </li>
-<li><a href="#org6a0daae">4. Hyperparameters</a></li>
-<li><a href="#orgff539d0">5. Defining Helper Functions</a>
+<li><a href="#orgb762f0a">4. Hyperparameters</a></li>
+<li><a href="#orga4605fa">5. Defining Helper Functions</a>
 <ul>
-<li><a href="#org6857420">5.1. Creating an ROC Plot</a></li>
-<li><a href="#org0e380ff">5.2. Saving and Loading Models</a></li>
+<li><a href="#org2c33ebd">5.1. Creating an ROC Plot</a></li>
+<li><a href="#org271d811">5.2. Saving and Loading Models</a></li>
 </ul>
 </li>
-<li><a href="#orgfcfcb9c">6. Importing Data</a></li>
-<li><a href="#orga0a07b5">7. Class Weights</a></li>
-<li><a href="#org2230aaf">8. Grid Search for choosing models</a>
+<li><a href="#orgcae5097">6. Importing Data</a></li>
+<li><a href="#org5ae6de1">7. Class Weights</a></li>
+<li><a href="#orgb29146e">8. Grid Search for choosing models</a>
 <ul>
-<li><a href="#org7d524d4">8.1. Overview of results</a>
+<li><a href="#org56c31da">8.1. Overview of results</a>
 <ul>
-<li><a href="#org6727b88">8.1.1. Decision Tree Grid Search</a></li>
-<li><a href="#orgdc9bafc">8.1.2. Logistic Regression Grid Search</a></li>
-<li><a href="#orga0b3349">8.1.3. Neural Network Grid Search</a></li>
+<li><a href="#org18740b0">8.1.1. Decision Tree Grid Search</a></li>
+<li><a href="#orgd9fce60">8.1.2. Logistic Regression Grid Search</a></li>
+<li><a href="#org7aa46db">8.1.3. Neural Network Grid Search</a></li>
 </ul>
 </li>
-<li><a href="#orgd9a09e9">8.2. Actual Code</a>
+<li><a href="#org7f3f988">8.2. Actual Code</a>
 <ul>
-<li><a href="#org43da079">8.2.1. Using Grid Search for the Decision Tree Classifier</a></li>
-<li><a href="#org9937def">8.2.2. Using Grid Search for the Logistic Regression</a></li>
-<li><a href="#org4b34603">8.2.3. Using Grid Search for Neural Network</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a href="#org49190e4">9. The Final Model</a>
-<ul>
-<li><a href="#org0141426">9.1. Checkpointing Model Weights</a></li>
-<li><a href="#orgb24b33e">9.2. Defining and Training the Classifier</a></li>
-<li><a href="#orgddf318f">9.3. Saving or Loading the Classifier</a>
-<ul>
-<li><a href="#orgfdcc782">9.3.1. Saving the Model</a></li>
-<li><a href="#org841142e">9.3.2. Loading the Model</a></li>
+<li><a href="#org42cdc2d">8.2.1. Using Grid Search for the Decision Tree Classifier</a></li>
+<li><a href="#orgcfe14b3">8.2.2. Using Grid Search for the Logistic Regression</a></li>
+<li><a href="#org3ac2c48">8.2.3. Using Grid Search for Neural Network</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#orga2f4a1f">10. Evaluating and Metrics</a>
+<li><a href="#orgad7b41a">9. The Final Model</a>
 <ul>
-<li><a href="#org32d24fb">10.1. Predictions and Prediction Probabilities</a></li>
-<li><a href="#org0a619af">10.2. Metrics</a></li>
+<li><a href="#orgf9ddfc3">9.1. Checkpointing Model Weights</a></li>
+<li><a href="#org93bf41f">9.2. Defining and Training the Classifier</a></li>
+<li><a href="#org8f594da">9.3. Saving or Loading the Classifier</a>
+<ul>
+<li><a href="#org715e5a0">9.3.1. Saving the Model</a></li>
+<li><a href="#org90f777d">9.3.2. Loading the Model</a></li>
 </ul>
 </li>
-<li><a href="#orgdbd3559">11. Plots</a></li>
-<li><a href="#org52be835">12. Links to Other Files in Project</a></li>
+</ul>
+</li>
+<li><a href="#orgfa58f65">10. Evaluating and Metrics</a>
+<ul>
+<li><a href="#org07a0b1d">10.1. Predictions and Prediction Probabilities</a></li>
+<li><a href="#orga33f790">10.2. Metrics</a></li>
+</ul>
+</li>
+<li><a href="#org69ccc89">11. Plots</a></li>
+<li><a href="#orga36ca70">12. Links to Other Files in Project</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org01935aa" class="outline-2">
-<h2 id="org01935aa"><span class="section-number-2">1</span> Activating Python Environment</h2>
+<div id="outline-container-orgf096bb2" class="outline-2">
+<h2 id="orgf096bb2"><span class="section-number-2">1</span> Activating Python Environment</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 This code block must be run to activate python virtual environment for
@@ -306,8 +306,8 @@ org session "SESSION_1". The following Python code blocks are run in
 </div>
 </div>
 
-<div id="outline-container-orgd6f13c7" class="outline-2">
-<h2 id="orgd6f13c7"><span class="section-number-2">2</span> Importing dependencies</h2>
+<div id="outline-container-org79de2d9" class="outline-2">
+<h2 id="org79de2d9"><span class="section-number-2">2</span> Importing dependencies</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 This project is primarily uses <code>Keras</code> and <code>Sklearn</code> for the data analysis
@@ -343,8 +343,8 @@ matplotlib.use<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;
 </div>
 </div>
 
-<div id="outline-container-org38a15d2" class="outline-2">
-<h2 id="org38a15d2"><span class="section-number-2">3</span> Logging Setup</h2>
+<div id="outline-container-orgc89bc8e" class="outline-2">
+<h2 id="orgc89bc8e"><span class="section-number-2">3</span> Logging Setup</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 It was quite hard to keep track of different runs in the project, and noticed
@@ -352,8 +352,8 @@ I kept loosing track of previous runs and just wanted a log to save some of
 the metrics and information about the different runs.
 </p>
 </div>
-<div id="outline-container-orgafac135" class="outline-3">
-<h3 id="orgafac135"><span class="section-number-3">3.1</span> Simply adding whitespace to log file</h3>
+<div id="outline-container-org3d86781" class="outline-3">
+<h3 id="org3d86781"><span class="section-number-3">3.1</span> Simply adding whitespace to log file</h3>
 <div class="outline-text-3" id="text-3-1">
 <p>
 Nothing special is happening here, but just making sure there is whitespace
@@ -370,8 +370,8 @@ between runs in the log file.
 </div>
 </div>
 
-<div id="outline-container-orgcb01fa8" class="outline-3">
-<h3 id="orgcb01fa8"><span class="section-number-3">3.2</span> Defining CSVLogger and Tensorboard Settings</h3>
+<div id="outline-container-org989b0f1" class="outline-3">
+<h3 id="org989b0f1"><span class="section-number-3">3.2</span> Defining CSVLogger and Tensorboard Settings</h3>
 <div class="outline-text-3" id="text-3-2">
 <p>
 CSVLogger is used to keep track of the different runs manually, in addition
@@ -386,17 +386,17 @@ to setting up tensorboard.
 </div>
 
 <pre class="example">
-2021-07-07 12:19:02.602719: I tensorflow/core/profiler/lib/profiler_session.cc:136] Profiler session initializing.
-2021-07-07 12:19:02.602780: I tensorflow/core/profiler/lib/profiler_session.cc:155] Profiler session started.
-2021-07-07 12:19:02.602858: E tensorflow/core/profiler/internal/gpu/cupti_tracer.cc:1415] function cupti_interface_-&gt;Subscribe( &amp;subscriber_, (CUpti_CallbackFunc)ApiCallback, this)failed with error CUPTI could not be loaded or symbol could not be found.
-2021-07-07 12:19:02.602919: I tensorflow/core/profiler/lib/profiler_session.cc:172] Profiler session tear down.
-2021-07-07 12:19:02.602969: E tensorflow/core/profiler/internal/gpu/cupti_tracer.cc:1496] function cupti_interface_-&gt;Finalize()failed with error CUPTI could not be loaded or symbol could not be found.
+2021-07-07 15:09:57.107548: I tensorflow/core/profiler/lib/profiler_session.cc:136] Profiler session initializing.
+2021-07-07 15:09:57.107586: I tensorflow/core/profiler/lib/profiler_session.cc:155] Profiler session started.
+2021-07-07 15:09:57.107641: E tensorflow/core/profiler/internal/gpu/cupti_tracer.cc:1415] function cupti_interface_-&gt;Subscribe( &amp;subscriber_, (CUpti_CallbackFunc)ApiCallback, this)failed with error CUPTI could not be loaded or symbol could not be found.
+2021-07-07 15:09:57.107686: I tensorflow/core/profiler/lib/profiler_session.cc:172] Profiler session tear down.
+2021-07-07 15:09:57.107717: E tensorflow/core/profiler/internal/gpu/cupti_tracer.cc:1496] function cupti_interface_-&gt;Finalize()failed with error CUPTI could not be loaded or symbol could not be found.
 </pre>
 </div>
 </div>
 
-<div id="outline-container-org8f2417d" class="outline-3">
-<h3 id="org8f2417d"><span class="section-number-3">3.3</span> STDOUT Logging Settings</h3>
+<div id="outline-container-orgedddc18" class="outline-3">
+<h3 id="orgedddc18"><span class="section-number-3">3.3</span> STDOUT Logging Settings</h3>
 <div class="outline-text-3" id="text-3-3">
 <p>
 These are the settings for logging information to the terminal and debugging
@@ -411,8 +411,8 @@ the output.
 </div>
 </div>
 
-<div id="outline-container-org6a0daae" class="outline-2">
-<h2 id="org6a0daae"><span class="section-number-2">4</span> Hyperparameters</h2>
+<div id="outline-container-orgb762f0a" class="outline-2">
+<h2 id="orgb762f0a"><span class="section-number-2">4</span> Hyperparameters</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 In order to more easily configure the model and keep track of the settting,
@@ -437,12 +437,12 @@ where needed.
 </div>
 </div>
 
-<div id="outline-container-orgff539d0" class="outline-2">
-<h2 id="orgff539d0"><span class="section-number-2">5</span> Defining Helper Functions</h2>
+<div id="outline-container-orga4605fa" class="outline-2">
+<h2 id="orga4605fa"><span class="section-number-2">5</span> Defining Helper Functions</h2>
 <div class="outline-text-2" id="text-5">
 </div>
-<div id="outline-container-org6857420" class="outline-3">
-<h3 id="org6857420"><span class="section-number-3">5.1</span> Creating an ROC Plot</h3>
+<div id="outline-container-org2c33ebd" class="outline-3">
+<h3 id="org2c33ebd"><span class="section-number-3">5.1</span> Creating an ROC Plot</h3>
 <div class="outline-text-3" id="text-5-1">
 <p>
 This is a plot that takes in the "false positives" (<code>fper</code>) and "true
@@ -468,8 +468,8 @@ for binary classifications problems. A good explanation can be found <a href="ht
 </div>
 </div>
 
-<div id="outline-container-org0e380ff" class="outline-3">
-<h3 id="org0e380ff"><span class="section-number-3">5.2</span> Saving and Loading Models</h3>
+<div id="outline-container-org271d811" class="outline-3">
+<h3 id="org271d811"><span class="section-number-3">5.2</span> Saving and Loading Models</h3>
 <div class="outline-text-3" id="text-5-2">
 <p>
 Simply functions to save and load varieties of this hof_model.
@@ -493,8 +493,8 @@ Simply functions to save and load varieties of this hof_model.
 </div>
 </div>
 
-<div id="outline-container-orgfcfcb9c" class="outline-2">
-<h2 id="orgfcfcb9c"><span class="section-number-2">6</span> Importing Data</h2>
+<div id="outline-container-orgcae5097" class="outline-2">
+<h2 id="orgcae5097"><span class="section-number-2">6</span> Importing Data</h2>
 <div class="outline-text-2" id="text-6">
 <p>
 Importing the training and test datasets, in addition to defining the column
@@ -535,8 +535,8 @@ training data.
 </div>
 </div>
 
-<div id="outline-container-orga0a07b5" class="outline-2">
-<h2 id="orga0a07b5"><span class="section-number-2">7</span> Class Weights</h2>
+<div id="outline-container-org5ae6de1" class="outline-2">
+<h2 id="org5ae6de1"><span class="section-number-2">7</span> Class Weights</h2>
 <div class="outline-text-2" id="text-7">
 <p>
 One of the ways of dealing with an imbalanced data set is to weight the
@@ -547,7 +547,7 @@ ratio between the class weights.
 </p>
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #7e97af;">class_weights</span> = class_weight.compute_class_weight<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">'balanced'</span>, np.unique<span style="color: #bf6c68;">(</span>train_y<span style="color: #bf6c68;">)</span>, train_y<span style="color: #5e7e9b;">)</span>
-<span style="color: #7e97af;">class_weights</span> = <span style="color: #5e7e9b;">dict</span><span style="color: #5e7e9b;">(</span><span style="color: #5e7e9b;">enumerate</span><span style="color: #bf6c68;">(</span>class_weights.flatten<span style="color: #5a7273;">()</span>, <span style="color: #cb8986;">0</span><span style="color: #bf6c68;">)</span><span style="color: #5e7e9b;">)</span>
+<span style="color: #7e97af;">class_weights</span> = <span style="color: #5e7e9b;">dict</span><span style="color: #5e7e9b;">(</span><span style="color: #5e7e9b;">enumerate</span><span style="color: #bf6c68;">(</span>class_weights<span style="color: #bf6c68;">)</span><span style="color: #5e7e9b;">)</span>
 <span style="color: #48485e;"># </span><span style="color: #48485e;">class_weights = {0: 1.0, 1: 15.0}</span>
 <span style="color: #5e7e9b; font-weight: bold;">print</span><span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">"class weights: "</span>, class_weights<span style="color: #5e7e9b;">)</span>
 <span style="color: #5e7e9b; font-weight: bold;">print</span><span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">"value counts of Y in train_y: "</span>, train_y.<span style="color: #5e7e9b;">sum</span><span style="color: #bf6c68;">()</span><span style="color: #5e7e9b;">)</span>
@@ -556,6 +556,8 @@ ratio between the class weights.
 </div>
 
 <pre class="example">
+/home/olav/gitRepos/TTK28-project/venv/lib/python3.8/site-packages/sklearn/utils/validation.py:70: FutureWarning: Pass classes=[0 1], y=[0 1 0 ... 0 0 0] as keyword args. From version 1.0 (renaming of 0.25) passing these as positional arguments will result in an error
+  warnings.warn(f"Pass {args_msg} as keyword args. From version "
 class weights:  {0: 0.5354623824451411, 1: 7.5497237569060776}
 value counts of Y in train_y:  181
 value counts of N in train_y:  2552
@@ -563,8 +565,8 @@ value counts of N in train_y:  2552
 </div>
 </div>
 
-<div id="outline-container-org2230aaf" class="outline-2">
-<h2 id="org2230aaf"><span class="section-number-2">8</span> Grid Search for choosing models</h2>
+<div id="outline-container-orgb29146e" class="outline-2">
+<h2 id="orgb29146e"><span class="section-number-2">8</span> Grid Search for choosing models</h2>
 <div class="outline-text-2" id="text-8">
 <p>
 A few different attempts were made to try to compare some different binary
@@ -601,12 +603,12 @@ negative rates.
 </p>
 </div>
 
-<div id="outline-container-org7d524d4" class="outline-3">
-<h3 id="org7d524d4"><span class="section-number-3">8.1</span> Overview of results</h3>
+<div id="outline-container-org56c31da" class="outline-3">
+<h3 id="org56c31da"><span class="section-number-3">8.1</span> Overview of results</h3>
 <div class="outline-text-3" id="text-8-1">
 </div>
-<div id="outline-container-org6727b88" class="outline-4">
-<h4 id="org6727b88"><span class="section-number-4">8.1.1</span> Decision Tree Grid Search</h4>
+<div id="outline-container-org18740b0" class="outline-4">
+<h4 id="org18740b0"><span class="section-number-4">8.1.1</span> Decision Tree Grid Search</h4>
 <div class="outline-text-4" id="text-8-1-1">
 <p>
 The following results are from when only using the original 10 features.
@@ -630,7 +632,7 @@ and finds the best number of components for the decision tree.
 <li>Max Depth = <code>[2, 4, 6, 8, 10, 12]</code></li>
 </ul>
 
-<pre class="example" id="org749b0c4">
+<pre class="example" id="org4d0e2ef">
 : Best Score: 0.5178250609559948
 : Best Criterion: gini
 : Best max_depth: 12
@@ -641,8 +643,8 @@ and finds the best number of components for the decision tree.
 </div>
 </div>
 
-<div id="outline-container-orgdc9bafc" class="outline-4">
-<h4 id="orgdc9bafc"><span class="section-number-4">8.1.2</span> Logistic Regression Grid Search</h4>
+<div id="outline-container-orgd9fce60" class="outline-4">
+<h4 id="orgd9fce60"><span class="section-number-4">8.1.2</span> Logistic Regression Grid Search</h4>
 <div class="outline-text-4" id="text-8-1-2">
 <p>
 The following results are from when only using the original 10 features.
@@ -655,7 +657,7 @@ The following results are from when only using the original 10 features.
 <li>Solver = <code>['liblinear']</code></li>
 </ul>
 
-<pre class="example" id="org43b6e57">
+<pre class="example" id="org3d558fa">
 Fitting 5 folds for each of 280 candidates, totalling 1400 fits
 Best Score: 0.5373897826007131
 
@@ -665,8 +667,8 @@ Best Estimator: LogisticRegression(C=1.623776739188721, class_weight={0: 1.0, 1:
 </div>
 </div>
 
-<div id="outline-container-orga0b3349" class="outline-4">
-<h4 id="orga0b3349"><span class="section-number-4">8.1.3</span> Neural Network Grid Search</h4>
+<div id="outline-container-org7aa46db" class="outline-4">
+<h4 id="org7aa46db"><span class="section-number-4">8.1.3</span> Neural Network Grid Search</h4>
 <div class="outline-text-4" id="text-8-1-3">
 <p>
 The following results are from when only using the original 10 features.
@@ -682,7 +684,7 @@ following resutl
 <li>Epochs = <code>[100, 125, 150, 175, 200]</code></li>
 </ul>
 
-<pre class="example" id="orgfda092f">
+<pre class="example" id="org7373d2e">
 Best Score: 0.6292982089131982
 Best Estimator: {'verbose': 0, 'batch_size': 4, 'epochs': 200, 'build_fn': &lt;function create_model at 0x7f440e43d9d0&gt;}
 </pre>
@@ -695,7 +697,7 @@ The <code>class weights</code> parameter were set to 'balanced' for this run.
 <li>Epochs = <code>[190, 200, 210]</code></li>
 </ul>
 
-<pre class="example" id="orga9f37ed">
+<pre class="example" id="orge964533">
 Best Score: 0.589460143563261
 
 Best Estimator: {'verbose': 0, 'batch_size': 5, 'epochs': 210, 'build_fn': &lt;function create_model at 0x7f938bf6a9d0&gt;}
@@ -709,7 +711,7 @@ The <code>class weights</code> parameter were set to 'balanced' for this run.
 <li>Epochs = <code>[200, 250, 300, 400]</code></li>
 </ul>
 
-<pre class="example" id="orgacab4af">
+<pre class="example" id="orge3aedfd">
 Best Score: 0.5824397099036812
 Best Estimator: {'verbose': 0, 'batch_size': 6, 'epochs': 250, 'build_fn': &lt;function create_model at 0x7f938bf5a280&gt;}
 </pre>
@@ -717,12 +719,12 @@ Best Estimator: {'verbose': 0, 'batch_size': 6, 'epochs': 250, 'build_fn': &lt;f
 </div>
 </div>
 
-<div id="outline-container-orgd9a09e9" class="outline-3">
-<h3 id="orgd9a09e9"><span class="section-number-3">8.2</span> Actual Code</h3>
+<div id="outline-container-org7f3f988" class="outline-3">
+<h3 id="org7f3f988"><span class="section-number-3">8.2</span> Actual Code</h3>
 <div class="outline-text-3" id="text-8-2">
 </div>
-<div id="outline-container-org43da079" class="outline-4">
-<h4 id="org43da079"><span class="section-number-4">8.2.1</span> Using Grid Search for the Decision Tree Classifier</h4>
+<div id="outline-container-org42cdc2d" class="outline-4">
+<h4 id="org42cdc2d"><span class="section-number-4">8.2.1</span> Using Grid Search for the Decision Tree Classifier</h4>
 <div class="outline-text-4" id="text-8-2-1">
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #7e97af;">pca</span> = decomposition.PCA<span style="color: #5e7e9b;">()</span>
@@ -758,8 +760,8 @@ DecisionTreeClassifier(class_weight={0: 1.0, 1: 16}, max_depth=12)
 </div>
 </div>
 
-<div id="outline-container-org9937def" class="outline-4">
-<h4 id="org9937def"><span class="section-number-4">8.2.2</span> Using Grid Search for the Logistic Regression</h4>
+<div id="outline-container-orgcfe14b3" class="outline-4">
+<h4 id="orgcfe14b3"><span class="section-number-4">8.2.2</span> Using Grid Search for the Logistic Regression</h4>
 <div class="outline-text-4" id="text-8-2-2">
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #5e7e9b; font-weight: bold;">from</span> sklearn.linear_model <span style="color: #5e7e9b; font-weight: bold;">import</span> LogisticRegression
@@ -777,7 +779,7 @@ clf_GS.fit<span style="color: #5e7e9b;">(</span>train_X, train_y<span style="col
 </pre>
 </div>
 
-<pre class="example" id="orgd0ee6c3">
+<pre class="example" id="orgcadd6d5">
 Fitting 5 folds for each of 280 candidates, totalling 1400 fits
 Best Score: 0.5373897826007131
 
@@ -787,8 +789,8 @@ Best Estimator: LogisticRegression(C=1.623776739188721, class_weight={0: 1.0, 1:
 </div>
 </div>
 
-<div id="outline-container-org4b34603" class="outline-4">
-<h4 id="org4b34603"><span class="section-number-4">8.2.3</span> Using Grid Search for Neural Network</h4>
+<div id="outline-container-org3ac2c48" class="outline-4">
+<h4 id="org3ac2c48"><span class="section-number-4">8.2.3</span> Using Grid Search for Neural Network</h4>
 <div class="outline-text-4" id="text-8-2-3">
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #5e7e9b; font-weight: bold;">def</span> <span style="color: #bf6c68; font-weight: bold;">create_model</span><span style="color: #5e7e9b;">()</span>:
@@ -819,7 +821,7 @@ clf_GS.fit<span style="color: #5e7e9b;">(</span>train_X, train_y, class_weight=c
 </pre>
 </div>
 
-<pre class="example" id="orgafbda57">
+<pre class="example" id="org0277386">
 Best Score: 0.5824397099036812
 
 Best Estimator: {'verbose': 0, 'batch_size': 6, 'epochs': 250, 'build_fn': &lt;function create_model at 0x7f938bf5a280&gt;}
@@ -829,12 +831,12 @@ Best Estimator: {'verbose': 0, 'batch_size': 6, 'epochs': 250, 'build_fn': &lt;f
 </div>
 </div>
 
-<div id="outline-container-org49190e4" class="outline-2">
-<h2 id="org49190e4"><span class="section-number-2">9</span> The Final Model</h2>
+<div id="outline-container-orgad7b41a" class="outline-2">
+<h2 id="orgad7b41a"><span class="section-number-2">9</span> The Final Model</h2>
 <div class="outline-text-2" id="text-9">
 </div>
-<div id="outline-container-org0141426" class="outline-3">
-<h3 id="org0141426"><span class="section-number-3">9.1</span> Checkpointing Model Weights</h3>
+<div id="outline-container-orgf9ddfc3" class="outline-3">
+<h3 id="orgf9ddfc3"><span class="section-number-3">9.1</span> Checkpointing Model Weights</h3>
 <div class="outline-text-3" id="text-9-1">
 <p>
 This for setting up the checkpoints while running the model. It is not really
@@ -848,8 +850,8 @@ in use right now as it is not added in the <code>model.fit</code> callbacks.
 </div>
 </div>
 
-<div id="outline-container-orgb24b33e" class="outline-3">
-<h3 id="orgb24b33e"><span class="section-number-3">9.2</span> Defining and Training the Classifier</h3>
+<div id="outline-container-org93bf41f" class="outline-3">
+<h3 id="org93bf41f"><span class="section-number-3">9.2</span> Defining and Training the Classifier</h3>
 <div class="outline-text-3" id="text-9-2">
 <p>
 Some different model structures were tested for this model, but there were
@@ -889,21 +891,141 @@ A summation of these rules were outlined as the following:
 
 <span style="color: #7e97af;">model</span> = KerasClassifier<span style="color: #5e7e9b;">(</span>build_fn=create_model, epochs=HP<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'EPOCHS'</span><span style="color: #bf6c68;">]</span>,
                             batch_size=HP<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'BATCH_SIZE'</span><span style="color: #bf6c68;">]</span>, verbose = <span style="color: #cb8986;">2</span><span style="color: #5e7e9b;">)</span>
-model.fit<span style="color: #5e7e9b;">(</span>train_X, train_y, class_weight=class_weight, callbacks=<span style="color: #bf6c68;">[</span>csv_logger, tensorboard_callback<span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">)</span>
+model.fit<span style="color: #5e7e9b;">(</span>train_X, train_y, class_weight=class_weights, callbacks=<span style="color: #bf6c68;">[</span>csv_logger, tensorboard_callback<span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">)</span>
+</pre>
+</div>
+
+<pre class="example" id="org4f14577">
+Epoch 1/50
+2021-07-07 15:10:01.659123: I tensorflow/core/profiler/lib/profiler_session.cc:136] Profiler session initializing.
+2021-07-07 15:10:01.659172: I tensorflow/core/profiler/lib/profiler_session.cc:155] Profiler session started.
+2021-07-07 15:10:01.659210: E tensorflow/core/profiler/internal/gpu/cupti_tracer.cc:1415] function cupti_interface_-&gt;Subscribe( &amp;subscriber_, (CUpti_CallbackFunc)ApiCallback, this)failed with error CUPTI could not be loaded or symbol could not be found.
+2021-07-07 15:10:01.665821: I tensorflow/core/profiler/lib/profiler_session.cc:71] Profiler session collecting data.
+2021-07-07 15:10:01.665893: E tensorflow/core/profiler/internal/gpu/cupti_tracer.cc:1496] function cupti_interface_-&gt;Finalize()failed with error CUPTI could not be loaded or symbol could not be found.
+2021-07-07 15:10:01.668651: I tensorflow/core/profiler/internal/gpu/cupti_collector.cc:228]  GpuTracer has collected 0 callback api events and 0 activity events. 
+2021-07-07 15:10:01.670767: I tensorflow/core/profiler/lib/profiler_session.cc:172] Profiler session tear down.
+2021-07-07 15:10:01.678605: I tensorflow/core/profiler/rpc/client/save_profile.cc:137] Creating directory: ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01
+2021-07-07 15:10:01.680072: I tensorflow/core/profiler/rpc/client/save_profile.cc:143] Dumped gzipped tool data for trace.json.gz to ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01/BigArch.trace.json.gz
+2021-07-07 15:10:01.687139: I tensorflow/core/profiler/rpc/client/save_profile.cc:137] Creating directory: ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01
+2021-07-07 15:10:01.687306: I tensorflow/core/profiler/rpc/client/save_profile.cc:143] Dumped gzipped tool data for memory_profile.json.gz to ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01/BigArch.memory_profile.json.gz
+2021-07-07 15:10:01.687594: I tensorflow/core/profiler/rpc/client/capture_profile.cc:251] Creating directory: ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01Dumped tool data for xplane.pb to ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01/BigArch.xplane.pb
+Dumped tool data for overview_page.pb to ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01/BigArch.overview_page.pb
+Dumped tool data for input_pipeline.pb to ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01/BigArch.input_pipeline.pb
+Dumped tool data for tensorflow_stats.pb to ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01/BigArch.tensorflow_stats.pb
+Dumped tool data for kernel_stats.pb to ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01/BigArch.kernel_stats.pb
+
+2733/2733 - 2s - loss: 0.4942 - accuracy: 0.8094 - recall: 0.7072
+Epoch 2/50
+2733/2733 - 2s - loss: 0.3264 - accuracy: 0.8229 - recall: 0.9116
+Epoch 3/50
+2733/2733 - 2s - loss: 0.2861 - accuracy: 0.8529 - recall: 0.9171
+Epoch 4/50
+2733/2733 - 2s - loss: 0.2698 - accuracy: 0.8613 - recall: 0.9061
+Epoch 5/50
+2733/2733 - 2s - loss: 0.2620 - accuracy: 0.8558 - recall: 0.9282
+Epoch 6/50
+2733/2733 - 2s - loss: 0.2500 - accuracy: 0.8664 - recall: 0.9282
+Epoch 7/50
+2733/2733 - 2s - loss: 0.2498 - accuracy: 0.8767 - recall: 0.9116
+Epoch 8/50
+2733/2733 - 2s - loss: 0.2488 - accuracy: 0.8811 - recall: 0.9006
+Epoch 9/50
+2733/2733 - 2s - loss: 0.2416 - accuracy: 0.8836 - recall: 0.9116
+Epoch 10/50
+2733/2733 - 2s - loss: 0.2379 - accuracy: 0.8785 - recall: 0.9227
+Epoch 11/50
+2733/2733 - 2s - loss: 0.2365 - accuracy: 0.8902 - recall: 0.9006
+Epoch 12/50
+2733/2733 - 2s - loss: 0.2314 - accuracy: 0.8811 - recall: 0.9116
+Epoch 13/50
+2733/2733 - 2s - loss: 0.2262 - accuracy: 0.8880 - recall: 0.9171
+Epoch 14/50
+2733/2733 - 2s - loss: 0.2224 - accuracy: 0.8869 - recall: 0.9116
+Epoch 15/50
+2733/2733 - 2s - loss: 0.2212 - accuracy: 0.8873 - recall: 0.9171
+Epoch 16/50
+2733/2733 - 2s - loss: 0.2195 - accuracy: 0.8833 - recall: 0.9116
+Epoch 17/50
+2733/2733 - 2s - loss: 0.2159 - accuracy: 0.8902 - recall: 0.9171
+Epoch 18/50
+2733/2733 - 2s - loss: 0.2117 - accuracy: 0.8928 - recall: 0.9337
+Epoch 19/50
+2733/2733 - 2s - loss: 0.2070 - accuracy: 0.8917 - recall: 0.9392
+Epoch 20/50
+2733/2733 - 2s - loss: 0.2060 - accuracy: 0.8932 - recall: 0.9337
+Epoch 21/50
+2733/2733 - 2s - loss: 0.2026 - accuracy: 0.8983 - recall: 0.9337
+Epoch 22/50
+2733/2733 - 2s - loss: 0.2032 - accuracy: 0.8965 - recall: 0.9227
+Epoch 23/50
+2733/2733 - 2s - loss: 0.1954 - accuracy: 0.8994 - recall: 0.9392
+Epoch 24/50
+2733/2733 - 2s - loss: 0.1921 - accuracy: 0.8990 - recall: 0.9448
+Epoch 25/50
+2733/2733 - 2s - loss: 0.1939 - accuracy: 0.9016 - recall: 0.9282
+Epoch 26/50
+2733/2733 - 2s - loss: 0.1916 - accuracy: 0.8997 - recall: 0.9337
+Epoch 27/50
+2733/2733 - 2s - loss: 0.1900 - accuracy: 0.9045 - recall: 0.9392
+Epoch 28/50
+2733/2733 - 2s - loss: 0.1860 - accuracy: 0.8997 - recall: 0.9503
+Epoch 29/50
+2733/2733 - 2s - loss: 0.1847 - accuracy: 0.9049 - recall: 0.9558
+Epoch 30/50
+2733/2733 - 2s - loss: 0.1803 - accuracy: 0.9071 - recall: 0.9503
+Epoch 31/50
+2733/2733 - 2s - loss: 0.1763 - accuracy: 0.9096 - recall: 0.9613
+Epoch 32/50
+2733/2733 - 2s - loss: 0.1815 - accuracy: 0.9104 - recall: 0.9337
+Epoch 33/50
+2733/2733 - 2s - loss: 0.1737 - accuracy: 0.9093 - recall: 0.9503
+Epoch 34/50
+2733/2733 - 2s - loss: 0.1800 - accuracy: 0.9104 - recall: 0.9558
+Epoch 35/50
+2733/2733 - 2s - loss: 0.1725 - accuracy: 0.9118 - recall: 0.9503
+Epoch 36/50
+2733/2733 - 2s - loss: 0.1781 - accuracy: 0.9136 - recall: 0.9448
+Epoch 37/50
+2733/2733 - 2s - loss: 0.1683 - accuracy: 0.9093 - recall: 0.9503
+Epoch 38/50
+2733/2733 - 2s - loss: 0.1672 - accuracy: 0.9122 - recall: 0.9392
+Epoch 39/50
+2733/2733 - 2s - loss: 0.1660 - accuracy: 0.9096 - recall: 0.9448
+Epoch 40/50
+2733/2733 - 2s - loss: 0.1742 - accuracy: 0.9100 - recall: 0.9558
+Epoch 41/50
+2733/2733 - 2s - loss: 0.1698 - accuracy: 0.9147 - recall: 0.9503
+Epoch 42/50
+2733/2733 - 2s - loss: 0.1708 - accuracy: 0.9085 - recall: 0.9613
+Epoch 43/50
+2733/2733 - 2s - loss: 0.1608 - accuracy: 0.9158 - recall: 0.9669
+Epoch 44/50
+2733/2733 - 2s - loss: 0.1706 - accuracy: 0.9082 - recall: 0.9503
+Epoch 45/50
+2733/2733 - 2s - loss: 0.1677 - accuracy: 0.9122 - recall: 0.9669
+Epoch 46/50
+2733/2733 - 2s - loss: 0.1605 - accuracy: 0.9122 - recall: 0.9669
+Epoch 47/50
+2733/2733 - 2s - loss: 0.1611 - accuracy: 0.9140 - recall: 0.9558
+Epoch 48/50
+2733/2733 - 2s - loss: 0.1642 - accuracy: 0.9133 - recall: 0.9613
+Epoch 49/50
+2733/2733 - 2s - loss: 0.1674 - accuracy: 0.9104 - recall: 0.9558
+Epoch 50/50
+2733/2733 - 2s - loss: 0.1611 - accuracy: 0.9118 - recall: 0.9669
 </pre>
 </div>
 </div>
-</div>
 
-<div id="outline-container-orgddf318f" class="outline-3">
-<h3 id="orgddf318f"><span class="section-number-3">9.3</span> Saving or Loading the Classifier</h3>
+<div id="outline-container-org8f594da" class="outline-3">
+<h3 id="org8f594da"><span class="section-number-3">9.3</span> Saving or Loading the Classifier</h3>
 <div class="outline-text-3" id="text-9-3">
 <p>
 Both of these blocks can be uncommented to save or load models as desired.
 </p>
 </div>
-<div id="outline-container-orgfdcc782" class="outline-4">
-<h4 id="orgfdcc782"><span class="section-number-4">9.3.1</span> Saving the Model</h4>
+<div id="outline-container-org715e5a0" class="outline-4">
+<h4 id="org715e5a0"><span class="section-number-4">9.3.1</span> Saving the Model</h4>
 <div class="outline-text-4" id="text-9-3-1">
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #48485e;">### </span><span style="color: #48485e;">Saving Entire Model</span>
@@ -914,8 +1036,8 @@ Both of these blocks can be uncommented to save or load models as desired.
 </div>
 </div>
 
-<div id="outline-container-org841142e" class="outline-4">
-<h4 id="org841142e"><span class="section-number-4">9.3.2</span> Loading the Model</h4>
+<div id="outline-container-org90f777d" class="outline-4">
+<h4 id="org90f777d"><span class="section-number-4">9.3.2</span> Loading the Model</h4>
 <div class="outline-text-4" id="text-9-3-2">
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #48485e;">### </span><span style="color: #48485e;">Loading Entire Model</span>
@@ -928,12 +1050,12 @@ Both of these blocks can be uncommented to save or load models as desired.
 </div>
 </div>
 
-<div id="outline-container-orga2f4a1f" class="outline-2">
-<h2 id="orga2f4a1f"><span class="section-number-2">10</span> Evaluating and Metrics</h2>
+<div id="outline-container-orgfa58f65" class="outline-2">
+<h2 id="orgfa58f65"><span class="section-number-2">10</span> Evaluating and Metrics</h2>
 <div class="outline-text-2" id="text-10">
 </div>
-<div id="outline-container-org32d24fb" class="outline-3">
-<h3 id="org32d24fb"><span class="section-number-3">10.1</span> Predictions and Prediction Probabilities</h3>
+<div id="outline-container-org07a0b1d" class="outline-3">
+<h3 id="org07a0b1d"><span class="section-number-3">10.1</span> Predictions and Prediction Probabilities</h3>
 <div class="outline-text-3" id="text-10-1">
 <p>
 The <code>model.predict()</code> will return the class predictions for the input data put
@@ -945,15 +1067,24 @@ belonging to the different classes.
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #48485e;"># </span><span style="color: #48485e;">Testing the model</span>
 <span style="color: #7e97af;">pred</span> = model.predict<span style="color: #5e7e9b;">(</span>test_X<span style="color: #5e7e9b;">)</span>
-<span style="color: #48485e;"># </span><span style="color: #48485e;">y_score = model.predict_proba(test_X, batch_size=HP['BATCH_SIZE'])</span>
-<span style="color: #7e97af;">y_score</span> = model.predict_proba<span style="color: #5e7e9b;">(</span>test_X<span style="color: #5e7e9b;">)</span>
+<span style="color: #7e97af;">y_score</span> = model.predict_proba<span style="color: #5e7e9b;">(</span>test_X, batch_size=HP<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'BATCH_SIZE'</span><span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">)</span>
+<span style="color: #48485e;"># </span><span style="color: #48485e;">y_score = model.predict_proba(test_X)</span>
+</pre>
+</div>
+
+<pre class="example">
+/home/olav/gitRepos/TTK28-project/venv/lib/python3.8/site-packages/tensorflow/python/keras/engine/sequential.py:450: UserWarning: `model.predict_classes()` is deprecated and will be removed after 2021-01-01. Please use instead:* `np.argmax(model.predict(x), axis=-1)`,   if your model does multi-class classification   (e.g. if it uses a `softmax` last-layer activation).* `(model.predict(x) &gt; 0.5).astype("int32")`,   if your model does binary classification   (e.g. if it uses a `sigmoid` last-layer activation).
+  warnings.warn('`model.predict_classes()` is deprecated and '
+683/683 - 0s
+/home/olav/gitRepos/TTK28-project/venv/lib/python3.8/site-packages/tensorflow/python/keras/engine/sequential.py:425: UserWarning: `model.predict_proba()` is deprecated and will be removed after 2021-01-01. Please use `model.predict()` instead.
+  warnings.warn('`model.predict_proba()` is deprecated and '
+683/683 - 0s
 </pre>
 </div>
 </div>
-</div>
 
-<div id="outline-container-org0a619af" class="outline-3">
-<h3 id="org0a619af"><span class="section-number-3">10.2</span> Metrics</h3>
+<div id="outline-container-orga33f790" class="outline-3">
+<h3 id="orga33f790"><span class="section-number-3">10.2</span> Metrics</h3>
 <div class="outline-text-3" id="text-10-2">
 <p>
 Since the data set is imbalanced, there are other metrics to consider beyond
@@ -1002,12 +1133,27 @@ while always predicting them as non-HoF players.
     <span style="color: #5e7e9b; font-weight: bold;">print</span><span style="color: #5e7e9b;">(</span>metric_dict, <span style="color: #5e7e9b;">file</span>=<span style="color: #5e7e9b;">file</span><span style="color: #5e7e9b;">)</span>
 </pre>
 </div>
+
+<pre class="example" id="org468b22c">
+tn :  597
+fp :  41
+fn :  11
+tp :  34
+###### ---------Overall Results --------- ######
+accuracy:  0.9238653001464129
+MCC:  0.5485242750356047
+confusion_mat:  [597, 41, 11, 34]
+auroc:  0.03974225008707767
+precision:  0.4533333333333333
+recall:  0.7555555555555555
+f1:  0.5666666666666667
+</pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgdbd3559" class="outline-2">
-<h2 id="orgdbd3559"><span class="section-number-2">11</span> Plots</h2>
+<div id="outline-container-org69ccc89" class="outline-2">
+<h2 id="org69ccc89"><span class="section-number-2">11</span> Plots</h2>
 <div class="outline-text-2" id="text-11">
 <p>
 Three metrics that are smart to include for imbalanced datasets are:
@@ -1028,12 +1174,18 @@ plot_roc_curve<span style="color: #5e7e9b;">(</span>fper, tper, HP<span style="c
 </pre>
 </div>
 
+<pre class="example">
+man_auroc:  0.9602577499129223
+</pre>
+
+
+
 <p>
 The latest ROC_plot is the following plot.
 </p>
 
 
-<div id="org87ecb5c" class="figure">
+<div id="org912c16a" class="figure">
 <p><img src="ROC_curve_latest.png" alt="ROC_curve_latest.png" />
 </p>
 </div>
@@ -1054,7 +1206,7 @@ The confusion matrix for the last run.
 </p>
 
 
-<div id="orge540312" class="figure">
+<div id="org529db9b" class="figure">
 <p><img src="confusion_mat_latest.png" alt="confusion_mat_latest.png" />
 </p>
 </div>
@@ -1071,7 +1223,7 @@ plt.clf<span style="color: #5e7e9b;">()</span>
 </div>
 
 
-<div id="orgc710277" class="figure">
+<div id="org230349c" class="figure">
 <p><img src="precision_recall_curve_latest.png" alt="precision_recall_curve_latest.png" />
 </p>
 </div>
@@ -1079,8 +1231,8 @@ plt.clf<span style="color: #5e7e9b;">()</span>
 </div>
 
 
-<div id="outline-container-org52be835" class="outline-2">
-<h2 id="org52be835"><span class="section-number-2">12</span> Links to Other Files in Project</h2>
+<div id="outline-container-orga36ca70" class="outline-2">
+<h2 id="orga36ca70"><span class="section-number-2">12</span> Links to Other Files in Project</h2>
 <div class="outline-text-2" id="text-12">
 <ol class="org-ol">
 <li><a href="https://www.olavpedersen.com/standalone_hof/extract_data.html">extract_data</a>: Extracting data from Lahman's raw data.</li>
@@ -1092,7 +1244,7 @@ plt.clf<span style="color: #5e7e9b;">()</span>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Olav Landmark Pedersen</p>
-<p class="date">Created: 2021-07-07 Wed 14:34</p>
+<p class="date">Created: 2021-07-07 Wed 15:12</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

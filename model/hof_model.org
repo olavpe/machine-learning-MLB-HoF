@@ -80,11 +80,11 @@
 #+end_src
 
 #+RESULTS:
-: 2021-07-07 12:19:02.602719: I tensorflow/core/profiler/lib/profiler_session.cc:136] Profiler session initializing.
-: 2021-07-07 12:19:02.602780: I tensorflow/core/profiler/lib/profiler_session.cc:155] Profiler session started.
-: 2021-07-07 12:19:02.602858: E tensorflow/core/profiler/internal/gpu/cupti_tracer.cc:1415] function cupti_interface_->Subscribe( &subscriber_, (CUpti_CallbackFunc)ApiCallback, this)failed with error CUPTI could not be loaded or symbol could not be found.
-: 2021-07-07 12:19:02.602919: I tensorflow/core/profiler/lib/profiler_session.cc:172] Profiler session tear down.
-: 2021-07-07 12:19:02.602969: E tensorflow/core/profiler/internal/gpu/cupti_tracer.cc:1496] function cupti_interface_->Finalize()failed with error CUPTI could not be loaded or symbol could not be found.
+: 2021-07-07 15:09:57.107548: I tensorflow/core/profiler/lib/profiler_session.cc:136] Profiler session initializing.
+: 2021-07-07 15:09:57.107586: I tensorflow/core/profiler/lib/profiler_session.cc:155] Profiler session started.
+: 2021-07-07 15:09:57.107641: E tensorflow/core/profiler/internal/gpu/cupti_tracer.cc:1415] function cupti_interface_->Subscribe( &subscriber_, (CUpti_CallbackFunc)ApiCallback, this)failed with error CUPTI could not be loaded or symbol could not be found.
+: 2021-07-07 15:09:57.107686: I tensorflow/core/profiler/lib/profiler_session.cc:172] Profiler session tear down.
+: 2021-07-07 15:09:57.107717: E tensorflow/core/profiler/internal/gpu/cupti_tracer.cc:1496] function cupti_interface_->Finalize()failed with error CUPTI could not be loaded or symbol could not be found.
 
 ** STDOUT Logging Settings
    These are the settings for logging information to the terminal and debugging
@@ -203,7 +203,7 @@
   ratio between the class weights.
 #+begin_src python :session SESSION_1 :results output :exports both
   class_weights = class_weight.compute_class_weight('balanced', np.unique(train_y), train_y)
-  class_weights = dict(enumerate(class_weights.flatten(), 0))
+  class_weights = dict(enumerate(class_weights))
   # class_weights = {0: 1.0, 1: 15.0}
   print("class weights: ", class_weights)
   print("value counts of Y in train_y: ", train_y.sum())
@@ -211,6 +211,8 @@
 #+end_src
 
 #+RESULTS:
+: /home/olav/gitRepos/TTK28-project/venv/lib/python3.8/site-packages/sklearn/utils/validation.py:70: FutureWarning: Pass classes=[0 1], y=[0 1 0 ... 0 0 0] as keyword args. From version 1.0 (renaming of 0.25) passing these as positional arguments will result in an error
+:   warnings.warn(f"Pass {args_msg} as keyword args. From version "
 : class weights:  {0: 0.5354623824451411, 1: 7.5497237569060776}
 : value counts of Y in train_y:  181
 : value counts of N in train_y:  2552
@@ -378,7 +380,7 @@ Best Estimator: LogisticRegression(C=1.623776739188721, class_weight={0: 1.0, 1:
 
 *** Using Grid Search for Neural Network
 
-#+begin_src python :session SESSION_1 :results output :exports both
+#+begin_src python :session SESSION_1 :results output :exports both :eval no
   def create_model():
       model = Sequential([
           Dense(10, activation='relu', input_shape=(10,)),
@@ -440,7 +442,7 @@ Best Estimator: LogisticRegression(C=1.623776739188721, class_weight={0: 1.0, 1:
     1. number of hidden layers equals one
     2. the number of neurons in that layer is the mean of the neurons in the input and output layers.
 
- #+begin_src python :session SESSION_1 :results output :exports both :eval no
+ #+begin_src python :session SESSION_1 :results output :exports both
    def create_model():
        model = Sequential([
            Dense(10, activation='relu', input_shape=(10,)),
@@ -456,8 +458,129 @@ Best Estimator: LogisticRegression(C=1.623776739188721, class_weight={0: 1.0, 1:
 
    model = KerasClassifier(build_fn=create_model, epochs=HP['EPOCHS'],
                                batch_size=HP['BATCH_SIZE'], verbose = 2)
-   model.fit(train_X, train_y, class_weight=class_weight, callbacks=[csv_logger, tensorboard_callback])
+   model.fit(train_X, train_y, class_weight=class_weights, callbacks=[csv_logger, tensorboard_callback])
  #+end_src
+
+ #+RESULTS:
+ #+begin_example
+ Epoch 1/50
+ 2021-07-07 15:10:01.659123: I tensorflow/core/profiler/lib/profiler_session.cc:136] Profiler session initializing.
+ 2021-07-07 15:10:01.659172: I tensorflow/core/profiler/lib/profiler_session.cc:155] Profiler session started.
+ 2021-07-07 15:10:01.659210: E tensorflow/core/profiler/internal/gpu/cupti_tracer.cc:1415] function cupti_interface_->Subscribe( &subscriber_, (CUpti_CallbackFunc)ApiCallback, this)failed with error CUPTI could not be loaded or symbol could not be found.
+ 2021-07-07 15:10:01.665821: I tensorflow/core/profiler/lib/profiler_session.cc:71] Profiler session collecting data.
+ 2021-07-07 15:10:01.665893: E tensorflow/core/profiler/internal/gpu/cupti_tracer.cc:1496] function cupti_interface_->Finalize()failed with error CUPTI could not be loaded or symbol could not be found.
+ 2021-07-07 15:10:01.668651: I tensorflow/core/profiler/internal/gpu/cupti_collector.cc:228]  GpuTracer has collected 0 callback api events and 0 activity events. 
+ 2021-07-07 15:10:01.670767: I tensorflow/core/profiler/lib/profiler_session.cc:172] Profiler session tear down.
+ 2021-07-07 15:10:01.678605: I tensorflow/core/profiler/rpc/client/save_profile.cc:137] Creating directory: ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01
+ 2021-07-07 15:10:01.680072: I tensorflow/core/profiler/rpc/client/save_profile.cc:143] Dumped gzipped tool data for trace.json.gz to ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01/BigArch.trace.json.gz
+ 2021-07-07 15:10:01.687139: I tensorflow/core/profiler/rpc/client/save_profile.cc:137] Creating directory: ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01
+ 2021-07-07 15:10:01.687306: I tensorflow/core/profiler/rpc/client/save_profile.cc:143] Dumped gzipped tool data for memory_profile.json.gz to ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01/BigArch.memory_profile.json.gz
+ 2021-07-07 15:10:01.687594: I tensorflow/core/profiler/rpc/client/capture_profile.cc:251] Creating directory: ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01Dumped tool data for xplane.pb to ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01/BigArch.xplane.pb
+ Dumped tool data for overview_page.pb to ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01/BigArch.overview_page.pb
+ Dumped tool data for input_pipeline.pb to ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01/BigArch.input_pipeline.pb
+ Dumped tool data for tensorflow_stats.pb to ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01/BigArch.tensorflow_stats.pb
+ Dumped tool data for kernel_stats.pb to ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01/BigArch.kernel_stats.pb
+
+ 2733/2733 - 2s - loss: 0.4942 - accuracy: 0.8094 - recall: 0.7072
+ Epoch 2/50
+ 2733/2733 - 2s - loss: 0.3264 - accuracy: 0.8229 - recall: 0.9116
+ Epoch 3/50
+ 2733/2733 - 2s - loss: 0.2861 - accuracy: 0.8529 - recall: 0.9171
+ Epoch 4/50
+ 2733/2733 - 2s - loss: 0.2698 - accuracy: 0.8613 - recall: 0.9061
+ Epoch 5/50
+ 2733/2733 - 2s - loss: 0.2620 - accuracy: 0.8558 - recall: 0.9282
+ Epoch 6/50
+ 2733/2733 - 2s - loss: 0.2500 - accuracy: 0.8664 - recall: 0.9282
+ Epoch 7/50
+ 2733/2733 - 2s - loss: 0.2498 - accuracy: 0.8767 - recall: 0.9116
+ Epoch 8/50
+ 2733/2733 - 2s - loss: 0.2488 - accuracy: 0.8811 - recall: 0.9006
+ Epoch 9/50
+ 2733/2733 - 2s - loss: 0.2416 - accuracy: 0.8836 - recall: 0.9116
+ Epoch 10/50
+ 2733/2733 - 2s - loss: 0.2379 - accuracy: 0.8785 - recall: 0.9227
+ Epoch 11/50
+ 2733/2733 - 2s - loss: 0.2365 - accuracy: 0.8902 - recall: 0.9006
+ Epoch 12/50
+ 2733/2733 - 2s - loss: 0.2314 - accuracy: 0.8811 - recall: 0.9116
+ Epoch 13/50
+ 2733/2733 - 2s - loss: 0.2262 - accuracy: 0.8880 - recall: 0.9171
+ Epoch 14/50
+ 2733/2733 - 2s - loss: 0.2224 - accuracy: 0.8869 - recall: 0.9116
+ Epoch 15/50
+ 2733/2733 - 2s - loss: 0.2212 - accuracy: 0.8873 - recall: 0.9171
+ Epoch 16/50
+ 2733/2733 - 2s - loss: 0.2195 - accuracy: 0.8833 - recall: 0.9116
+ Epoch 17/50
+ 2733/2733 - 2s - loss: 0.2159 - accuracy: 0.8902 - recall: 0.9171
+ Epoch 18/50
+ 2733/2733 - 2s - loss: 0.2117 - accuracy: 0.8928 - recall: 0.9337
+ Epoch 19/50
+ 2733/2733 - 2s - loss: 0.2070 - accuracy: 0.8917 - recall: 0.9392
+ Epoch 20/50
+ 2733/2733 - 2s - loss: 0.2060 - accuracy: 0.8932 - recall: 0.9337
+ Epoch 21/50
+ 2733/2733 - 2s - loss: 0.2026 - accuracy: 0.8983 - recall: 0.9337
+ Epoch 22/50
+ 2733/2733 - 2s - loss: 0.2032 - accuracy: 0.8965 - recall: 0.9227
+ Epoch 23/50
+ 2733/2733 - 2s - loss: 0.1954 - accuracy: 0.8994 - recall: 0.9392
+ Epoch 24/50
+ 2733/2733 - 2s - loss: 0.1921 - accuracy: 0.8990 - recall: 0.9448
+ Epoch 25/50
+ 2733/2733 - 2s - loss: 0.1939 - accuracy: 0.9016 - recall: 0.9282
+ Epoch 26/50
+ 2733/2733 - 2s - loss: 0.1916 - accuracy: 0.8997 - recall: 0.9337
+ Epoch 27/50
+ 2733/2733 - 2s - loss: 0.1900 - accuracy: 0.9045 - recall: 0.9392
+ Epoch 28/50
+ 2733/2733 - 2s - loss: 0.1860 - accuracy: 0.8997 - recall: 0.9503
+ Epoch 29/50
+ 2733/2733 - 2s - loss: 0.1847 - accuracy: 0.9049 - recall: 0.9558
+ Epoch 30/50
+ 2733/2733 - 2s - loss: 0.1803 - accuracy: 0.9071 - recall: 0.9503
+ Epoch 31/50
+ 2733/2733 - 2s - loss: 0.1763 - accuracy: 0.9096 - recall: 0.9613
+ Epoch 32/50
+ 2733/2733 - 2s - loss: 0.1815 - accuracy: 0.9104 - recall: 0.9337
+ Epoch 33/50
+ 2733/2733 - 2s - loss: 0.1737 - accuracy: 0.9093 - recall: 0.9503
+ Epoch 34/50
+ 2733/2733 - 2s - loss: 0.1800 - accuracy: 0.9104 - recall: 0.9558
+ Epoch 35/50
+ 2733/2733 - 2s - loss: 0.1725 - accuracy: 0.9118 - recall: 0.9503
+ Epoch 36/50
+ 2733/2733 - 2s - loss: 0.1781 - accuracy: 0.9136 - recall: 0.9448
+ Epoch 37/50
+ 2733/2733 - 2s - loss: 0.1683 - accuracy: 0.9093 - recall: 0.9503
+ Epoch 38/50
+ 2733/2733 - 2s - loss: 0.1672 - accuracy: 0.9122 - recall: 0.9392
+ Epoch 39/50
+ 2733/2733 - 2s - loss: 0.1660 - accuracy: 0.9096 - recall: 0.9448
+ Epoch 40/50
+ 2733/2733 - 2s - loss: 0.1742 - accuracy: 0.9100 - recall: 0.9558
+ Epoch 41/50
+ 2733/2733 - 2s - loss: 0.1698 - accuracy: 0.9147 - recall: 0.9503
+ Epoch 42/50
+ 2733/2733 - 2s - loss: 0.1708 - accuracy: 0.9085 - recall: 0.9613
+ Epoch 43/50
+ 2733/2733 - 2s - loss: 0.1608 - accuracy: 0.9158 - recall: 0.9669
+ Epoch 44/50
+ 2733/2733 - 2s - loss: 0.1706 - accuracy: 0.9082 - recall: 0.9503
+ Epoch 45/50
+ 2733/2733 - 2s - loss: 0.1677 - accuracy: 0.9122 - recall: 0.9669
+ Epoch 46/50
+ 2733/2733 - 2s - loss: 0.1605 - accuracy: 0.9122 - recall: 0.9669
+ Epoch 47/50
+ 2733/2733 - 2s - loss: 0.1611 - accuracy: 0.9140 - recall: 0.9558
+ Epoch 48/50
+ 2733/2733 - 2s - loss: 0.1642 - accuracy: 0.9133 - recall: 0.9613
+ Epoch 49/50
+ 2733/2733 - 2s - loss: 0.1674 - accuracy: 0.9104 - recall: 0.9558
+ Epoch 50/50
+ 2733/2733 - 2s - loss: 0.1611 - accuracy: 0.9118 - recall: 0.9669
+ #+end_example
 
 ** Saving or Loading the Classifier
    Both of these blocks can be uncommented to save or load models as desired.
@@ -489,11 +612,17 @@ Best Estimator: LogisticRegression(C=1.623776739188721, class_weight={0: 1.0, 1:
 #+begin_src python :session SESSION_1 :results output :exports both
   # Testing the model
   pred = model.predict(test_X)
-  # y_score = model.predict_proba(test_X, batch_size=HP['BATCH_SIZE'])
-  y_score = model.predict_proba(test_X)
+  y_score = model.predict_proba(test_X, batch_size=HP['BATCH_SIZE'])
+  # y_score = model.predict_proba(test_X)
 #+end_src
 
 #+RESULTS:
+: /home/olav/gitRepos/TTK28-project/venv/lib/python3.8/site-packages/tensorflow/python/keras/engine/sequential.py:450: UserWarning: `model.predict_classes()` is deprecated and will be removed after 2021-01-01. Please use instead:* `np.argmax(model.predict(x), axis=-1)`,   if your model does multi-class classification   (e.g. if it uses a `softmax` last-layer activation).* `(model.predict(x) > 0.5).astype("int32")`,   if your model does binary classification   (e.g. if it uses a `sigmoid` last-layer activation).
+:   warnings.warn('`model.predict_classes()` is deprecated and '
+: 683/683 - 0s
+: /home/olav/gitRepos/TTK28-project/venv/lib/python3.8/site-packages/tensorflow/python/keras/engine/sequential.py:425: UserWarning: `model.predict_proba()` is deprecated and will be removed after 2021-01-01. Please use `model.predict()` instead.
+:   warnings.warn('`model.predict_proba()` is deprecated and '
+: 683/683 - 0s
 
 ** Metrics
    Since the data set is imbalanced, there are other metrics to consider beyond
@@ -543,17 +672,18 @@ Best Estimator: LogisticRegression(C=1.623776739188721, class_weight={0: 1.0, 1:
 
 #+RESULTS:
 #+begin_example
-tn :  631
-fp :  7
-fn :  26
-tp :  19
+tn :  597
+fp :  41
+fn :  11
+tp :  34
 ###### ---------Overall Results --------- ######
-accuracy:  0.9516837481698389
-confusion_mat:  [631, 7, 26, 19]
-auroc:  0.041692789968652035
-precision:  0.7307692307692307
-recall:  0.4222222222222222
-f1:  0.5352112676056338
+accuracy:  0.9238653001464129
+MCC:  0.5485242750356047
+confusion_mat:  [597, 41, 11, 34]
+auroc:  0.03974225008707767
+precision:  0.4533333333333333
+recall:  0.7555555555555555
+f1:  0.5666666666666667
 #+end_example
 
 * Plots
@@ -572,6 +702,7 @@ f1:  0.5352112676056338
 #+end_src
 
 #+RESULTS:
+: man_auroc:  0.9602577499129223
 
 
 The latest ROC_plot is the following plot.
