@@ -33,10 +33,13 @@
   matplotlib.use('PS')
   import matplotlib.pyplot as plt
   import logging
+  from sklearn import tree, decomposition
   from sklearn.preprocessing import LabelEncoder
-  from sklearn.metrics import confusion_matrix, roc_curve, roc_auc_score, accuracy_score, auc
+  from sklearn.metrics import confusion_matrix, roc_curve, roc_auc_score, accuracy_score, auc, matthews_corrcoef, make_scorer
   from sklearn.utils import class_weight
   from sklearn.model_selection import KFold, StratifiedKFold, cross_val_score, cross_validate, learning_curve
+  from sklearn.pipeline import Pipeline
+  from sklearn.model_selection import GridSearchCV
   import scikitplot as skplt
   import tensorflow as tf
   from tensorflow import keras
@@ -77,11 +80,11 @@
 #+end_src
 
 #+RESULTS:
-: 2021-07-05 00:32:40.155378: I tensorflow/core/profiler/lib/profiler_session.cc:136] Profiler session initializing.
-: 2021-07-05 00:32:40.155416: I tensorflow/core/profiler/lib/profiler_session.cc:155] Profiler session started.
-: 2021-07-05 00:32:40.155461: E tensorflow/core/profiler/internal/gpu/cupti_tracer.cc:1415] function cupti_interface_->Subscribe( &subscriber_, (CUpti_CallbackFunc)ApiCallback, this)failed with error CUPTI could not be loaded or symbol could not be found.
-: 2021-07-05 00:32:40.155488: I tensorflow/core/profiler/lib/profiler_session.cc:172] Profiler session tear down.
-: 2021-07-05 00:32:40.155508: E tensorflow/core/profiler/internal/gpu/cupti_tracer.cc:1496] function cupti_interface_->Finalize()failed with error CUPTI could not be loaded or symbol could not be found.
+: 2021-07-07 15:09:57.107548: I tensorflow/core/profiler/lib/profiler_session.cc:136] Profiler session initializing.
+: 2021-07-07 15:09:57.107586: I tensorflow/core/profiler/lib/profiler_session.cc:155] Profiler session started.
+: 2021-07-07 15:09:57.107641: E tensorflow/core/profiler/internal/gpu/cupti_tracer.cc:1415] function cupti_interface_->Subscribe( &subscriber_, (CUpti_CallbackFunc)ApiCallback, this)failed with error CUPTI could not be loaded or symbol could not be found.
+: 2021-07-07 15:09:57.107686: I tensorflow/core/profiler/lib/profiler_session.cc:172] Profiler session tear down.
+: 2021-07-07 15:09:57.107717: E tensorflow/core/profiler/internal/gpu/cupti_tracer.cc:1496] function cupti_interface_->Finalize()failed with error CUPTI could not be loaded or symbol could not be found.
 
 ** STDOUT Logging Settings
    These are the settings for logging information to the terminal and debugging
@@ -192,53 +195,192 @@
 
 #+RESULTS:
 
-* Defining and Compiling the Model
-** Class Weights
+* Class Weights
   One of the ways of dealing with an imbalanced data set is to weight the
   classes. This suggestion and others are very nicely explained in this [[https://towardsdatascience.com/handling-imbalanced-datasets-in-machine-learning-7a0e84220f28][post]].
   An error in the one class will have a much higher cost in the cost function.
   The following backpropagation algorithm will correct the weights based on the
   ratio between the class weights.
 #+begin_src python :session SESSION_1 :results output :exports both
-  ### Weighting the classes for bias datasets
-  # class_weights = class_weight.compute_class_weight('balanced', np.unique(train_y), train_y)
-  class_weights = {0: 1.0, 1: 15.0}
+  class_weights = class_weight.compute_class_weight('balanced', np.unique(train_y), train_y)
+  class_weights = dict(enumerate(class_weights))
+  # class_weights = {0: 1.0, 1: 15.0}
   print("class weights: ", class_weights)
   print("value counts of Y in train_y: ", train_y.sum())
   print("value counts of N in train_y: ", len(train_y) - train_y.sum())
 #+end_src
 
 #+RESULTS:
-: class weights:  {0: 1.0, 1: 15.0}
+: /home/olav/gitRepos/TTK28-project/venv/lib/python3.8/site-packages/sklearn/utils/validation.py:70: FutureWarning: Pass classes=[0 1], y=[0 1 0 ... 0 0 0] as keyword args. From version 1.0 (renaming of 0.25) passing these as positional arguments will result in an error
+:   warnings.warn(f"Pass {args_msg} as keyword args. From version "
+: class weights:  {0: 0.5354623824451411, 1: 7.5497237569060776}
 : value counts of Y in train_y:  181
 : value counts of N in train_y:  2552
 
-** Checkpointing Model Weights
-   This for setting up the checkpoints while running the model. It is not really
-   in use right now as it is not added in the ~model.fit~ callbacks.
-#+begin_src python :session SESSION_1 :results output :exports both
-  model_weights_name = HP['NAME'] + '_model.h5'
-  checkpointer = ModelCheckpoint(model_weights_name, monitor='Recall', verbose=0)
+* Grid Search for choosing models
+
+   A few different attempts were made to try to compare some different binary
+   classifiers. This is mainly to keep track a backup of notes from the code.
+   There were three different binary classifiers used. Logistic Regression
+   seems to be the standard starting point for binary classification problems.
+   Decisions Trees are flexible, fast, and forgiving so therefore, it was
+   tested as a classifier. The last model was a neural network as it was
+   hoped to be out compete the other classifiers.
+
+   - [[https://towardsdatascience.com/logistic-regression-model-tuning-with-scikit-learn-part-1-425142e01af5][Logistic Regression]]
+   - [[https://www.upgrad.com/blog/random-forest-vs-decision-tree/][Decision Tree]] and [[https://www.dezyre.com/recipes/optimize-hyper-parameters-of-decisiontree-model-using-grid-search-in-python][another detailed example]]
+   - [[https://www.programmersought.com/article/44834680140/][Neural Network Grid Search CV]], and [[https://machinelearningmastery.com/grid-search-hyperparameters-deep-learning-models-python-keras/][another here]].
+
+   Here are some other resources to look through for selection and comparison
+   of different models.
+
+   - [[https://builtin.com/data-science/supervised-machine-learning-classification][AN IN-DEPTH GUIDE TO SUPERVISED MACHINE LEARNING CLASSIFICATION]]
+   - [[https://towardsdatascience.com/what-metrics-should-we-use-on-imbalanced-data-set-precision-recall-roc-e2e79252aeba][What metrics should be used for evaluating a model on an imbalanced data set? (precision + recall or ROC=TPR+FPR)]]
+   - [[https://machinelearningmastery.com/feature-selection-with-real-and-categorical-data/][How to Choose a Feature Selection Method For Machine Learning]]
+   - [[https://www.datasciencecentral.com/profiles/blogs/how-to-choose-a-machine-learning-model-some-guidelines][How to Choose a Machine Learning Model – Some Guidelines]]
+
+   The metric used as the goal for the grid search was the Matthew Correlation
+   Coefficient, which considers an equal weighting of false positive and false
+   negative rates.
+
+** Overview of results
+
+*** Decision Tree Grid Search
+
+    The following results are from when only using the original 10 features.
+    The following pipeline also uses Principal Component Analysis (PCA) first
+    and finds the best number of components for the decision tree.
+
+    *PCA Components*:
+    - Best number of components: From 1 to the max number of features (10).
+
+    *Decision Tree*:
+    - Different Class Weights ~class_weight=[{0: 1.0, 1: w} for w in [10, 12, 14, 15, 16, 17, 18]],~
+    - Criterion = ~['gini', 'entropy']~
+    - Max Depth = ~[2, 4, 6, 8, 10, 12]~
+
+#+begin_example
+ : Best Score: 0.5178250609559948
+ : Best Criterion: gini
+ : Best max_depth: 12
+ : Best Number Of Components: 6
+ :
+ : DecisionTreeClassifier(class_weight={0: 1.0, 1: 16}, max_depth=12)
+#+end_example
+
+*** Logistic Regression Grid Search
+
+     The following results are from when only using the original 10 features.
+
+     - Penalty = ~['l1', 'l2']~
+     - C = ~np.logspace(-4, 4, 20),~
+     - Different Class Weights ~class_weight=[{0: 1.0, 1: w} for w in [10, 12, 14, 15, 16, 17, 18]],~
+     - Solver = ~['liblinear']~
+
+ #+begin_example
+Fitting 5 folds for each of 280 candidates, totalling 1400 fits
+Best Score: 0.5373897826007131
+
+Best Estimator: LogisticRegression(C=1.623776739188721, class_weight={0: 1.0, 1: 10},
+                   penalty='l1', random_state=0, solver='liblinear')
+ #+end_example
+
+*** Neural Network Grid Search
+
+    The following results are from when only using the original 10 features.
+    There were a few iterations since the optimal solutions were endpoints.
+
+    The dataset for this was not balanced! There were no class weights for the
+    following resutl
+    - Batch Size = ~[2, 4, 6, 8, 10]~
+    - Epochs = ~[100, 125, 150, 175, 200]~
+
+#+begin_example
+Best Score: 0.6292982089131982
+Best Estimator: {'verbose': 0, 'batch_size': 4, 'epochs': 200, 'build_fn': <function create_model at 0x7f440e43d9d0>}
+#+end_example
+
+    The ~class weights~ parameter were set to 'balanced' for this run.
+    - Batch Size = ~[3, 4, 5]~
+    - Epochs = ~[190, 200, 210]~
+
+#+begin_example
+Best Score: 0.589460143563261
+
+Best Estimator: {'verbose': 0, 'batch_size': 5, 'epochs': 210, 'build_fn': <function create_model at 0x7f938bf6a9d0>}
+#+end_example
+
+    The ~class weights~ parameter were set to 'balanced' for this run.
+    - Batch Size = ~[4, 6, 10, 20]~
+    - Epochs = ~[200, 250, 300, 400]~
+
+#+begin_example
+Best Score: 0.5824397099036812
+Best Estimator: {'verbose': 0, 'batch_size': 6, 'epochs': 250, 'build_fn': <function create_model at 0x7f938bf5a280>}
+#+end_example
+
+** Actual Code
+*** Using Grid Search for the Decision Tree Classifier
+
+#+begin_src python :session SESSION_1 :results output :exports both :eval no
+  pca = decomposition.PCA()
+  dec_tree = tree.DecisionTreeClassifier()
+  pipe = Pipeline(steps=[('pca', pca),
+                         ('dec_tree', dec_tree)])
+  n_components = list(range(1,train_X.shape[1]+1,1))
+  criterion = ['gini', 'entropy']
+  grid_scorer = make_scorer(matthews_corrcoef, greater_is_better=True)
+  max_depth = [2,4,6,8,10,12]
+  parameters = dict(pca__n_components=n_components,
+                        dec_tree__criterion=criterion,
+                        dec_tree__class_weight=[{0: 1.0, 1: w} for w in [10, 12, 14, 15, 16, 17, 18]],
+                        dec_tree__max_depth=max_depth)
+  clf_GS = GridSearchCV(pipe, parameters, scoring=grid_scorer)
+  clf_GS.fit(train_X, train_y)
+  print('Best Score:', clf_GS.best_score_)
+  print('Best Criterion:', clf_GS.best_estimator_.get_params()['dec_tree__criterion'])
+  print('Best max_depth:', clf_GS.best_estimator_.get_params()['dec_tree__max_depth'])
+  print('Best Number Of Components:', clf_GS.best_estimator_.get_params()['pca__n_components'])
+  print(); print(clf_GS.best_estimator_.get_params()['dec_tree'])
+#+end_src
+
+ #+RESULTS:
+ : Best Score: 0.5178250609559948
+ : Best Criterion: gini
+ : Best max_depth: 12
+ : Best Number Of Components: 6
+ :
+ : DecisionTreeClassifier(class_weight={0: 1.0, 1: 16}, max_depth=12)
+
+*** Using Grid Search for the Logistic Regression
+
+#+begin_src python :session SESSION_1 :results output :exports both :eval no
+  from sklearn.linear_model import LogisticRegression
+  logistic_regression = LogisticRegression(random_state=0)
+  pipe = Pipeline(steps=[('logistic_regression', logistic_regression)])
+  grid_scorer = make_scorer(matthews_corrcoef, greater_is_better=True)
+  parameters = dict(logistic_regression__penalty = ['l1', 'l2'],
+                    logistic_regression__C = np.logspace(-4, 4, 20),
+                    logistic_regression__class_weight=[{0: 1.0, 1: w} for w in [10, 12, 14, 15, 16, 17, 18]],
+                    logistic_regression__solver = ['liblinear'])
+  clf_GS = GridSearchCV(pipe, parameters, scoring=grid_scorer, cv = 5, verbose=True, n_jobs=-1, return_train_score=True)
+  clf_GS.fit(train_X, train_y)
+  print('Best Score:', clf_GS.best_score_)
+  print(); print('Best Estimator:', clf_GS.best_estimator_.get_params()['logistic_regression'])
 #+end_src
 
 #+RESULTS:
+#+begin_example
+Fitting 5 folds for each of 280 candidates, totalling 1400 fits
+Best Score: 0.5373897826007131
 
-** Defining and Training the Classifier
-   Some different model structures were tested for this model, but there were
-   some '[[https://stats.stackexchange.com/questions/181/how-to-choose-the-number-of-hidden-layers-and-nodes-in-a-feedforward-neural-netw#:~:text=There%20are%20many%20rule-of,size%20of%20the%20output%20layer.][rules of thumb]]' which were considered. For the number of hidden nodes
-   in a layer:
-   - The number of hidden neurons should be between the size of the input layer
-     and the size of the output layer.
-   - The number of hidden neurons should be 2/3 the size of the input layer,
-     plus the size of the output layer.
-   - The number of hidden neurons should be less than twice the size of the
-     input layer.
+Best Estimator: LogisticRegression(C=1.623776739188721, class_weight={0: 1.0, 1: 10},
+                   penalty='l1', random_state=0, solver='liblinear')
+#+end_example
 
-   A summation of these rules were outlined as the following:
-   1. number of hidden layers equals one
-   2. the number of neurons in that layer is the mean of the neurons in the input and output layers.
+*** Using Grid Search for Neural Network
 
-#+begin_src python :session SESSION_1 :results output :exports both
+#+begin_src python :session SESSION_1 :results output :exports both :eval no
   def create_model():
       model = Sequential([
           Dense(10, activation='relu', input_shape=(10,)),
@@ -252,152 +394,213 @@
           metrics=HP['METRICS'])
       return model
 
-  model = KerasClassifier(build_fn=create_model, epochs=HP['EPOCHS'],
-                              batch_size=HP['BATCH_SIZE'], verbose = 2, )
-  model.fit(train_X, train_y, callbacks=[csv_logger, tensorboard_callback])
-  # model.fit(train_X, train_y, class_weight=class_weight, callbacks=[csv_logger, tensorboard_callback])
+  model = KerasClassifier(build_fn=create_model, verbose = 0)
+
+  grid_scorer = make_scorer(matthews_corrcoef, greater_is_better=True)
+  batch_size = [4, 6, 10, 20]
+  epochs = [200, 250, 300, 400]
+  param_grid = dict(batch_size=batch_size,
+                    epochs=epochs)
+  clf_GS = GridSearchCV(model, param_grid, scoring=grid_scorer, cv = 5, n_jobs=-1)
+  clf_GS.fit(train_X, train_y, class_weight=class_weights)
+
+  print('Best Score:', clf_GS.best_score_)
+  print(); print('Best Estimator:', clf_GS.best_estimator_.get_params())
 #+end_src
 
-#+RESULTS:
-#+begin_example
-Epoch 1/50
-2021-07-05 00:32:44.468326: I tensorflow/core/profiler/lib/profiler_session.cc:136] Profiler session initializing.
-2021-07-05 00:32:44.468370: I tensorflow/core/profiler/lib/profiler_session.cc:155] Profiler session started.
-2021-07-05 00:32:44.468421: E tensorflow/core/profiler/internal/gpu/cupti_tracer.cc:1415] function cupti_interface_->Subscribe( &subscriber_, (CUpti_CallbackFunc)ApiCallback, this)failed with error CUPTI could not be loaded or symbol could not be found.
-2021-07-05 00:32:44.492640: I tensorflow/core/profiler/lib/profiler_session.cc:71] Profiler session collecting data.
-2021-07-05 00:32:44.492726: E tensorflow/core/profiler/internal/gpu/cupti_tracer.cc:1496] function cupti_interface_->Finalize()failed with error CUPTI could not be loaded or symbol could not be found.
-2021-07-05 00:32:44.493221: I tensorflow/core/profiler/internal/gpu/cupti_collector.cc:228]  GpuTracer has collected 0 callback api events and 0 activity events. 
-2021-07-05 00:32:44.494175: I tensorflow/core/profiler/lib/profiler_session.cc:172] Profiler session tear down.
-2021-07-05 00:32:44.495626: I tensorflow/core/profiler/rpc/client/save_profile.cc:137] Creating directory: ../logs/scalars/20210705-003240/train/plugins/profile/2021_07_05_00_32_44
-2021-07-05 00:32:44.496398: I tensorflow/core/profiler/rpc/client/save_profile.cc:143] Dumped gzipped tool data for trace.json.gz to ../logs/scalars/20210705-003240/train/plugins/profile/2021_07_05_00_32_44/BigArch.trace.json.gz
-2021-07-05 00:32:44.497566: I tensorflow/core/profiler/rpc/client/save_profile.cc:137] Creating directory: ../logs/scalars/20210705-003240/train/plugins/profile/2021_07_05_00_32_44
-2021-07-05 00:32:44.497742: I tensorflow/core/profiler/rpc/client/save_profile.cc:143] Dumped gzipped tool data for memory_profile.json.gz to ../logs/scalars/20210705-003240/train/plugins/profile/2021_07_05_00_32_44/BigArch.memory_profile.json.gz
-2021-07-05 00:32:44.498042: I tensorflow/core/profiler/rpc/client/capture_profile.cc:251] Creating directory: ../logs/scalars/20210705-003240/train/plugins/profile/2021_07_05_00_32_44Dumped tool data for xplane.pb to ../logs/scalars/20210705-003240/train/plugins/profile/2021_07_05_00_32_44/BigArch.xplane.pb
-Dumped tool data for overview_page.pb to ../logs/scalars/20210705-003240/train/plugins/profile/2021_07_05_00_32_44/BigArch.overview_page.pb
-Dumped tool data for input_pipeline.pb to ../logs/scalars/20210705-003240/train/plugins/profile/2021_07_05_00_32_44/BigArch.input_pipeline.pb
-Dumped tool data for tensorflow_stats.pb to ../logs/scalars/20210705-003240/train/plugins/profile/2021_07_05_00_32_44/BigArch.tensorflow_stats.pb
-Dumped tool data for kernel_stats.pb to ../logs/scalars/20210705-003240/train/plugins/profile/2021_07_05_00_32_44/BigArch.kernel_stats.pb
+ #+RESULTS:
+ #+begin_example
+ Best Score: 0.5824397099036812
 
-2733/2733 - 2s - loss: 0.2017 - accuracy: 0.9367 - recall: 0.1492
-Epoch 2/50
-2733/2733 - 2s - loss: 0.1331 - accuracy: 0.9499 - recall: 0.3757
-Epoch 3/50
-2733/2733 - 2s - loss: 0.1257 - accuracy: 0.9491 - recall: 0.4088
-Epoch 4/50
-2733/2733 - 2s - loss: 0.1191 - accuracy: 0.9543 - recall: 0.4807
-Epoch 5/50
-2733/2733 - 2s - loss: 0.1158 - accuracy: 0.9528 - recall: 0.5083
-Epoch 6/50
-2733/2733 - 2s - loss: 0.1148 - accuracy: 0.9491 - recall: 0.4641
-Epoch 7/50
-2733/2733 - 2s - loss: 0.1125 - accuracy: 0.9528 - recall: 0.5193
-Epoch 8/50
-2733/2733 - 2s - loss: 0.1104 - accuracy: 0.9517 - recall: 0.5414
-Epoch 9/50
-2733/2733 - 2s - loss: 0.1091 - accuracy: 0.9546 - recall: 0.5470
-Epoch 10/50
-2733/2733 - 2s - loss: 0.1075 - accuracy: 0.9543 - recall: 0.5691
-Epoch 11/50
-2733/2733 - 2s - loss: 0.1059 - accuracy: 0.9539 - recall: 0.5414
-Epoch 12/50
-2733/2733 - 2s - loss: 0.1038 - accuracy: 0.9557 - recall: 0.5801
-Epoch 13/50
-2733/2733 - 2s - loss: 0.1025 - accuracy: 0.9546 - recall: 0.5525
-Epoch 14/50
-2733/2733 - 2s - loss: 0.0993 - accuracy: 0.9579 - recall: 0.5746
-Epoch 15/50
-2733/2733 - 2s - loss: 0.1013 - accuracy: 0.9557 - recall: 0.5856
-Epoch 16/50
-2733/2733 - 2s - loss: 0.0992 - accuracy: 0.9565 - recall: 0.5691
-Epoch 17/50
-2733/2733 - 2s - loss: 0.0980 - accuracy: 0.9576 - recall: 0.5746
-Epoch 18/50
-2733/2733 - 2s - loss: 0.0972 - accuracy: 0.9623 - recall: 0.5967
-Epoch 19/50
-2733/2733 - 2s - loss: 0.0955 - accuracy: 0.9583 - recall: 0.5691
-Epoch 20/50
-2733/2733 - 2s - loss: 0.0960 - accuracy: 0.9557 - recall: 0.5912
-Epoch 21/50
-2733/2733 - 2s - loss: 0.0955 - accuracy: 0.9594 - recall: 0.5801
-Epoch 22/50
-2733/2733 - 2s - loss: 0.0944 - accuracy: 0.9587 - recall: 0.5801
-Epoch 23/50
-2733/2733 - 2s - loss: 0.0920 - accuracy: 0.9576 - recall: 0.5856
-Epoch 24/50
-2733/2733 - 2s - loss: 0.0915 - accuracy: 0.9612 - recall: 0.5912
-Epoch 25/50
-2733/2733 - 2s - loss: 0.0907 - accuracy: 0.9616 - recall: 0.6133
-Epoch 26/50
-2733/2733 - 2s - loss: 0.0930 - accuracy: 0.9601 - recall: 0.5635
-Epoch 27/50
-2733/2733 - 2s - loss: 0.0920 - accuracy: 0.9612 - recall: 0.5912
-Epoch 28/50
-2733/2733 - 2s - loss: 0.0906 - accuracy: 0.9590 - recall: 0.5801
-Epoch 29/50
-2733/2733 - 2s - loss: 0.0899 - accuracy: 0.9645 - recall: 0.6133
-Epoch 30/50
-2733/2733 - 2s - loss: 0.0903 - accuracy: 0.9598 - recall: 0.6133
-Epoch 31/50
-2733/2733 - 2s - loss: 0.0893 - accuracy: 0.9587 - recall: 0.5746
-Epoch 32/50
-2733/2733 - 2s - loss: 0.0902 - accuracy: 0.9598 - recall: 0.5801
-Epoch 33/50
-2733/2733 - 2s - loss: 0.0879 - accuracy: 0.9590 - recall: 0.5801
-Epoch 34/50
-2733/2733 - 2s - loss: 0.0873 - accuracy: 0.9612 - recall: 0.5967
-Epoch 35/50
-2733/2733 - 2s - loss: 0.0884 - accuracy: 0.9612 - recall: 0.5967
-Epoch 36/50
-2733/2733 - 2s - loss: 0.0848 - accuracy: 0.9638 - recall: 0.6298
-Epoch 37/50
-2733/2733 - 2s - loss: 0.0873 - accuracy: 0.9634 - recall: 0.6188
-Epoch 38/50
-2733/2733 - 2s - loss: 0.0868 - accuracy: 0.9638 - recall: 0.5967
-Epoch 39/50
-2733/2733 - 2s - loss: 0.0869 - accuracy: 0.9616 - recall: 0.5912
-Epoch 40/50
-2733/2733 - 2s - loss: 0.0848 - accuracy: 0.9649 - recall: 0.5967
-Epoch 41/50
-2733/2733 - 2s - loss: 0.0858 - accuracy: 0.9619 - recall: 0.5912
-Epoch 42/50
-2733/2733 - 2s - loss: 0.0861 - accuracy: 0.9619 - recall: 0.5912
-Epoch 43/50
-2733/2733 - 2s - loss: 0.0860 - accuracy: 0.9641 - recall: 0.6243
-Epoch 44/50
-2733/2733 - 2s - loss: 0.0850 - accuracy: 0.9634 - recall: 0.6022
-Epoch 45/50
-2733/2733 - 2s - loss: 0.0867 - accuracy: 0.9627 - recall: 0.6022
-Epoch 46/50
-2733/2733 - 2s - loss: 0.0842 - accuracy: 0.9638 - recall: 0.5912
-Epoch 47/50
-2733/2733 - 2s - loss: 0.0845 - accuracy: 0.9623 - recall: 0.6077
-Epoch 48/50
-2733/2733 - 2s - loss: 0.0856 - accuracy: 0.9630 - recall: 0.6022
-Epoch 49/50
-2733/2733 - 2s - loss: 0.0835 - accuracy: 0.9641 - recall: 0.5912
-Epoch 50/50
-2733/2733 - 2s - loss: 0.0843 - accuracy: 0.9605 - recall: 0.5801
-#+end_example
+ Best Estimator: {'verbose': 0, 'batch_size': 6, 'epochs': 250, 'build_fn': <function create_model at 0x7f938bf5a280>}
+ #+end_example
 
-* Saving or Loading the Classifier
-  Both of these blocks can be uncommented to save or load models as desired.
-** Saving the Model
-#+begin_src python :session SESSION_1 :results output :exports both
-  ### Saving Entire Model
-  # save_model(model, "test_final_check")
-  # model.model.save("model_test_final_different.h5")
-#+end_src
+* The Final Model
+** Checkpointing Model Weights
+    This for setting up the checkpoints while running the model. It is not really
+    in use right now as it is not added in the ~model.fit~ callbacks.
+ #+begin_src python :session SESSION_1 :results output :exports both
+   model_weights_name = HP['NAME'] + '_model.h5'
+   checkpointer = ModelCheckpoint(model_weights_name, monitor='Recall', verbose=0)
+ #+end_src
 
-#+RESULTS:
+ #+RESULTS:
 
-** Loading the Model
-#+begin_src python :session SESSION_1 :results output :exports both
-  ### Loading Entire Model
-  # model = load_model(model, "test_final")
-  # model.load("model_test_final_different.h5")
-#+end_src
+** Defining and Training the Classifier
 
-#+RESULTS:
+    Some different model structures were tested for this model, but there were
+    some '[[https://stats.stackexchange.com/questions/181/how-to-choose-the-number-of-hidden-layers-and-nodes-in-a-feedforward-neural-netw#:~:text=There%20are%20many%20rule-of,size%20of%20the%20output%20layer.][rules of thumb]]' which were considered. For the number of hidden nodes
+    in a layer:
+    - The number of hidden neurons should be between the size of the input layer
+      and the size of the output layer.
+    - The number of hidden neurons should be 2/3 the size of the input layer,
+      plus the size of the output layer.
+    - The number of hidden neurons should be less than twice the size of the
+      input layer.
+
+    A summation of these rules were outlined as the following:
+    1. number of hidden layers equals one
+    2. the number of neurons in that layer is the mean of the neurons in the input and output layers.
+
+ #+begin_src python :session SESSION_1 :results output :exports both
+   def create_model():
+       model = Sequential([
+           Dense(10, activation='relu', input_shape=(10,)),
+           Dense(5, activation='relu'),
+           Dense(1, activation='sigmoid'),
+       ])
+
+       model.compile(
+           optimizer= HP['OPTIMIZER'],
+           loss= HP['LOSS'],
+           metrics=HP['METRICS'])
+       return model
+
+   model = KerasClassifier(build_fn=create_model, epochs=HP['EPOCHS'],
+                               batch_size=HP['BATCH_SIZE'], verbose = 2)
+   model.fit(train_X, train_y, class_weight=class_weights, callbacks=[csv_logger, tensorboard_callback])
+ #+end_src
+
+ #+RESULTS:
+ #+begin_example
+ Epoch 1/50
+ 2021-07-07 15:10:01.659123: I tensorflow/core/profiler/lib/profiler_session.cc:136] Profiler session initializing.
+ 2021-07-07 15:10:01.659172: I tensorflow/core/profiler/lib/profiler_session.cc:155] Profiler session started.
+ 2021-07-07 15:10:01.659210: E tensorflow/core/profiler/internal/gpu/cupti_tracer.cc:1415] function cupti_interface_->Subscribe( &subscriber_, (CUpti_CallbackFunc)ApiCallback, this)failed with error CUPTI could not be loaded or symbol could not be found.
+ 2021-07-07 15:10:01.665821: I tensorflow/core/profiler/lib/profiler_session.cc:71] Profiler session collecting data.
+ 2021-07-07 15:10:01.665893: E tensorflow/core/profiler/internal/gpu/cupti_tracer.cc:1496] function cupti_interface_->Finalize()failed with error CUPTI could not be loaded or symbol could not be found.
+ 2021-07-07 15:10:01.668651: I tensorflow/core/profiler/internal/gpu/cupti_collector.cc:228]  GpuTracer has collected 0 callback api events and 0 activity events. 
+ 2021-07-07 15:10:01.670767: I tensorflow/core/profiler/lib/profiler_session.cc:172] Profiler session tear down.
+ 2021-07-07 15:10:01.678605: I tensorflow/core/profiler/rpc/client/save_profile.cc:137] Creating directory: ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01
+ 2021-07-07 15:10:01.680072: I tensorflow/core/profiler/rpc/client/save_profile.cc:143] Dumped gzipped tool data for trace.json.gz to ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01/BigArch.trace.json.gz
+ 2021-07-07 15:10:01.687139: I tensorflow/core/profiler/rpc/client/save_profile.cc:137] Creating directory: ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01
+ 2021-07-07 15:10:01.687306: I tensorflow/core/profiler/rpc/client/save_profile.cc:143] Dumped gzipped tool data for memory_profile.json.gz to ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01/BigArch.memory_profile.json.gz
+ 2021-07-07 15:10:01.687594: I tensorflow/core/profiler/rpc/client/capture_profile.cc:251] Creating directory: ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01Dumped tool data for xplane.pb to ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01/BigArch.xplane.pb
+ Dumped tool data for overview_page.pb to ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01/BigArch.overview_page.pb
+ Dumped tool data for input_pipeline.pb to ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01/BigArch.input_pipeline.pb
+ Dumped tool data for tensorflow_stats.pb to ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01/BigArch.tensorflow_stats.pb
+ Dumped tool data for kernel_stats.pb to ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01/BigArch.kernel_stats.pb
+
+ 2733/2733 - 2s - loss: 0.4942 - accuracy: 0.8094 - recall: 0.7072
+ Epoch 2/50
+ 2733/2733 - 2s - loss: 0.3264 - accuracy: 0.8229 - recall: 0.9116
+ Epoch 3/50
+ 2733/2733 - 2s - loss: 0.2861 - accuracy: 0.8529 - recall: 0.9171
+ Epoch 4/50
+ 2733/2733 - 2s - loss: 0.2698 - accuracy: 0.8613 - recall: 0.9061
+ Epoch 5/50
+ 2733/2733 - 2s - loss: 0.2620 - accuracy: 0.8558 - recall: 0.9282
+ Epoch 6/50
+ 2733/2733 - 2s - loss: 0.2500 - accuracy: 0.8664 - recall: 0.9282
+ Epoch 7/50
+ 2733/2733 - 2s - loss: 0.2498 - accuracy: 0.8767 - recall: 0.9116
+ Epoch 8/50
+ 2733/2733 - 2s - loss: 0.2488 - accuracy: 0.8811 - recall: 0.9006
+ Epoch 9/50
+ 2733/2733 - 2s - loss: 0.2416 - accuracy: 0.8836 - recall: 0.9116
+ Epoch 10/50
+ 2733/2733 - 2s - loss: 0.2379 - accuracy: 0.8785 - recall: 0.9227
+ Epoch 11/50
+ 2733/2733 - 2s - loss: 0.2365 - accuracy: 0.8902 - recall: 0.9006
+ Epoch 12/50
+ 2733/2733 - 2s - loss: 0.2314 - accuracy: 0.8811 - recall: 0.9116
+ Epoch 13/50
+ 2733/2733 - 2s - loss: 0.2262 - accuracy: 0.8880 - recall: 0.9171
+ Epoch 14/50
+ 2733/2733 - 2s - loss: 0.2224 - accuracy: 0.8869 - recall: 0.9116
+ Epoch 15/50
+ 2733/2733 - 2s - loss: 0.2212 - accuracy: 0.8873 - recall: 0.9171
+ Epoch 16/50
+ 2733/2733 - 2s - loss: 0.2195 - accuracy: 0.8833 - recall: 0.9116
+ Epoch 17/50
+ 2733/2733 - 2s - loss: 0.2159 - accuracy: 0.8902 - recall: 0.9171
+ Epoch 18/50
+ 2733/2733 - 2s - loss: 0.2117 - accuracy: 0.8928 - recall: 0.9337
+ Epoch 19/50
+ 2733/2733 - 2s - loss: 0.2070 - accuracy: 0.8917 - recall: 0.9392
+ Epoch 20/50
+ 2733/2733 - 2s - loss: 0.2060 - accuracy: 0.8932 - recall: 0.9337
+ Epoch 21/50
+ 2733/2733 - 2s - loss: 0.2026 - accuracy: 0.8983 - recall: 0.9337
+ Epoch 22/50
+ 2733/2733 - 2s - loss: 0.2032 - accuracy: 0.8965 - recall: 0.9227
+ Epoch 23/50
+ 2733/2733 - 2s - loss: 0.1954 - accuracy: 0.8994 - recall: 0.9392
+ Epoch 24/50
+ 2733/2733 - 2s - loss: 0.1921 - accuracy: 0.8990 - recall: 0.9448
+ Epoch 25/50
+ 2733/2733 - 2s - loss: 0.1939 - accuracy: 0.9016 - recall: 0.9282
+ Epoch 26/50
+ 2733/2733 - 2s - loss: 0.1916 - accuracy: 0.8997 - recall: 0.9337
+ Epoch 27/50
+ 2733/2733 - 2s - loss: 0.1900 - accuracy: 0.9045 - recall: 0.9392
+ Epoch 28/50
+ 2733/2733 - 2s - loss: 0.1860 - accuracy: 0.8997 - recall: 0.9503
+ Epoch 29/50
+ 2733/2733 - 2s - loss: 0.1847 - accuracy: 0.9049 - recall: 0.9558
+ Epoch 30/50
+ 2733/2733 - 2s - loss: 0.1803 - accuracy: 0.9071 - recall: 0.9503
+ Epoch 31/50
+ 2733/2733 - 2s - loss: 0.1763 - accuracy: 0.9096 - recall: 0.9613
+ Epoch 32/50
+ 2733/2733 - 2s - loss: 0.1815 - accuracy: 0.9104 - recall: 0.9337
+ Epoch 33/50
+ 2733/2733 - 2s - loss: 0.1737 - accuracy: 0.9093 - recall: 0.9503
+ Epoch 34/50
+ 2733/2733 - 2s - loss: 0.1800 - accuracy: 0.9104 - recall: 0.9558
+ Epoch 35/50
+ 2733/2733 - 2s - loss: 0.1725 - accuracy: 0.9118 - recall: 0.9503
+ Epoch 36/50
+ 2733/2733 - 2s - loss: 0.1781 - accuracy: 0.9136 - recall: 0.9448
+ Epoch 37/50
+ 2733/2733 - 2s - loss: 0.1683 - accuracy: 0.9093 - recall: 0.9503
+ Epoch 38/50
+ 2733/2733 - 2s - loss: 0.1672 - accuracy: 0.9122 - recall: 0.9392
+ Epoch 39/50
+ 2733/2733 - 2s - loss: 0.1660 - accuracy: 0.9096 - recall: 0.9448
+ Epoch 40/50
+ 2733/2733 - 2s - loss: 0.1742 - accuracy: 0.9100 - recall: 0.9558
+ Epoch 41/50
+ 2733/2733 - 2s - loss: 0.1698 - accuracy: 0.9147 - recall: 0.9503
+ Epoch 42/50
+ 2733/2733 - 2s - loss: 0.1708 - accuracy: 0.9085 - recall: 0.9613
+ Epoch 43/50
+ 2733/2733 - 2s - loss: 0.1608 - accuracy: 0.9158 - recall: 0.9669
+ Epoch 44/50
+ 2733/2733 - 2s - loss: 0.1706 - accuracy: 0.9082 - recall: 0.9503
+ Epoch 45/50
+ 2733/2733 - 2s - loss: 0.1677 - accuracy: 0.9122 - recall: 0.9669
+ Epoch 46/50
+ 2733/2733 - 2s - loss: 0.1605 - accuracy: 0.9122 - recall: 0.9669
+ Epoch 47/50
+ 2733/2733 - 2s - loss: 0.1611 - accuracy: 0.9140 - recall: 0.9558
+ Epoch 48/50
+ 2733/2733 - 2s - loss: 0.1642 - accuracy: 0.9133 - recall: 0.9613
+ Epoch 49/50
+ 2733/2733 - 2s - loss: 0.1674 - accuracy: 0.9104 - recall: 0.9558
+ Epoch 50/50
+ 2733/2733 - 2s - loss: 0.1611 - accuracy: 0.9118 - recall: 0.9669
+ #+end_example
+
+** Saving or Loading the Classifier
+   Both of these blocks can be uncommented to save or load models as desired.
+*** Saving the Model
+ #+begin_src python :session SESSION_1 :results output :exports both
+   ### Saving Entire Model
+   # save_model(model, "test_final_check")
+   # model.model.save("model_test_final_different.h5")
+ #+end_src
+
+ #+RESULTS:
+
+*** Loading the Model
+ #+begin_src python :session SESSION_1 :results output :exports both
+   ### Loading Entire Model
+   # model = load_model(model, "test_final")
+   # model.load("model_test_final_different.h5")
+ #+end_src
+
+ #+RESULTS:
 
 * Evaluating and Metrics
 ** Predictions and Prediction Probabilities
@@ -410,6 +613,7 @@ Epoch 50/50
   # Testing the model
   pred = model.predict(test_X)
   y_score = model.predict_proba(test_X, batch_size=HP['BATCH_SIZE'])
+  # y_score = model.predict_proba(test_X)
 #+end_src
 
 #+RESULTS:
@@ -429,6 +633,7 @@ Epoch 50/50
 #+begin_src python :session SESSION_1 :results output :exports both
   # Calculating overall metrics
   accuracy = accuracy_score(test_y, pred)
+  mcc = matthews_corrcoef(test_y, pred)
   tn, fp, fn, tp = confusion_matrix(test_y, pred).ravel()
   confusion_mat = [tn, fp, fn, tp]
   auroc = roc_auc_score(test_y, y_score[:,0])
@@ -442,6 +647,7 @@ Epoch 50/50
       print(confusion_label[i], ': ', confusion_mat[i])
   print("###### ---------Overall Results --------- ######")
   print("accuracy: ", accuracy)
+  print("MCC: ", mcc)
   print("confusion_mat: ", confusion_mat)
   print("auroc: ", auroc)
   print("precision: ", precision)
@@ -466,17 +672,18 @@ Epoch 50/50
 
 #+RESULTS:
 #+begin_example
-tn :  631
-fp :  7
-fn :  26
-tp :  19
+tn :  597
+fp :  41
+fn :  11
+tp :  34
 ###### ---------Overall Results --------- ######
-accuracy:  0.9516837481698389
-confusion_mat:  [631, 7, 26, 19]
-auroc:  0.041692789968652035
-precision:  0.7307692307692307
-recall:  0.4222222222222222
-f1:  0.5352112676056338
+accuracy:  0.9238653001464129
+MCC:  0.5485242750356047
+confusion_mat:  [597, 41, 11, 34]
+auroc:  0.03974225008707767
+precision:  0.4533333333333333
+recall:  0.7555555555555555
+f1:  0.5666666666666667
 #+end_example
 
 * Plots
@@ -495,8 +702,7 @@ f1:  0.5352112676056338
 #+end_src
 
 #+RESULTS:
-: Trying to create RO
-: man_auroc:  0.9583072100313479
+: man_auroc:  0.9602577499129223
 
 
 The latest ROC_plot is the following plot.
