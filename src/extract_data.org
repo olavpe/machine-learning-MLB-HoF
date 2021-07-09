@@ -25,6 +25,7 @@
 
 #+begin_src python :session SESSION_1 :results output :exports both
   import pandas as pd
+  from icecream import ic
 #+end_src
 
 #+RESULTS:
@@ -37,6 +38,8 @@
 master_df = pd.read_csv('../data/core/People.csv',
                         usecols=['playerID','nameFirst','nameLast','bats','throws','debut','finalGame'])
 batting_df = pd.read_csv('../data/core/Batting.csv')
+pitching_df = pd.read_csv('../data/core/Pitching.csv')
+fielding_df = pd.read_csv('../data/core/Fielding.csv')
 awards_df = pd.read_csv('../data/core/AwardsPlayers.csv',
                         usecols=['playerID','awardID','yearID'])
 allstar_df = pd.read_csv('../data/core/AllstarFull.csv',
@@ -108,6 +111,131 @@ for i, row in batting_df.iterrows():
 for k,v in years_played.items():
     player_stats[k]['Years_Played'] = len(list(set(v)))
 
+#+end_src
+
+#+RESULTS:
+
+** Pitching Data
+
+   This adds the pitching stats for the different players. The ~player_stats~
+   dictionary is where the player information is aggregated until setting it to
+   the ~master_df~.
+
+#+begin_src python :session SESSION_1 :results output :exports both
+  pitching_keys_list = ['IPouts', 'H-A', 'ER-A', 'HR-A', 'BB-A', 'SO-A',
+                        'BAOpp', 'ERA', 'IBB-A', 'WP', 'HBP-A', 'BK',
+                        'BFP', 'GF', 'R-A', 'SH-A', 'SF-A', 'GIDP']
+  pitching_col_list = ['IPouts', 'H', 'ER', 'HR', 'BB', 'SO', 'BAOpp', 'ERA',
+                       'IBB', 'WP', 'HBP', 'BK', 'BFP', 'GF', 'R',
+                       'SH', 'SF', 'GIDP']
+  pitching_col_to_avg = ['BAOpp', 'ERA']
+
+  for i, pitch_row in pitching_df.iterrows():
+      playerID = pitch_row['playerID']
+      if playerID not in player_stats:
+          player_stats[playerID] = {}
+      for stat_key, stat_col in zip(pitching_keys_list, pitching_col_list):
+          if stat_key in player_stats[playerID]:
+              if stat_col in pitching_col_to_avg:
+                  player_stats[playerID][stat_key] = (player_stats[playerID][stat_key] + pitch_row[stat_col])/2
+              else:
+                  player_stats[playerID][stat_key] += pitch_row[stat_col]
+          else:
+              player_stats[playerID][stat_key] = pitch_row[stat_col]
+
+              # player_stats[playerID]['IPouts'] = player_stats[playerID]['IPouts'] + pitch_row['IPouts']
+              # player_stats[playerID]['H-A'] = player_stats[playerID]['H-A']     + pitch_row['H']
+              # player_stats[playerID]['ER-A'] = player_stats[playerID]['ER-A']   + pitch_row['ER']
+              # player_stats[playerID]['HR-A'] = player_stats[playerID]['HR-A']   + pitch_row['HR']
+              # player_stats[playerID]['BB-A'] = player_stats[playerID]['BB-A']   + pitch_row['BB']
+              # player_stats[playerID]['SO-A'] = player_stats[playerID]['SO-A']   + pitch_row['SO']
+              # player_stats[playerID]['BAOpp'] = (player_stats[playerID]['BAOpp']+ pitch_row['BAOpp'])/2
+              # player_stats[playerID]['ERA'] = (player_stats[playerID]['ERA']    + pitch_row['ERA'])/2
+              # player_stats[playerID]['IBB-A'] = player_stats[playerID]['IBB-A'] + pitch_row['IBB']
+              # player_stats[playerID]['WP'] = player_stats[playerID]['WP']       + pitch_row['WP']
+              # player_stats[playerID]['HBP-A'] = player_stats[playerID]['HBP-A'] + pitch_row['HBP']
+              # player_stats[playerID]['BK'] = player_stats[playerID]['BK']       + pitch_row['BK']
+              # player_stats[playerID]['BFP'] = player_stats[playerID]['BFP']     + pitch_row['BFP']
+              # player_stats[playerID]['GF'] = player_stats[playerID]['GF']       + pitch_row['GF']
+              # player_stats[playerID]['R-A'] = player_stats[playerID]['R-A']     + pitch_row['R']
+              # player_stats[playerID]['SH-A'] = player_stats[playerID]['SH-A']   + pitch_row['SH']
+              # player_stats[playerID]['SF-A'] = player_stats[playerID]['SF-A']   + pitch_row['SF']
+              # player_stats[playerID]['GIDP'] = player_stats[playerID]['GIDP']   + pitch_row['GIDP']
+          # else:
+          #   player_stats[playerID]['IPouts'] = pitch_row['IPouts']
+          #   player_stats[playerID]['H-A'] = pitch_row['H']
+          #   player_stats[playerID]['ER-A'] = pitch_row['ER']
+          #   player_stats[playerID]['HR-A'] = pitch_row['HR']
+          #   player_stats[playerID]['BB-A'] = pitch_row['BB']
+          #   player_stats[playerID]['SO-A'] = pitch_row['SO']
+          #   player_stats[playerID]['BAOpp'] = pitch_row['BAOpp']
+          #   player_stats[playerID]['ERA'] = pitch_row['ERA']
+          #   player_stats[playerID]['IBB-A'] = pitch_row['IBB']
+          #   player_stats[playerID]['WP'] = pitch_row['WP']
+          #   player_stats[playerID]['HBP-A'] = pitch_row['HBP']
+          #   player_stats[playerID]['BK'] = pitch_row['BK']
+          #   player_stats[playerID]['BFP'] = pitch_row['BFP']
+          #   player_stats[playerID]['GF'] = pitch_row['GF']
+          #   player_stats[playerID]['R-A'] = pitch_row['R']
+          #   player_stats[playerID]['SH-A'] = pitch_row['SH']
+          #   player_stats[playerID]['SF-A'] = pitch_row['SF']
+          #   player_stats[playerID]['GIDP'] = pitch_row['GIDP']
+#+end_src
+
+#+RESULTS:
+
+** Fielding Data
+
+   This adds the position stats for the different players. The ~player_stats~
+   dictionary is where the player information is aggregated until setting it to
+   the ~master_df~. 
+   
+#+begin_src python :session SESSION_1 :results output :exports both
+  fielding_df_pos = fielding_df[['playerID', 'POS']]
+  fielding_df_pos = fielding_df_pos.drop_duplicates(subset=['playerID'])
+
+  for i, field_row in fielding_df_pos.iterrows():
+      playerID = field_row['playerID']
+      if playerID not in player_stats:
+          player_stats[playerID] = {}
+      player_stats[playerID]['POS'] = field_row['POS']
+#+end_src
+
+#+RESULTS:
+
+   This adds some of the fielding stats to the ~player_stats~ like the previous
+   pitching and fielding data.
+
+#+begin_src python :session SESSION_1 :results output :exports both
+  fielding_keys_list = ['PO', 'A', 'E', 'DP']
+  fielding_col_list = ['PO', 'A', 'E', 'DP']
+  # fielding_col_to_avg = ['ZR']
+
+  for i, field_row in fielding_df.iterrows():
+      playerID = field_row['playerID']
+      if playerID not in player_stats:
+          player_stats[playerID] = {}
+      for stat_key, stat_col in zip(fielding_keys_list, fielding_col_list):
+          if stat_key in player_stats[playerID]:
+              player_stats[playerID][stat_key] += field_row[stat_col]
+          else:
+              player_stats[playerID][stat_key] = field_row[stat_col]
+
+  # for i, field_row in fielding_df.iterrows():
+  #     playerID = field_row['playerID']
+  #     if playerID in player_stats:
+  #         player_stats[playerID]['PO'] = player_stats[playerID]['PO'] + field_row['PO']
+  #         player_stats[playerID]['A'] = player_stats[playerID]['A'] + field_row['A']
+  #         player_stats[playerID]['E'] = player_stats[playerID]['E'] + field_row['E']
+  #         player_stats[playerID]['DP'] = player_stats[playerID]['DP'] + field_row['DP']
+  #         player_stats[playerID]['ZR'] = (player_stats[playerID]['ZR'] + field_row['ZR'])/2
+  #     else:
+  #         player_stats[playerID] = {}
+  #         player_stats[playerID]['PO'] = field_row['PO']
+  #         player_stats[playerID]['A'] = field_row['A']
+  #         player_stats[playerID]['E'] = field_row['E']
+  #         player_stats[playerID]['DP'] = field_row['DP']
+  #         player_stats[playerID]['ZR'] = field_row['ZR']
 #+end_src
 
 #+RESULTS:
