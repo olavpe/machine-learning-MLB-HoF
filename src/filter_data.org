@@ -126,15 +126,6 @@ df['finalGame'] = df['finalGame'].astype('float32')
 
 #+RESULTS:
 
-#+begin_src python :session SESSION_1 :results output :exports both
-stat_names = ['G', 'AB', 'R', 'H', '2B', '3B', 'HR', 'RBI', 'SB',
-              'BB', 'SO', 'IBB', 'HBP', 'SH', 'SF', '1B', 'OPS', 'SLG', 'OBS', 'WHIP', 'KperBB']
-for name in stat_names:
-    string = 'number of NaN values in '+ name
-#+end_src
-
-#+RESULTS:
-
 * Fulfilling criteria for HoF eligibility
 
   Removing players who have played less than 10 years as these players are not
@@ -151,173 +142,48 @@ for name in stat_names:
 ** Selecting Variables to use in training
 
 #+begin_src python :session SESSION_1 :results output :exports both
+   hof_label_df = df[['playerID', 'HoF', 'POS']]
+   df_inf_containing = df[['WHIP', 'KperBB']]
+   df = df[['G_all', 'finalGame', 'OPS', 'SB', 'HR',
+            'Years_Played', 'Most Valuable Player', 'AS_games',
+            'Gold Glove', 'Rookie of the Year', 'World Series MVP', 'Silver Slugger',
+            'WHIP', 'ERA', 'KperBB', 'PO', 'A', 'E', 'DP']]
 
-  # Removing values with incompatible values
-  # ic(df.shape)
-  # ic(df['WHIP'] != inf)
-  # ic(df['KperBB'] != inf)
-  # ic(df_inf.shape)
-  # ic(np.isinf(df))
-  # ic(df_inf['WHIP'])
-  # ic(df_inf['KperBB'])
-  # df[np.isinf(df['KperBB'])]
-  # ic(df.shape)
-  # ic(df.max())
-  # ic(df.groupby(np.isinf(df['WHIP'])).count())
-  # ic(df.groupby(np.isinf(df['KperBB'])).count())
-
-  # pre_std_df = df
-  hof_label_df = df[['playerID', 'HoF', 'POS']]
-  df_inf_containing = df[['WHIP', 'KperBB']]
-  df = df[['G_all', 'finalGame', 'OPS', 'SB', 'HR',
-           'Years_Played', 'Most Valuable Player', 'AS_games',
-           'Gold Glove', 'Rookie of the Year', 'World Series MVP', 'Silver Slugger',
-           'WHIP', 'ERA', 'KperBB', 'PO', 'A', 'E', 'DP']]
-
-  # ic(df)
-  df_inf = np.isinf(df_inf_containing)
-  # ic(df_inf)
-  df = df[~df_inf['WHIP']]
-  df = df[~df_inf['KperBB']]
-  hof_label_df = hof_label_df[~df_inf['WHIP']]
-  hof_label_df = hof_label_df[~df_inf['KperBB']]
-
-  # ic(pre_std_df.shape)
+   df_inf = np.isinf(df_inf_containing)
+   # Removing index of values with infinity values from both data to be
+   # standardized and the label data
+   df = df[~df_inf['WHIP']]
+   df = df[~df_inf['KperBB']]
+   hof_label_df = hof_label_df[~df_inf['WHIP']]
+   hof_label_df = hof_label_df[~df_inf['KperBB']]
 #+end_src
 
 #+RESULTS:
-: /tmp/babel-aDvIBM/python-Lik2ow:28: UserWarning: Boolean Series key will be reindexed to match DataFrame index.
+: /tmp/babel-aDvIBM/python-PmDC6f:12: UserWarning: Boolean Series key will be reindexed to match DataFrame index.
 :   df = df[~df_inf['KperBB']]
-: /tmp/babel-aDvIBM/python-Lik2ow:30: UserWarning: Boolean Series key will be reindexed to match DataFrame index.
+: /tmp/babel-aDvIBM/python-PmDC6f:14: UserWarning: Boolean Series key will be reindexed to match DataFrame index.
 :   hof_label_df = hof_label_df[~df_inf['KperBB']]
 
 ** One Hot Encoding for Player Position Data
 
 #+begin_src python :session SESSION_1 :results output :exports both
-  ic("in One Hot Encoding")
   # creating one hot encoder object 
   onehotencoder = OneHotEncoder()
   #reshape the 1-D country array to 2-D as fit_transform expects 2-D and finally fit the object 
-  # X = onehotencoder.fit_transform(df.POS.values.reshape(-1,1)).toarray()
   X = onehotencoder.fit_transform(hof_label_df[['POS']]).toarray()
-
-  # X = onehotencoder.fit_transform(df.POS.reshape(-1,1)).toarray()
   #To add this back into the original dataframe 
-  ic(df)
-  ic(hof_label_df.POS.value_counts())
-  ic(X)
-  ic(X.shape)
-  ic(hof_label_df.shape)
   dfOneHot = pd.DataFrame(X, columns = ["POS_"+str(int(i)) for i in range(X.shape[1])]) 
-  ic(dfOneHot)
-  # df = pd.concat([df, dfOneHot], axis=1)
-  ic(df)
-  #droping the country column 
-  # df= df.drop(['POS'], axis=1) 
-  ic(df)
-  #printing to verify 
-  print(df.head())
 #+end_src
 
  #+RESULTS:
- #+begin_example
- ic| 'in One Hot Encoding'
- ic| df:        G_all  finalGame       OPS     SB     HR  ...  KperBB       PO       A      E      DP
-         3        316     1883.0  0.604969    0.0    2.0  ...    0.00   1328.0   269.0  237.0    24.0
-         4       2524     1897.0  0.838926    0.0   97.0  ...    0.50  22572.0  1612.0  976.0  1283.0
-         11       480     1890.0  0.521447    0.0    3.0  ...    0.50    908.0  1253.0  367.0    88.0
-         30       452     1884.0  0.592735    0.0    8.0  ...    0.00    820.0    63.0  173.0     6.0
-         34       575     1885.0  0.619459    0.0    0.0  ...    0.00   1209.0    90.0  148.0    19.0
-         ...      ...        ...       ...    ...    ...  ...     ...      ...     ...    ...     ...
-         17279    937     2018.0  0.829678   32.0   93.0  ...    0.00    761.0  1390.0   67.0   177.0
-         17286   1173     2018.0  0.768319   29.0  141.0  ...    0.00   2279.0  2876.0   62.0   679.0
-         17291   1081     2018.0  0.724818    8.0  135.0  ...    0.00   7225.0   412.0   56.0    72.0
-         17293    651     2018.0  0.643173  162.0   13.0  ...    0.00    768.0   141.0   17.0    33.0
-         17295    254     2018.0  0.387644    0.0    1.0  ...    3.85     97.0   185.0   13.0     7.0
-
-         [3396 rows x 19 columns]
- ic| hof_label_df.POS.value_counts(): P     1268
-                                      OF     667
-                                      2B     389
-                                      C      365
-                                      1B     289
-                                      3B     238
-                                      SS     180
-                                      Name: POS, dtype: int64
- ic| X: array([[0., 0., 0., ..., 0., 0., 0.],
-               [1., 0., 0., ..., 0., 0., 0.],
-               [0., 0., 0., ..., 1., 0., 0.],
-               ...,
-               [0., 0., 0., ..., 0., 0., 0.],
-               [0., 1., 0., ..., 0., 0., 0.],
-               [0., 0., 0., ..., 0., 1., 0.]])
- ic| X.shape: (3396, 7)
- ic| hof_label_df.shape: (3396, 3)
- ic| dfOneHot:       POS_0  POS_1  POS_2  POS_3  POS_4  POS_5  POS_6
-               0       0.0    0.0    0.0    1.0    0.0    0.0    0.0
-               1       1.0    0.0    0.0    0.0    0.0    0.0    0.0
-               2       0.0    0.0    0.0    0.0    1.0    0.0    0.0
-               3       0.0    0.0    0.0    1.0    0.0    0.0    0.0
-               4       0.0    0.0    0.0    0.0    1.0    0.0    0.0
-               ...     ...    ...    ...    ...    ...    ...    ...
-               3391    0.0    1.0    0.0    0.0    0.0    0.0    0.0
-               3392    0.0    0.0    1.0    0.0    0.0    0.0    0.0
-               3393    0.0    0.0    0.0    1.0    0.0    0.0    0.0
-               3394    0.0    1.0    0.0    0.0    0.0    0.0    0.0
-               3395    0.0    0.0    0.0    0.0    0.0    1.0    0.0
-
-               [3396 rows x 7 columns]
- ic| df:        G_all  finalGame       OPS     SB     HR  ...  KperBB       PO       A      E      DP
-         3        316     1883.0  0.604969    0.0    2.0  ...    0.00   1328.0   269.0  237.0    24.0
-         4       2524     1897.0  0.838926    0.0   97.0  ...    0.50  22572.0  1612.0  976.0  1283.0
-         11       480     1890.0  0.521447    0.0    3.0  ...    0.50    908.0  1253.0  367.0    88.0
-         30       452     1884.0  0.592735    0.0    8.0  ...    0.00    820.0    63.0  173.0     6.0
-         34       575     1885.0  0.619459    0.0    0.0  ...    0.00   1209.0    90.0  148.0    19.0
-         ...      ...        ...       ...    ...    ...  ...     ...      ...     ...    ...     ...
-         17279    937     2018.0  0.829678   32.0   93.0  ...    0.00    761.0  1390.0   67.0   177.0
-         17286   1173     2018.0  0.768319   29.0  141.0  ...    0.00   2279.0  2876.0   62.0   679.0
-         17291   1081     2018.0  0.724818    8.0  135.0  ...    0.00   7225.0   412.0   56.0    72.0
-         17293    651     2018.0  0.643173  162.0   13.0  ...    0.00    768.0   141.0   17.0    33.0
-         17295    254     2018.0  0.387644    0.0    1.0  ...    3.85     97.0   185.0   13.0     7.0
-
-         [3396 rows x 19 columns]
- ic| df:        G_all  finalGame       OPS     SB     HR  ...  KperBB       PO       A      E      DP
-         3        316     1883.0  0.604969    0.0    2.0  ...    0.00   1328.0   269.0  237.0    24.0
-         4       2524     1897.0  0.838926    0.0   97.0  ...    0.50  22572.0  1612.0  976.0  1283.0
-         11       480     1890.0  0.521447    0.0    3.0  ...    0.50    908.0  1253.0  367.0    88.0
-         30       452     1884.0  0.592735    0.0    8.0  ...    0.00    820.0    63.0  173.0     6.0
-         34       575     1885.0  0.619459    0.0    0.0  ...    0.00   1209.0    90.0  148.0    19.0
-         ...      ...        ...       ...    ...    ...  ...     ...      ...     ...    ...     ...
-         17279    937     2018.0  0.829678   32.0   93.0  ...    0.00    761.0  1390.0   67.0   177.0
-         17286   1173     2018.0  0.768319   29.0  141.0  ...    0.00   2279.0  2876.0   62.0   679.0
-         17291   1081     2018.0  0.724818    8.0  135.0  ...    0.00   7225.0   412.0   56.0    72.0
-         17293    651     2018.0  0.643173  162.0   13.0  ...    0.00    768.0   141.0   17.0    33.0
-         17295    254     2018.0  0.387644    0.0    1.0  ...    3.85     97.0   185.0   13.0     7.0
-
-         [3396 rows x 19 columns]
-     G_all  finalGame       OPS   SB    HR  Years_Played  ...   ERA  KperBB       PO       A      E      DP
- 3     316     1883.0  0.604969  0.0   2.0          10.0  ...  1.80     0.0   1328.0   269.0  237.0    24.0
- 4    2524     1897.0  0.838926  0.0  97.0          27.0  ...  9.00     0.5  22572.0  1612.0  976.0  1283.0
- 11    480     1890.0  0.521447  0.0   3.0          10.0  ...  3.58     0.5    908.0  1253.0  367.0    88.0
- 30    452     1884.0  0.592735  0.0   8.0          10.0  ...  0.00     0.0    820.0    63.0  173.0     6.0
- 34    575     1885.0  0.619459  0.0   0.0          11.0  ...  0.00     0.0   1209.0    90.0  148.0    19.0
-
- [5 rows x 19 columns]
- #+end_example
 
 ** Standardizing the Data
 
 #+begin_src python :session SESSION_1 :results output :exports both
-  # df[np.isinf(df['WHIP']) or np.isinf(df['KperBB'])]
-  # ic(np.isinf(df['WHIP']))
-  # ic(np.isinf(df['KperBB']))
-  # df[np.isinf(df['WHIP'])]
-  # df[np.isinf(df['KperBB'])]
-  # ic(df.max())
   df = pd.DataFrame(StandardScaler().fit_transform(df), columns=df.columns)
+  # Joining the one hot encoded dummy variables to standardized data set
   df = df.join(dfOneHot)
-  ### Adding back the HoF data
-  # ic("right after standardizing the data")
+  # Adding back the HoF data
   df.insert(df.shape[1], 'HoF', hof_label_df['HoF'].to_numpy())
 #+end_src
 
@@ -326,14 +192,12 @@ for name in stat_names:
 ** Converting HoF back to strings
 
 #+begin_src python :session SESSION_1 :results output :exports both
- ic("in Converting HoF back to string")
  df['HoF'] = df['HoF'].replace(1.0, 'Y', regex=True)
  df['HoF'] = df['HoF'].replace(np.nan, 'N', regex=True)
  df['HoF'] = df['HoF'].replace(0.0, 'N', regex=True)
 #+end_src
 
  #+RESULTS:
- : ic| 'in Converting HoF back to string'
 
 ** Splitting dataset by HoF players
 
