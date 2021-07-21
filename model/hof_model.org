@@ -166,9 +166,10 @@
 #+begin_src python :session SESSION_1 :results output :exports both
   train_df = pd.read_csv('../data/train_data_' + HP['NAME'] + '.csv', index_col=False)
   test_df = pd.read_csv('../data/test_data_' + HP['NAME'] + '.csv', index_col=False)
-  data_type_dict = {'numerical': [ 'G_all', 'finalGame', 'OPS', 'Years_Played',
+  data_type_dict = {'numerical': [ 'G_all', 'finalGame', 'OPS', 'SB', 'HR', 'Years_Played',
                                    'Most Valuable Player', 'AS_games', 'Gold Glove',
-                                   'Rookie of the Year', 'World Series MVP', 'Silver Slugger'],
+                                   'Rookie of the Year', 'World Series MVP', 'Silver Slugger',
+                                   'WHIP', 'ERA', 'KperBB', 'PO', 'A', 'E', 'DP'],
                     'categorical': ['HoF']}
 #+end_src
 
@@ -211,11 +212,11 @@
 #+end_src
 
 #+RESULTS:
-: /home/olav/gitRepos/TTK28-project/venv/lib/python3.8/site-packages/sklearn/utils/validation.py:70: FutureWarning: Pass classes=[0 1], y=[0 1 0 ... 0 0 0] as keyword args. From version 1.0 (renaming of 0.25) passing these as positional arguments will result in an error
+: /home/olav/gitRepos/TTK28-project/venv/lib/python3.8/site-packages/sklearn/utils/validation.py:70: FutureWarning: Pass classes=[0 1], y=[0 0 0 ... 0 1 0] as keyword args. From version 1.0 (renaming of 0.25) passing these as positional arguments will result in an error
 :   warnings.warn(f"Pass {args_msg} as keyword args. From version "
-: class weights:  {0: 0.5354623824451411, 1: 7.5497237569060776}
-: value counts of Y in train_y:  181
-: value counts of N in train_y:  2552
+: class weights:  {0: 0.5354749704375247, 1: 7.5472222222222225}
+: value counts of Y in train_y:  180
+: value counts of N in train_y:  2537
 
 * Grid Search for choosing models
 
@@ -287,37 +288,90 @@ Best Estimator: LogisticRegression(C=1.623776739188721, class_weight={0: 1.0, 1:
 
 *** Neural Network Grid Search
 
-    The following results are from when only using the original 10 features.
-    There were a few iterations since the optimal solutions were endpoints.
+**** For the original 10 input features
 
-    The dataset for this was not balanced! There were no class weights for the
-    following resutl
-    - Batch Size = ~[2, 4, 6, 8, 10]~
-    - Epochs = ~[100, 125, 150, 175, 200]~
+     The following results are from when only using the original 10 features.
+     There were a few iterations since the optimal solutions were endpoints.
 
-#+begin_example
-Best Score: 0.6292982089131982
-Best Estimator: {'verbose': 0, 'batch_size': 4, 'epochs': 200, 'build_fn': <function create_model at 0x7f440e43d9d0>}
-#+end_example
+     The dataset for this was not balanced! There were no class weights for the
+     following result
+     - Batch Size = ~[2, 4, 6, 8, 10]~
+     - Epochs = ~[100, 125, 150, 175, 200]~
 
-    The ~class weights~ parameter were set to 'balanced' for this run.
-    - Batch Size = ~[3, 4, 5]~
-    - Epochs = ~[190, 200, 210]~
+ #+begin_example
+ Best Score: 0.6292982089131982
+ Best Estimator: {'verbose': 0, 'batch_size': 4, 'epochs': 200, 'build_fn': <function create_model at 0x7f440e43d9d0>}
+ #+end_example
 
-#+begin_example
-Best Score: 0.589460143563261
+     The ~class weights~ parameter were set to 'balanced' for this run.
+     - Batch Size = ~[3, 4, 5]~
+     - Epochs = ~[190, 200, 210]~
 
-Best Estimator: {'verbose': 0, 'batch_size': 5, 'epochs': 210, 'build_fn': <function create_model at 0x7f938bf6a9d0>}
-#+end_example
+ #+begin_example
+ Best Score: 0.589460143563261
 
-    The ~class weights~ parameter were set to 'balanced' for this run.
-    - Batch Size = ~[4, 6, 10, 20]~
-    - Epochs = ~[200, 250, 300, 400]~
+ Best Estimator: {'verbose': 0, 'batch_size': 5, 'epochs': 210, 'build_fn': <function create_model at 0x7f938bf6a9d0>}
+ #+end_example
 
-#+begin_example
-Best Score: 0.5824397099036812
-Best Estimator: {'verbose': 0, 'batch_size': 6, 'epochs': 250, 'build_fn': <function create_model at 0x7f938bf5a280>}
-#+end_example
+     The ~class weights~ parameter were set to 'balanced' for this run.
+     - Batch Size = ~[4, 6, 10, 20]~
+     - Epochs = ~[200, 250, 300, 400]~
+
+ #+begin_example
+ Best Score: 0.5824397099036812
+ Best Estimator: {'verbose': 0, 'batch_size': 6, 'epochs': 250, 'build_fn': <function create_model at 0x7f938bf5a280>}
+ #+end_example
+
+**** For the added 26 input features with 26,13,1 structure
+
+     The ~class weights~ parameter were set to 'balanced' for this run.
+     - Batch Size = ~[5, 6, 7]~
+     - Epochs = ~[230, 235, 240, 245, 250]~
+
+ #+begin_example
+ Best Score: 0.6141709069236523
+
+ Best Estimator: {'verbose': 0, 'batch_size': 6, 'epochs': 240, 'build_fn': <function create_model at 0x7fe6b47933a0>}
+ #+end_example
+
+**** For the added 26 input features with 26,17,9,1 structure
+
+     The ~class weights~ parameter were set to 'balanced' for this run.
+     - Batch Size = ~[2, 4, 6, 8, 10]~
+     - Epochs = ~[100, 125, 150, 175, 200]~
+
+ #+begin_example
+ Best Score: 0.6292286798742979
+
+ Best Estimator: {'verbose': 0, 'batch_size': 2, 'epochs': 100, 'build_fn': <function create_model at 0x7fe6b4648670>}
+ #+end_example
+
+     The ~class weights~ parameter were set to 'balanced' for this run.
+     - Batch Size = ~[1, 2, 4]~
+     - Epochs = ~[25, 50, 75, 100, 125]~
+
+ #+begin_example
+ Best Score: 0.5979329942840022
+
+ Best Estimator: {'verbose': 0, 'batch_size': 1, 'epochs': 125, 'build_fn': <function create_model at 0x7fe634937040>}
+ #+end_example
+
+     The ~class weights~ parameter were set to 'balanced' for this run.
+     - Batch Size = ~[1, 2, 4]~
+     - Epochs = ~[125, 150, 200, 250, 300]~
+
+ #+begin_example
+ Best Score: 0.6079706322981303
+
+ Best Estimator: {'verbose': 0, 'batch_size': 4, 'epochs': 125, 'build_fn': <function create_model at 0x7fe6b47933a0>}
+ #+end_example
+
+ It turns out that for this structure, it seems to be peaking at around 0.60 -
+ 0.63 with:
+
+  - Batch Size: 4
+  - Epochs: 125
+
 
 ** Actual Code
 *** Using Grid Search for the Decision Tree Classifier
@@ -345,12 +399,13 @@ Best Estimator: {'verbose': 0, 'batch_size': 6, 'epochs': 250, 'build_fn': <func
 #+end_src
 
  #+RESULTS:
- : Best Score: 0.5178250609559948
- : Best Criterion: gini
- : Best max_depth: 12
- : Best Number Of Components: 6
+ : Best Score: 0.5011699881216227
+ : Best Criterion: entropy
+ : Best max_depth: 8
+ : Best Number Of Components: 22
  :
- : DecisionTreeClassifier(class_weight={0: 1.0, 1: 16}, max_depth=12)
+ : DecisionTreeClassifier(class_weight={0: 1.0, 1: 10}, criterion='entropy',
+ :                        max_depth=8)
 
 *** Using Grid Search for the Logistic Regression
 
@@ -372,19 +427,20 @@ Best Estimator: {'verbose': 0, 'batch_size': 6, 'epochs': 250, 'build_fn': <func
 #+RESULTS:
 #+begin_example
 Fitting 5 folds for each of 280 candidates, totalling 1400 fits
-Best Score: 0.5373897826007131
+Best Score: 0.6192125559700654
 
-Best Estimator: LogisticRegression(C=1.623776739188721, class_weight={0: 1.0, 1: 10},
-                   penalty='l1', random_state=0, solver='liblinear')
+Best Estimator: LogisticRegression(C=29.763514416313132, class_weight={0: 1.0, 1: 10},
+                   random_state=0, solver='liblinear')
 #+end_example
 
 *** Using Grid Search for Neural Network
 
-#+begin_src python :session SESSION_1 :results output :exports both :eval no
+#+begin_src python :session SESSION_1 :results output :exports both
   def create_model():
       model = Sequential([
-          Dense(10, activation='relu', input_shape=(10,)),
-          Dense(5, activation='relu'),
+          Dense(26, activation='relu', input_shape=(26,)),
+          Dense(17, activation='relu'),
+          Dense(9, activation='relu'),
           Dense(1, activation='sigmoid'),
       ])
 
@@ -397,8 +453,8 @@ Best Estimator: LogisticRegression(C=1.623776739188721, class_weight={0: 1.0, 1:
   model = KerasClassifier(build_fn=create_model, verbose = 0)
 
   grid_scorer = make_scorer(matthews_corrcoef, greater_is_better=True)
-  batch_size = [4, 6, 10, 20]
-  epochs = [200, 250, 300, 400]
+  batch_size = [1, 2, 4]
+  epochs = [125, 150, 200, 250, 300]
   param_grid = dict(batch_size=batch_size,
                     epochs=epochs)
   clf_GS = GridSearchCV(model, param_grid, scoring=grid_scorer, cv = 5, n_jobs=-1)
@@ -410,9 +466,9 @@ Best Estimator: LogisticRegression(C=1.623776739188721, class_weight={0: 1.0, 1:
 
  #+RESULTS:
  #+begin_example
- Best Score: 0.5824397099036812
+ Best Score: 0.6079706322981303
 
- Best Estimator: {'verbose': 0, 'batch_size': 6, 'epochs': 250, 'build_fn': <function create_model at 0x7f938bf5a280>}
+ Best Estimator: {'verbose': 0, 'batch_size': 4, 'epochs': 125, 'build_fn': <function create_model at 0x7fe6b47933a0>}
  #+end_example
 
 * The Final Model
@@ -442,11 +498,11 @@ Best Estimator: LogisticRegression(C=1.623776739188721, class_weight={0: 1.0, 1:
     1. number of hidden layers equals one
     2. the number of neurons in that layer is the mean of the neurons in the input and output layers.
 
- #+begin_src python :session SESSION_1 :results output :exports both
+ #+begin_src python :session SESSION_1 :results output :exports both :eval no
    def create_model():
        model = Sequential([
-           Dense(10, activation='relu', input_shape=(10,)),
-           Dense(5, activation='relu'),
+           Dense(26, activation='relu', input_shape=(10,)),
+           Dense(13, activation='relu'),
            Dense(1, activation='sigmoid'),
        ])
 
