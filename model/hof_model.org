@@ -101,13 +101,6 @@
   tensorboard_callback = keras.callbacks.TensorBoard(log_dir=log_dir)
 #+end_src
 
-#+RESULTS:
-: 2021-07-25 00:06:32.404901: I tensorflow/core/profiler/lib/profiler_session.cc:136] Profiler session initializing.
-: 2021-07-25 00:06:32.404938: I tensorflow/core/profiler/lib/profiler_session.cc:155] Profiler session started.
-: 2021-07-25 00:06:32.404992: E tensorflow/core/profiler/internal/gpu/cupti_tracer.cc:1415] function cupti_interface_->Subscribe( &subscriber_, (CUpti_CallbackFunc)ApiCallback, this)failed with error CUPTI could not be loaded or symbol could not be found.
-: 2021-07-25 00:06:32.405028: I tensorflow/core/profiler/lib/profiler_session.cc:172] Profiler session tear down.
-: 2021-07-25 00:06:32.405048: E tensorflow/core/profiler/internal/gpu/cupti_tracer.cc:1496] function cupti_interface_->Finalize()failed with error CUPTI could not be loaded or symbol could not be found.
-
 ** STDOUT Logging Settings
    These are the settings for logging information to the terminal and debugging
    the output.
@@ -212,8 +205,6 @@
 #+end_src
 
 #+RESULTS:
-: /home/olav/gitRepos/TTK28-project/venv/lib/python3.8/site-packages/sklearn/utils/validation.py:70: FutureWarning: Pass classes=[0 1], y=[0 0 0 ... 0 1 0] as keyword args. From version 1.0 (renaming of 0.25) passing these as positional arguments will result in an error
-:   warnings.warn(f"Pass {args_msg} as keyword args. From version "
 : class weights:  {0: 0.5354749704375247, 1: 7.5472222222222225}
 : value counts of Y in train_y:  180
 : value counts of N in train_y:  2537
@@ -528,20 +519,6 @@ Best Estimator: LogisticRegression(C=29.763514416313132, class_weight={0: 1.0, 1
 
   #+RESULTS:
 
-*** Generating Predictions and Prediction Probabilities 
-  The ~model.predict()~ will return the class predictions for the input data put
-  in the function. The ~model.predict_proba()~ will return the probability
-  predictions for the classes, and is the likelihood of the observation
-  belonging to the different classes.
-
-#+begin_src python :session SESSION_1 :results output :exports both
-  # Testing the model
-  decision_tree_pred = decision_tree_model.predict(test_X_pca)
-  decision_tree_y_score = decision_tree_model.predict_proba(test_X_pca)
-#+end_src
-
-#+RESULTS:
-    
 ** Logistic Regression Model
 *** Checkpointing Model Weights
      This for setting up the checkpoints while running the model. It is not really
@@ -583,20 +560,6 @@ Best Estimator: LogisticRegression(C=29.763514416313132, class_weight={0: 1.0, 1
 
   #+RESULTS:
 
-*** Generating Predictions and Prediction Probabilities 
-  The ~model.predict()~ will return the class predictions for the input data put
-  in the function. The ~model.predict_proba()~ will return the probability
-  predictions for the classes, and is the likelihood of the observation
-  belonging to the different classes.
-
-#+begin_src python :session SESSION_1 :results output :exports both
-  # Testing the model
-  logistic_regression_pred = logistic_regression_model.predict(test_X)
-  logistic_regression_y_score = logistic_regression_model.predict_proba(test_X)
-#+end_src
-
-#+RESULTS:
-    
 ** Neural Network Model
 *** Checkpointing Model Weights
      This for setting up the checkpoints while running the model. It is not really
@@ -632,122 +595,105 @@ Best Estimator: LogisticRegression(C=29.763514416313132, class_weight={0: 1.0, 1
   #+RESULTS:
   #+begin_example
   Epoch 1/50
-  2021-07-25 00:06:40.488944: I tensorflow/core/profiler/lib/profiler_session.cc:136] Profiler session initializing.
-  2021-07-25 00:06:40.488990: I tensorflow/core/profiler/lib/profiler_session.cc:155] Profiler session started.
-  2021-07-25 00:06:40.489041: E tensorflow/core/profiler/internal/gpu/cupti_tracer.cc:1415] function cupti_interface_->Subscribe( &subscriber_, (CUpti_CallbackFunc)ApiCallback, this)failed with error CUPTI could not be loaded or symbol could not be found.
-  2021-07-25 00:06:40.515677: I tensorflow/core/profiler/lib/profiler_session.cc:71] Profiler session collecting data.
-  2021-07-25 00:06:40.515758: E tensorflow/core/profiler/internal/gpu/cupti_tracer.cc:1496] function cupti_interface_->Finalize()failed with error CUPTI could not be loaded or symbol could not be found.
-  2021-07-25 00:06:40.516279: I tensorflow/core/profiler/internal/gpu/cupti_collector.cc:228]  GpuTracer has collected 0 callback api events and 0 activity events. 
-  2021-07-25 00:06:40.517294: I tensorflow/core/profiler/lib/profiler_session.cc:172] Profiler session tear down.
-  2021-07-25 00:06:40.518843: I tensorflow/core/profiler/rpc/client/save_profile.cc:137] Creating directory: ../logs/scalars/20210725-000632/train/plugins/profile/2021_07_25_00_06_40
-  2021-07-25 00:06:40.519653: I tensorflow/core/profiler/rpc/client/save_profile.cc:143] Dumped gzipped tool data for trace.json.gz to ../logs/scalars/20210725-000632/train/plugins/profile/2021_07_25_00_06_40/BigArch.trace.json.gz
-  2021-07-25 00:06:40.520995: I tensorflow/core/profiler/rpc/client/save_profile.cc:137] Creating directory: ../logs/scalars/20210725-000632/train/plugins/profile/2021_07_25_00_06_40
-  2021-07-25 00:06:40.521103: I tensorflow/core/profiler/rpc/client/save_profile.cc:143] Dumped gzipped tool data for memory_profile.json.gz to ../logs/scalars/20210725-000632/train/plugins/profile/2021_07_25_00_06_40/BigArch.memory_profile.json.gz
-  2021-07-25 00:06:40.521374: I tensorflow/core/profiler/rpc/client/capture_profile.cc:251] Creating directory: ../logs/scalars/20210725-000632/train/plugins/profile/2021_07_25_00_06_40Dumped tool data for xplane.pb to ../logs/scalars/20210725-000632/train/plugins/profile/2021_07_25_00_06_40/BigArch.xplane.pb
-  Dumped tool data for overview_page.pb to ../logs/scalars/20210725-000632/train/plugins/profile/2021_07_25_00_06_40/BigArch.overview_page.pb
-  Dumped tool data for input_pipeline.pb to ../logs/scalars/20210725-000632/train/plugins/profile/2021_07_25_00_06_40/BigArch.input_pipeline.pb
-  Dumped tool data for tensorflow_stats.pb to ../logs/scalars/20210725-000632/train/plugins/profile/2021_07_25_00_06_40/BigArch.tensorflow_stats.pb
-  Dumped tool data for kernel_stats.pb to ../logs/scalars/20210725-000632/train/plugins/profile/2021_07_25_00_06_40/BigArch.kernel_stats.pb
-
-  2717/2717 - 2s - loss: 0.5292 - accuracy: 0.8649 - recall: 0.6333
+  2717/2717 - 2s - loss: 0.3930 - accuracy: 0.8347 - recall: 0.8111
   Epoch 2/50
-  2717/2717 - 2s - loss: 0.2411 - accuracy: 0.8756 - recall: 0.9167
+  2717/2717 - 2s - loss: 0.2347 - accuracy: 0.8760 - recall: 0.9056
   Epoch 3/50
-  2717/2717 - 2s - loss: 0.2053 - accuracy: 0.8933 - recall: 0.9167
+  2717/2717 - 2s - loss: 0.2029 - accuracy: 0.8999 - recall: 0.9500
   Epoch 4/50
-  2717/2717 - 2s - loss: 0.1809 - accuracy: 0.9032 - recall: 0.9444
+  2717/2717 - 2s - loss: 0.1897 - accuracy: 0.9069 - recall: 0.9333
   Epoch 5/50
-  2717/2717 - 2s - loss: 0.1745 - accuracy: 0.9087 - recall: 0.9444
+  2717/2717 - 2s - loss: 0.1746 - accuracy: 0.9120 - recall: 0.9444
   Epoch 6/50
-  2717/2717 - 2s - loss: 0.1655 - accuracy: 0.9179 - recall: 0.9667
+  2717/2717 - 2s - loss: 0.1761 - accuracy: 0.9128 - recall: 0.9444
   Epoch 7/50
-  2717/2717 - 2s - loss: 0.1600 - accuracy: 0.9176 - recall: 0.9389
+  2717/2717 - 2s - loss: 0.1653 - accuracy: 0.9168 - recall: 0.9500
   Epoch 8/50
-  2717/2717 - 2s - loss: 0.1611 - accuracy: 0.9157 - recall: 0.9500
+  2717/2717 - 2s - loss: 0.1495 - accuracy: 0.9257 - recall: 0.9611
   Epoch 9/50
-  2717/2717 - 2s - loss: 0.1452 - accuracy: 0.9231 - recall: 0.9722
+  2717/2717 - 2s - loss: 0.1433 - accuracy: 0.9201 - recall: 0.9667
   Epoch 10/50
-  2717/2717 - 2s - loss: 0.1334 - accuracy: 0.9282 - recall: 0.9722
+  2717/2717 - 2s - loss: 0.1492 - accuracy: 0.9293 - recall: 0.9500
   Epoch 11/50
-  2717/2717 - 2s - loss: 0.1396 - accuracy: 0.9245 - recall: 0.9611
+  2717/2717 - 2s - loss: 0.1391 - accuracy: 0.9249 - recall: 0.9611
   Epoch 12/50
-  2717/2717 - 2s - loss: 0.1388 - accuracy: 0.9315 - recall: 0.9778
+  2717/2717 - 2s - loss: 0.1238 - accuracy: 0.9371 - recall: 0.9778
   Epoch 13/50
-  2717/2717 - 2s - loss: 0.1251 - accuracy: 0.9341 - recall: 0.9778
+  2717/2717 - 2s - loss: 0.1243 - accuracy: 0.9356 - recall: 0.9722
   Epoch 14/50
-  2717/2717 - 2s - loss: 0.1326 - accuracy: 0.9360 - recall: 0.9667
+  2717/2717 - 2s - loss: 0.1405 - accuracy: 0.9360 - recall: 0.9444
   Epoch 15/50
-  2717/2717 - 2s - loss: 0.1338 - accuracy: 0.9356 - recall: 0.9611
+  2717/2717 - 2s - loss: 0.1133 - accuracy: 0.9400 - recall: 0.9833
   Epoch 16/50
-  2717/2717 - 2s - loss: 0.1205 - accuracy: 0.9389 - recall: 0.9722
+  2717/2717 - 2s - loss: 0.1081 - accuracy: 0.9455 - recall: 0.9667
   Epoch 17/50
-  2717/2717 - 2s - loss: 0.1133 - accuracy: 0.9418 - recall: 0.9722
+  2717/2717 - 2s - loss: 0.1063 - accuracy: 0.9488 - recall: 0.9778
   Epoch 18/50
-  2717/2717 - 2s - loss: 0.1175 - accuracy: 0.9444 - recall: 0.9611
+  2717/2717 - 2s - loss: 0.1094 - accuracy: 0.9411 - recall: 0.9722
   Epoch 19/50
-  2717/2717 - 2s - loss: 0.1034 - accuracy: 0.9492 - recall: 0.9833
+  2717/2717 - 2s - loss: 0.0986 - accuracy: 0.9544 - recall: 0.9778
   Epoch 20/50
-  2717/2717 - 2s - loss: 0.1097 - accuracy: 0.9437 - recall: 0.9778
+  2717/2717 - 2s - loss: 0.0985 - accuracy: 0.9525 - recall: 0.9778
   Epoch 21/50
-  2717/2717 - 2s - loss: 0.1121 - accuracy: 0.9481 - recall: 0.9667
+  2717/2717 - 2s - loss: 0.0986 - accuracy: 0.9514 - recall: 0.9889
   Epoch 22/50
-  2717/2717 - 2s - loss: 0.1096 - accuracy: 0.9430 - recall: 0.9778
+  2717/2717 - 2s - loss: 0.1130 - accuracy: 0.9499 - recall: 0.9778
   Epoch 23/50
-  2717/2717 - 2s - loss: 0.0990 - accuracy: 0.9496 - recall: 0.9833
+  2717/2717 - 2s - loss: 0.0900 - accuracy: 0.9551 - recall: 0.9833
   Epoch 24/50
-  2717/2717 - 2s - loss: 0.1051 - accuracy: 0.9492 - recall: 0.9889
+  2717/2717 - 2s - loss: 0.0887 - accuracy: 0.9584 - recall: 0.9667
   Epoch 25/50
-  2717/2717 - 2s - loss: 0.0884 - accuracy: 0.9562 - recall: 0.9833
+  2717/2717 - 2s - loss: 0.0826 - accuracy: 0.9591 - recall: 0.9944
   Epoch 26/50
-  2717/2717 - 2s - loss: 0.0970 - accuracy: 0.9510 - recall: 0.9722
+  2717/2717 - 2s - loss: 0.0994 - accuracy: 0.9577 - recall: 0.9889
   Epoch 27/50
-  2717/2717 - 2s - loss: 0.0831 - accuracy: 0.9595 - recall: 0.9889
+  2717/2717 - 2s - loss: 0.0834 - accuracy: 0.9614 - recall: 0.9833
   Epoch 28/50
-  2717/2717 - 2s - loss: 0.0817 - accuracy: 0.9584 - recall: 0.9889
+  2717/2717 - 2s - loss: 0.0790 - accuracy: 0.9647 - recall: 0.9889
   Epoch 29/50
-  2717/2717 - 2s - loss: 0.1072 - accuracy: 0.9488 - recall: 0.9722
+  2717/2717 - 2s - loss: 0.0790 - accuracy: 0.9658 - recall: 0.9778
   Epoch 30/50
-  2717/2717 - 2s - loss: 0.0794 - accuracy: 0.9606 - recall: 0.9944
+  2717/2717 - 2s - loss: 0.0794 - accuracy: 0.9639 - recall: 0.9889
   Epoch 31/50
-  2717/2717 - 2s - loss: 0.0791 - accuracy: 0.9595 - recall: 0.9889
+  2717/2717 - 2s - loss: 0.0789 - accuracy: 0.9625 - recall: 0.9833
   Epoch 32/50
-  2717/2717 - 2s - loss: 0.0805 - accuracy: 0.9610 - recall: 0.9889
+  2717/2717 - 2s - loss: 0.0795 - accuracy: 0.9610 - recall: 0.9833
   Epoch 33/50
-  2717/2717 - 2s - loss: 0.0870 - accuracy: 0.9588 - recall: 0.9722
+  2717/2717 - 2s - loss: 0.0918 - accuracy: 0.9628 - recall: 0.9833
   Epoch 34/50
-  2717/2717 - 2s - loss: 0.0800 - accuracy: 0.9599 - recall: 0.9889
+  2717/2717 - 2s - loss: 0.0811 - accuracy: 0.9632 - recall: 0.9833
   Epoch 35/50
-  2717/2717 - 2s - loss: 0.0799 - accuracy: 0.9588 - recall: 0.9722
+  2717/2717 - 2s - loss: 0.0827 - accuracy: 0.9606 - recall: 0.9722
   Epoch 36/50
-  2717/2717 - 2s - loss: 0.0902 - accuracy: 0.9628 - recall: 0.9833
+  2717/2717 - 2s - loss: 0.0796 - accuracy: 0.9614 - recall: 0.9889
   Epoch 37/50
-  2717/2717 - 2s - loss: 0.1179 - accuracy: 0.9628 - recall: 0.9889
+  2717/2717 - 2s - loss: 0.0662 - accuracy: 0.9680 - recall: 0.9833
   Epoch 38/50
-  2717/2717 - 2s - loss: 0.0657 - accuracy: 0.9672 - recall: 1.0000
+  2717/2717 - 2s - loss: 0.0686 - accuracy: 0.9654 - recall: 0.9889
   Epoch 39/50
-  2717/2717 - 2s - loss: 0.0664 - accuracy: 0.9702 - recall: 0.9833
+  2717/2717 - 2s - loss: 0.0632 - accuracy: 0.9661 - recall: 0.9944
   Epoch 40/50
-  2717/2717 - 2s - loss: 0.0619 - accuracy: 0.9731 - recall: 0.9889
+  2717/2717 - 2s - loss: 0.0696 - accuracy: 0.9661 - recall: 0.9833
   Epoch 41/50
-  2717/2717 - 2s - loss: 0.0609 - accuracy: 0.9687 - recall: 0.9944
+  2717/2717 - 2s - loss: 0.0661 - accuracy: 0.9739 - recall: 0.9944
   Epoch 42/50
-  2717/2717 - 2s - loss: 0.0658 - accuracy: 0.9680 - recall: 0.9889
+  2717/2717 - 2s - loss: 0.0682 - accuracy: 0.9672 - recall: 0.9833
   Epoch 43/50
-  2717/2717 - 2s - loss: 0.0904 - accuracy: 0.9614 - recall: 0.9722
+  2717/2717 - 2s - loss: 0.0592 - accuracy: 0.9731 - recall: 0.9833
   Epoch 44/50
-  2717/2717 - 2s - loss: 0.0754 - accuracy: 0.9628 - recall: 0.9889
+  2717/2717 - 2s - loss: 0.0539 - accuracy: 0.9772 - recall: 0.9944
   Epoch 45/50
-  2717/2717 - 2s - loss: 0.0497 - accuracy: 0.9742 - recall: 0.9944
+  2717/2717 - 2s - loss: 0.0727 - accuracy: 0.9750 - recall: 0.9889
   Epoch 46/50
-  2717/2717 - 2s - loss: 0.0601 - accuracy: 0.9724 - recall: 0.9889
+  2717/2717 - 2s - loss: 0.0587 - accuracy: 0.9750 - recall: 0.9944
   Epoch 47/50
-  2717/2717 - 2s - loss: 0.0524 - accuracy: 0.9739 - recall: 1.0000
+  2717/2717 - 2s - loss: 0.0584 - accuracy: 0.9709 - recall: 1.0000
   Epoch 48/50
-  2717/2717 - 2s - loss: 0.0833 - accuracy: 0.9683 - recall: 0.9833
+  2717/2717 - 2s - loss: 0.0602 - accuracy: 0.9757 - recall: 0.9833
   Epoch 49/50
-  2717/2717 - 2s - loss: 0.1226 - accuracy: 0.9676 - recall: 0.9889
+  2717/2717 - 2s - loss: 0.0550 - accuracy: 0.9728 - recall: 0.9889
   Epoch 50/50
-  2717/2717 - 2s - loss: 0.0567 - accuracy: 0.9724 - recall: 0.9944
+  2717/2717 - 2s - loss: 0.0742 - accuracy: 0.9713 - recall: 0.9889
   #+end_example
 
 *** Saving or Loading the Classifier
@@ -770,17 +716,22 @@ Best Estimator: LogisticRegression(C=29.763514416313132, class_weight={0: 1.0, 1
 
   #+RESULTS:
 
-*** Generating Predictions and Prediction Probabilities 
+* Generating Predictions and Prediction Probabilities 
   The ~model.predict()~ will return the class predictions for the input data put
   in the function. The ~model.predict_proba()~ will return the probability
   predictions for the classes, and is the likelihood of the observation
   belonging to the different classes.
 
 #+begin_src python :session SESSION_1 :results output :exports both
-  # Testing the model
+  # Testing the Decision Tree Model
+  decision_tree_pred = decision_tree_model.predict(test_X_pca)
+  decision_tree_y_score = decision_tree_model.predict_proba(test_X_pca)
+  # Testing the Logistic Regression Model
+  logistic_regression_pred = logistic_regression_model.predict(test_X)
+  logistic_regression_y_score = logistic_regression_model.predict_proba(test_X)
+  # Testing the Neural Network Model
   nn_pred = nn_model.predict(test_X)
   nn_y_score = nn_model.predict_proba(test_X, batch_size=HP['BATCH_SIZE'])
-  # y_score = model.predict_proba(test_X)
 #+end_src
 
 #+RESULTS:
@@ -847,19 +798,19 @@ Best Estimator: LogisticRegression(C=29.763514416313132, class_weight={0: 1.0, 1
 
 #+RESULTS:
 #+begin_example
-tn :  579
-fp :  55
-fn :  24
-tp :  21
+tn :  576
+fp :  58
+fn :  22
+tp :  23
 ###### ---------Overall Results --------- ######
 model_name:  Decision Tree
-accuracy:  0.8836524300441826
-MCC:  0.29975944655419967
-confusion_mat:  [579, 55, 24, 21]
-auroc:  0.30552050473186126
-precision:  0.27631578947368424
-recall:  0.4666666666666667
-f1:  0.347107438016529
+accuracy:  0.882179675994109
+MCC:  0.3220495679851962
+confusion_mat:  [576, 58, 22, 23]
+auroc:  0.2860848229933403
+precision:  0.2839506172839506
+recall:  0.5111111111111111
+f1:  0.3650793650793651
 tn :  572
 fp :  62
 fn :  8
@@ -873,22 +824,22 @@ auroc:  0.05341745531019977
 precision:  0.37373737373737376
 recall:  0.8222222222222222
 f1:  0.513888888888889
-tn :  588
-fp :  46
-fn :  14
-tp :  31
+tn :  596
+fp :  38
+fn :  15
+tp :  30
 ###### ---------Overall Results --------- ######
 model_name:  Neural Network
-accuracy:  0.9116347569955817
-MCC:  0.4835297289342375
-confusion_mat:  [588, 46, 14, 31]
-auroc:  0.0923764458464774
-precision:  0.4025974025974026
-recall:  0.6888888888888889
-f1:  0.5081967213114754
+accuracy:  0.9219440353460973
+MCC:  0.502772043165843
+confusion_mat:  [596, 38, 15, 30]
+auroc:  0.07173151069050122
+precision:  0.4411764705882353
+recall:  0.6666666666666666
+f1:  0.5309734513274336
 #+end_example
 
-* TODO Plots
+* Plots
   Three metrics that are smart to include for imbalanced datasets are:
   - ROC curve
   - Confusion Matrix
@@ -913,10 +864,6 @@ f1:  0.5081967213114754
   plt.savefig("../result/ROC_curve_latest.png")
   plt.clf()
 
-  # plot_roc_curve(fper, tper, HP['NAME'] + '_decision_tree')
-  # plot_roc_curve(fper, tper, HP['NAME'] + '_logistic_regression')
-  # plot_roc_curve(fper, tper, HP['NAME'] + '_neural_network')
-
   decision_tree_man_auroc = auc(decision_tree_fper, decision_tree_tper)
   logistic_regression_man_auroc = auc(logistic_regression_fper, logistic_regression_tper)
   nn_man_auroc = auc(nn_fper, nn_tper)
@@ -926,9 +873,9 @@ f1:  0.5081967213114754
 #+end_src
 
 #+RESULTS:
-: decision_tree_man_auroc:  0.6944794952681388
+: decision_tree_man_auroc:  0.7139151770066596
 : logistic_regression_man_auroc:  0.9465825446898002
-: nn_man_auroc:  0.920837714686295
+: nn_man_auroc:  0.9232211706975114
 
 The latest ROC_plot is the following plot.
 
@@ -951,8 +898,6 @@ The latest ROC_plot is the following plot.
 #+end_src
 
 #+RESULTS:
-: /home/olav/gitRepos/TTK28-project/venv/lib/python3.8/site-packages/scikitplot/metrics.py:115: RuntimeWarning: More than 20 figures have been opened. Figures created through the pyplot interface (`matplotlib.pyplot.figure`) are retained until explicitly closed and may consume too much memory. (To control this warning, see the rcParam `figure.max_open_warning`).
-:   fig, ax = plt.subplots(1, 1, figsize=figsize)
 
 
  This is the confusion matrix for the Decision Tree Classifier
@@ -966,22 +911,18 @@ The latest ROC_plot is the following plot.
 
 
 #+begin_src python :session SESSION_1 :results output :exports both
-# Generating precision-recall curve
-skplt.metrics.plot_precision_recall(test_y, decision_tree_y_score)
-precision_recall_curve_string = "../result/precision_recall_curve_" + HP['NAME'] + "_decision_tree_" + datetime.now().strftime("%Y%m%d-%H%M%S") + ".png"
-plt.savefig(precision_recall_curve_string)
-plt.savefig("../result/precision_recall_curve_decision_tree_latest.png")
-plt.clf()
-skplt.metrics.plot_precision_recall(test_y, logistic_regression_y_score)
-precision_recall_curve_string = "../result/precision_recall_curve_" + HP['NAME'] + "_logistic_regression_" + datetime.now().strftime("%Y%m%d-%H%M%S") + ".png"
-plt.savefig(precision_recall_curve_string)
-plt.savefig("../result/precision_recall_curve_logistic_regression_latest.png")
-plt.clf()
-skplt.metrics.plot_precision_recall(test_y, nn_y_score)
-precision_recall_curve_string = "../result/precision_recall_curve_" + HP['NAME'] + "_nn_" + datetime.now().strftime("%Y%m%d-%H%M%S") + ".png"
-plt.savefig("../result/precision_recall_curve_nn_latest.png")
-plt.savefig(precision_recall_curve_string)
-plt.clf()
+  # Generating precision-recall curve
+  def create_precision_recall_curve(test_y, y_score, model_name):
+      skplt.metrics.plot_precision_recall(test_y, y_score)
+      precision_recall_curve_string = "../result/precision_recall_curve_" + HP['NAME'] + "_" + model_name + "_" + datetime.now().strftime("%Y%m%d-%H%M%S") + ".png"
+      plt.savefig(precision_recall_curve_string)
+      latest_name = "../result/precision_recall_curve_" + model_name + "_latest.png" 
+      plt.savefig(latest_name)
+      plt.clf()
+
+  create_precision_recall_curve(test_y, decision_tree_y_score, "decision_tree")
+  create_precision_recall_curve(test_y, logistic_regression_y_score, "logistic_regression")
+  create_precision_recall_curve(test_y, nn_y_score, "nn")
 #+end_src
 
 #+RESULTS:
