@@ -35,6 +35,7 @@
   import logging
   from sklearn import tree, decomposition
   from sklearn.preprocessing import LabelEncoder
+  from sklearn.linear_model import LogisticRegression
   from sklearn.metrics import confusion_matrix, roc_curve, roc_auc_score, accuracy_score, auc, matthews_corrcoef, make_scorer
   from sklearn.utils import class_weight
   from sklearn.model_selection import KFold, StratifiedKFold, cross_val_score, cross_validate, learning_curve
@@ -48,6 +49,27 @@
   from tensorflow.keras.models import Sequential, model_from_json, load_model
   from tensorflow.keras.layers import Dense
   from tensorflow.keras.wrappers.scikit_learn import KerasClassifier
+#+end_src
+
+#+RESULTS:
+
+* Hyperparameters
+  In order to more easily configure the model and keep track of the settting,
+  this hyperparameters dictionary is defined here and used throughout the code
+  where needed.
+
+#+begin_src python :session SESSION_1 :results output :exports both
+  HP = {
+      'NAME': 'full',
+      'INFO': 'checking_testing_final',
+      'EPOCHS': 50,
+      'FOLDS': 2,
+      'BATCH_SIZE': 1,
+      'OPTIMIZER': 'adam',
+      'LOSS': 'binary_crossentropy',
+      'METRICS': ['accuracy', 'Recall'],
+      'DATASET': 'raw'
+  }
 #+end_src
 
 #+RESULTS:
@@ -80,39 +102,18 @@
 #+end_src
 
 #+RESULTS:
-: 2021-07-07 15:09:57.107548: I tensorflow/core/profiler/lib/profiler_session.cc:136] Profiler session initializing.
-: 2021-07-07 15:09:57.107586: I tensorflow/core/profiler/lib/profiler_session.cc:155] Profiler session started.
-: 2021-07-07 15:09:57.107641: E tensorflow/core/profiler/internal/gpu/cupti_tracer.cc:1415] function cupti_interface_->Subscribe( &subscriber_, (CUpti_CallbackFunc)ApiCallback, this)failed with error CUPTI could not be loaded or symbol could not be found.
-: 2021-07-07 15:09:57.107686: I tensorflow/core/profiler/lib/profiler_session.cc:172] Profiler session tear down.
-: 2021-07-07 15:09:57.107717: E tensorflow/core/profiler/internal/gpu/cupti_tracer.cc:1496] function cupti_interface_->Finalize()failed with error CUPTI could not be loaded or symbol could not be found.
+: 2021-07-25 00:06:32.404901: I tensorflow/core/profiler/lib/profiler_session.cc:136] Profiler session initializing.
+: 2021-07-25 00:06:32.404938: I tensorflow/core/profiler/lib/profiler_session.cc:155] Profiler session started.
+: 2021-07-25 00:06:32.404992: E tensorflow/core/profiler/internal/gpu/cupti_tracer.cc:1415] function cupti_interface_->Subscribe( &subscriber_, (CUpti_CallbackFunc)ApiCallback, this)failed with error CUPTI could not be loaded or symbol could not be found.
+: 2021-07-25 00:06:32.405028: I tensorflow/core/profiler/lib/profiler_session.cc:172] Profiler session tear down.
+: 2021-07-25 00:06:32.405048: E tensorflow/core/profiler/internal/gpu/cupti_tracer.cc:1496] function cupti_interface_->Finalize()failed with error CUPTI could not be loaded or symbol could not be found.
 
 ** STDOUT Logging Settings
    These are the settings for logging information to the terminal and debugging
    the output.
 
 #+begin_src python :session SESSION_1 :results output :exports both
-  logging.basicConfig(encoding='utf-8', level=logging.INFO)
-#+end_src
-
-#+RESULTS:
-
-* Hyperparameters
-  In order to more easily configure the model and keep track of the settting,
-  this hyperparameters dictionary is defined here and used throughout the code
-  where needed.
-
-#+begin_src python :session SESSION_1 :results output :exports both
-  HP = {
-      'NAME': 'full',
-      'INFO': 'checking_testing_final',
-      'EPOCHS': 50,
-      'FOLDS': 2,
-      'BATCH_SIZE': 1,
-      'OPTIMIZER': 'adam',
-      'LOSS': 'binary_crossentropy',
-      'METRICS': ['accuracy', 'Recall'],
-      'DATASET': 'raw'
-  }
+  # logging.basicConfig(encoding='utf-8', level=logging.INFO)
 #+end_src
 
 #+RESULTS:
@@ -135,7 +136,6 @@
       file_name = '../result/ROC_curve_' + name + datetime.now().strftime("%Y%m%d-%H%M%S") + '.png'
       plt.savefig(file_name)
       plt.savefig("../result/ROC_curve_latest.png")
-      plt.clf()
 #+end_src
 
 #+RESULTS:
@@ -245,7 +245,6 @@
    negative rates.
 
 ** Overview of results
-
 *** Decision Tree Grid Search
 
     The following results are from when only using the original 10 features.
@@ -372,7 +371,6 @@ Best Estimator: LogisticRegression(C=1.623776739188721, class_weight={0: 1.0, 1:
   - Batch Size: 4
   - Epochs: 125
 
-
 ** Actual Code
 *** Using Grid Search for the Decision Tree Classifier
 
@@ -410,7 +408,6 @@ Best Estimator: LogisticRegression(C=1.623776739188721, class_weight={0: 1.0, 1:
 *** Using Grid Search for the Logistic Regression
 
 #+begin_src python :session SESSION_1 :results output :exports both :eval no
-  from sklearn.linear_model import LogisticRegression
   logistic_regression = LogisticRegression(random_state=0)
   pipe = Pipeline(steps=[('logistic_regression', logistic_regression)])
   grid_scorer = make_scorer(matthews_corrcoef, greater_is_better=True)
@@ -434,8 +431,22 @@ Best Estimator: LogisticRegression(C=29.763514416313132, class_weight={0: 1.0, 1
 #+end_example
 
 *** Using Grid Search for Neural Network
+    
+     Some different model structures were tested for this model, but there were
+     some '[[https://stats.stackexchange.com/questions/181/how-to-choose-the-number-of-hidden-layers-and-nodes-in-a-feedforward-neural-netw#:~:text=There%20are%20many%20rule-of,size%20of%20the%20output%20layer.][rules of thumb]]' which were considered. For the number of hidden nodes
+     in a layer:
+     - The number of hidden neurons should be between the size of the input layer
+       and the size of the output layer.
+     - The number of hidden neurons should be 2/3 the size of the input layer,
+       plus the size of the output layer.
+     - The number of hidden neurons should be less than twice the size of the
+       input layer.
 
-#+begin_src python :session SESSION_1 :results output :exports both
+     A summation of these rules were outlined as the following:
+     1. number of hidden layers equals one
+     2. the number of neurons in that layer is the mean of the neurons in the input and output layers.
+
+#+begin_src python :session SESSION_1 :results output :exports both :eval no
   def create_model():
       model = Sequential([
           Dense(26, activation='relu', input_shape=(26,)),
@@ -471,195 +482,53 @@ Best Estimator: LogisticRegression(C=29.763514416313132, class_weight={0: 1.0, 1
  Best Estimator: {'verbose': 0, 'batch_size': 4, 'epochs': 125, 'build_fn': <function create_model at 0x7fe6b47933a0>}
  #+end_example
 
-* The Final Model
-** Checkpointing Model Weights
-    This for setting up the checkpoints while running the model. It is not really
-    in use right now as it is not added in the ~model.fit~ callbacks.
- #+begin_src python :session SESSION_1 :results output :exports both
-   model_weights_name = HP['NAME'] + '_model.h5'
-   checkpointer = ModelCheckpoint(model_weights_name, monitor='Recall', verbose=0)
- #+end_src
+* The Final Models
+** Decision Tree Model
+*** Checkpointing Model Weights
+     This for setting up the checkpoints while running the model. It is not really
+     in use right now as it is not added in the ~model.fit~ callbacks.
+  #+begin_src python :session SESSION_1 :results output :exports both
+    model_weights_name = HP['NAME'] + '_decision_tree_model.h5'
+    checkpointer = ModelCheckpoint(model_weights_name, monitor='Recall', verbose=0)
+  #+end_src
 
- #+RESULTS:
+  #+RESULTS:
 
-** Defining and Training the Classifier
+*** Defining and Training the Classifier
 
-    Some different model structures were tested for this model, but there were
-    some '[[https://stats.stackexchange.com/questions/181/how-to-choose-the-number-of-hidden-layers-and-nodes-in-a-feedforward-neural-netw#:~:text=There%20are%20many%20rule-of,size%20of%20the%20output%20layer.][rules of thumb]]' which were considered. For the number of hidden nodes
-    in a layer:
-    - The number of hidden neurons should be between the size of the input layer
-      and the size of the output layer.
-    - The number of hidden neurons should be 2/3 the size of the input layer,
-      plus the size of the output layer.
-    - The number of hidden neurons should be less than twice the size of the
-      input layer.
+  #+begin_src python :session SESSION_1 :results output :exports both
+    pca = decomposition.PCA(n_components=22)
+    pca.fit(train_X)
+    train_X_pca = pca.transform(train_X)
+    test_X_pca = pca.transform(test_X)
 
-    A summation of these rules were outlined as the following:
-    1. number of hidden layers equals one
-    2. the number of neurons in that layer is the mean of the neurons in the input and output layers.
+    decision_tree_model = tree.DecisionTreeClassifier(criterion='entropy', max_depth=8, class_weight={0: 1.0, 1: 10.0})
+    decision_tree_model.fit(train_X_pca, train_y)
+  #+end_src
 
- #+begin_src python :session SESSION_1 :results output :exports both :eval no
-   def create_model():
-       model = Sequential([
-           Dense(26, activation='relu', input_shape=(10,)),
-           Dense(13, activation='relu'),
-           Dense(1, activation='sigmoid'),
-       ])
+  #+RESULTS:
 
-       model.compile(
-           optimizer= HP['OPTIMIZER'],
-           loss= HP['LOSS'],
-           metrics=HP['METRICS'])
-       return model
+*** Saving or Loading the Classifier
+    Both of these blocks can be uncommented to save or load models as desired.
+**** Saving the Model
+  #+begin_src python :session SESSION_1 :results output :exports both
+    ### Saving Entire Model
+    # save_model(decision_tree_model, "test_final_check")
+    # model.model.save("decision_tree_model_test_final_different.h5")
+  #+end_src
 
-   model = KerasClassifier(build_fn=create_model, epochs=HP['EPOCHS'],
-                               batch_size=HP['BATCH_SIZE'], verbose = 2)
-   model.fit(train_X, train_y, class_weight=class_weights, callbacks=[csv_logger, tensorboard_callback])
- #+end_src
+  #+RESULTS:
 
- #+RESULTS:
- #+begin_example
- Epoch 1/50
- 2021-07-07 15:10:01.659123: I tensorflow/core/profiler/lib/profiler_session.cc:136] Profiler session initializing.
- 2021-07-07 15:10:01.659172: I tensorflow/core/profiler/lib/profiler_session.cc:155] Profiler session started.
- 2021-07-07 15:10:01.659210: E tensorflow/core/profiler/internal/gpu/cupti_tracer.cc:1415] function cupti_interface_->Subscribe( &subscriber_, (CUpti_CallbackFunc)ApiCallback, this)failed with error CUPTI could not be loaded or symbol could not be found.
- 2021-07-07 15:10:01.665821: I tensorflow/core/profiler/lib/profiler_session.cc:71] Profiler session collecting data.
- 2021-07-07 15:10:01.665893: E tensorflow/core/profiler/internal/gpu/cupti_tracer.cc:1496] function cupti_interface_->Finalize()failed with error CUPTI could not be loaded or symbol could not be found.
- 2021-07-07 15:10:01.668651: I tensorflow/core/profiler/internal/gpu/cupti_collector.cc:228]  GpuTracer has collected 0 callback api events and 0 activity events. 
- 2021-07-07 15:10:01.670767: I tensorflow/core/profiler/lib/profiler_session.cc:172] Profiler session tear down.
- 2021-07-07 15:10:01.678605: I tensorflow/core/profiler/rpc/client/save_profile.cc:137] Creating directory: ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01
- 2021-07-07 15:10:01.680072: I tensorflow/core/profiler/rpc/client/save_profile.cc:143] Dumped gzipped tool data for trace.json.gz to ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01/BigArch.trace.json.gz
- 2021-07-07 15:10:01.687139: I tensorflow/core/profiler/rpc/client/save_profile.cc:137] Creating directory: ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01
- 2021-07-07 15:10:01.687306: I tensorflow/core/profiler/rpc/client/save_profile.cc:143] Dumped gzipped tool data for memory_profile.json.gz to ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01/BigArch.memory_profile.json.gz
- 2021-07-07 15:10:01.687594: I tensorflow/core/profiler/rpc/client/capture_profile.cc:251] Creating directory: ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01Dumped tool data for xplane.pb to ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01/BigArch.xplane.pb
- Dumped tool data for overview_page.pb to ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01/BigArch.overview_page.pb
- Dumped tool data for input_pipeline.pb to ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01/BigArch.input_pipeline.pb
- Dumped tool data for tensorflow_stats.pb to ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01/BigArch.tensorflow_stats.pb
- Dumped tool data for kernel_stats.pb to ../logs/scalars/20210707-150957/train/plugins/profile/2021_07_07_15_10_01/BigArch.kernel_stats.pb
+**** Loading the Model
+  #+begin_src python :session SESSION_1 :results output :exports both
+    ### Loading Entire Model
+    # model = load_model(decision_tree_model, "test_final")
+    # model.load("decision_tree_model_test_final_different.h5")
+  #+end_src
 
- 2733/2733 - 2s - loss: 0.4942 - accuracy: 0.8094 - recall: 0.7072
- Epoch 2/50
- 2733/2733 - 2s - loss: 0.3264 - accuracy: 0.8229 - recall: 0.9116
- Epoch 3/50
- 2733/2733 - 2s - loss: 0.2861 - accuracy: 0.8529 - recall: 0.9171
- Epoch 4/50
- 2733/2733 - 2s - loss: 0.2698 - accuracy: 0.8613 - recall: 0.9061
- Epoch 5/50
- 2733/2733 - 2s - loss: 0.2620 - accuracy: 0.8558 - recall: 0.9282
- Epoch 6/50
- 2733/2733 - 2s - loss: 0.2500 - accuracy: 0.8664 - recall: 0.9282
- Epoch 7/50
- 2733/2733 - 2s - loss: 0.2498 - accuracy: 0.8767 - recall: 0.9116
- Epoch 8/50
- 2733/2733 - 2s - loss: 0.2488 - accuracy: 0.8811 - recall: 0.9006
- Epoch 9/50
- 2733/2733 - 2s - loss: 0.2416 - accuracy: 0.8836 - recall: 0.9116
- Epoch 10/50
- 2733/2733 - 2s - loss: 0.2379 - accuracy: 0.8785 - recall: 0.9227
- Epoch 11/50
- 2733/2733 - 2s - loss: 0.2365 - accuracy: 0.8902 - recall: 0.9006
- Epoch 12/50
- 2733/2733 - 2s - loss: 0.2314 - accuracy: 0.8811 - recall: 0.9116
- Epoch 13/50
- 2733/2733 - 2s - loss: 0.2262 - accuracy: 0.8880 - recall: 0.9171
- Epoch 14/50
- 2733/2733 - 2s - loss: 0.2224 - accuracy: 0.8869 - recall: 0.9116
- Epoch 15/50
- 2733/2733 - 2s - loss: 0.2212 - accuracy: 0.8873 - recall: 0.9171
- Epoch 16/50
- 2733/2733 - 2s - loss: 0.2195 - accuracy: 0.8833 - recall: 0.9116
- Epoch 17/50
- 2733/2733 - 2s - loss: 0.2159 - accuracy: 0.8902 - recall: 0.9171
- Epoch 18/50
- 2733/2733 - 2s - loss: 0.2117 - accuracy: 0.8928 - recall: 0.9337
- Epoch 19/50
- 2733/2733 - 2s - loss: 0.2070 - accuracy: 0.8917 - recall: 0.9392
- Epoch 20/50
- 2733/2733 - 2s - loss: 0.2060 - accuracy: 0.8932 - recall: 0.9337
- Epoch 21/50
- 2733/2733 - 2s - loss: 0.2026 - accuracy: 0.8983 - recall: 0.9337
- Epoch 22/50
- 2733/2733 - 2s - loss: 0.2032 - accuracy: 0.8965 - recall: 0.9227
- Epoch 23/50
- 2733/2733 - 2s - loss: 0.1954 - accuracy: 0.8994 - recall: 0.9392
- Epoch 24/50
- 2733/2733 - 2s - loss: 0.1921 - accuracy: 0.8990 - recall: 0.9448
- Epoch 25/50
- 2733/2733 - 2s - loss: 0.1939 - accuracy: 0.9016 - recall: 0.9282
- Epoch 26/50
- 2733/2733 - 2s - loss: 0.1916 - accuracy: 0.8997 - recall: 0.9337
- Epoch 27/50
- 2733/2733 - 2s - loss: 0.1900 - accuracy: 0.9045 - recall: 0.9392
- Epoch 28/50
- 2733/2733 - 2s - loss: 0.1860 - accuracy: 0.8997 - recall: 0.9503
- Epoch 29/50
- 2733/2733 - 2s - loss: 0.1847 - accuracy: 0.9049 - recall: 0.9558
- Epoch 30/50
- 2733/2733 - 2s - loss: 0.1803 - accuracy: 0.9071 - recall: 0.9503
- Epoch 31/50
- 2733/2733 - 2s - loss: 0.1763 - accuracy: 0.9096 - recall: 0.9613
- Epoch 32/50
- 2733/2733 - 2s - loss: 0.1815 - accuracy: 0.9104 - recall: 0.9337
- Epoch 33/50
- 2733/2733 - 2s - loss: 0.1737 - accuracy: 0.9093 - recall: 0.9503
- Epoch 34/50
- 2733/2733 - 2s - loss: 0.1800 - accuracy: 0.9104 - recall: 0.9558
- Epoch 35/50
- 2733/2733 - 2s - loss: 0.1725 - accuracy: 0.9118 - recall: 0.9503
- Epoch 36/50
- 2733/2733 - 2s - loss: 0.1781 - accuracy: 0.9136 - recall: 0.9448
- Epoch 37/50
- 2733/2733 - 2s - loss: 0.1683 - accuracy: 0.9093 - recall: 0.9503
- Epoch 38/50
- 2733/2733 - 2s - loss: 0.1672 - accuracy: 0.9122 - recall: 0.9392
- Epoch 39/50
- 2733/2733 - 2s - loss: 0.1660 - accuracy: 0.9096 - recall: 0.9448
- Epoch 40/50
- 2733/2733 - 2s - loss: 0.1742 - accuracy: 0.9100 - recall: 0.9558
- Epoch 41/50
- 2733/2733 - 2s - loss: 0.1698 - accuracy: 0.9147 - recall: 0.9503
- Epoch 42/50
- 2733/2733 - 2s - loss: 0.1708 - accuracy: 0.9085 - recall: 0.9613
- Epoch 43/50
- 2733/2733 - 2s - loss: 0.1608 - accuracy: 0.9158 - recall: 0.9669
- Epoch 44/50
- 2733/2733 - 2s - loss: 0.1706 - accuracy: 0.9082 - recall: 0.9503
- Epoch 45/50
- 2733/2733 - 2s - loss: 0.1677 - accuracy: 0.9122 - recall: 0.9669
- Epoch 46/50
- 2733/2733 - 2s - loss: 0.1605 - accuracy: 0.9122 - recall: 0.9669
- Epoch 47/50
- 2733/2733 - 2s - loss: 0.1611 - accuracy: 0.9140 - recall: 0.9558
- Epoch 48/50
- 2733/2733 - 2s - loss: 0.1642 - accuracy: 0.9133 - recall: 0.9613
- Epoch 49/50
- 2733/2733 - 2s - loss: 0.1674 - accuracy: 0.9104 - recall: 0.9558
- Epoch 50/50
- 2733/2733 - 2s - loss: 0.1611 - accuracy: 0.9118 - recall: 0.9669
- #+end_example
+  #+RESULTS:
 
-** Saving or Loading the Classifier
-   Both of these blocks can be uncommented to save or load models as desired.
-*** Saving the Model
- #+begin_src python :session SESSION_1 :results output :exports both
-   ### Saving Entire Model
-   # save_model(model, "test_final_check")
-   # model.model.save("model_test_final_different.h5")
- #+end_src
-
- #+RESULTS:
-
-*** Loading the Model
- #+begin_src python :session SESSION_1 :results output :exports both
-   ### Loading Entire Model
-   # model = load_model(model, "test_final")
-   # model.load("model_test_final_different.h5")
- #+end_src
-
- #+RESULTS:
-
-* Evaluating and Metrics
-** Predictions and Prediction Probabilities
+*** Generating Predictions and Prediction Probabilities 
   The ~model.predict()~ will return the class predictions for the input data put
   in the function. The ~model.predict_proba()~ will return the probability
   predictions for the classes, and is the likelihood of the observation
@@ -667,82 +536,359 @@ Best Estimator: LogisticRegression(C=29.763514416313132, class_weight={0: 1.0, 1
 
 #+begin_src python :session SESSION_1 :results output :exports both
   # Testing the model
-  pred = model.predict(test_X)
-  y_score = model.predict_proba(test_X, batch_size=HP['BATCH_SIZE'])
+  decision_tree_pred = decision_tree_model.predict(test_X_pca)
+  decision_tree_y_score = decision_tree_model.predict_proba(test_X_pca)
+#+end_src
+
+#+RESULTS:
+    
+** Logistic Regression Model
+*** Checkpointing Model Weights
+     This for setting up the checkpoints while running the model. It is not really
+     in use right now as it is not added in the ~model.fit~ callbacks.
+  #+begin_src python :session SESSION_1 :results output :exports both
+    model_weights_name = HP['NAME'] + '_logistic_regression_model.h5'
+    checkpointer = ModelCheckpoint(model_weights_name, monitor='Recall', verbose=0)
+  #+end_src
+
+  #+RESULTS:
+
+*** Defining and Training the Classifier
+
+#+begin_src python :session SESSION_1 :results output :exports both
+  logistic_regression_model = LogisticRegression(C=29.763514416313132, class_weight={0: 1.0, 1: 10},
+                                                  random_state=0, solver='liblinear')
+  logistic_regression_model.fit(train_X, train_y)
+#+end_src
+
+#+RESULTS:
+
+*** Saving or Loading the Classifier
+    Both of these blocks can be uncommented to save or load models as desired.
+**** Saving the Model
+  #+begin_src python :session SESSION_1 :results output :exports both
+    ### Saving Entire Model
+    # save_model(logistic_regression_model, "test_final_check")
+    # model.model.save("logistic_regression_model_test_final_different.h5")
+  #+end_src
+
+  #+RESULTS:
+
+**** Loading the Model
+  #+begin_src python :session SESSION_1 :results output :exports both
+    ### Loading Entire Model
+    # model = load_model(logistic_regression_model, "test_final")
+    # model.load("logistic_regression_model_test_final_different.h5")
+  #+end_src
+
+  #+RESULTS:
+
+*** Generating Predictions and Prediction Probabilities 
+  The ~model.predict()~ will return the class predictions for the input data put
+  in the function. The ~model.predict_proba()~ will return the probability
+  predictions for the classes, and is the likelihood of the observation
+  belonging to the different classes.
+
+#+begin_src python :session SESSION_1 :results output :exports both
+  # Testing the model
+  logistic_regression_pred = logistic_regression_model.predict(test_X)
+  logistic_regression_y_score = logistic_regression_model.predict_proba(test_X)
+#+end_src
+
+#+RESULTS:
+    
+** Neural Network Model
+*** Checkpointing Model Weights
+     This for setting up the checkpoints while running the model. It is not really
+     in use right now as it is not added in the ~model.fit~ callbacks.
+  #+begin_src python :session SESSION_1 :results output :exports both
+    model_weights_name = HP['NAME'] + '_NN_model.h5'
+    checkpointer = ModelCheckpoint(model_weights_name, monitor='Recall', verbose=0)
+  #+end_src
+
+  #+RESULTS:
+
+*** Defining and Training the Classifier
+
+  #+begin_src python :session SESSION_1 :results output :exports both
+    def create_model():
+        model = Sequential([
+            Dense(26, activation='relu', input_shape=(26,)),
+            Dense(13, activation='relu'),
+            Dense(1, activation='sigmoid'),
+        ])
+
+        model.compile(
+            optimizer= HP['OPTIMIZER'],
+            loss= HP['LOSS'],
+            metrics=HP['METRICS'])
+        return model
+
+    nn_model = KerasClassifier(build_fn=create_model, epochs=HP['EPOCHS'],
+                                batch_size=HP['BATCH_SIZE'], verbose = 2)
+    nn_model.fit(train_X, train_y, class_weight=class_weights, callbacks=[csv_logger, tensorboard_callback])
+  #+end_src
+
+  #+RESULTS:
+  #+begin_example
+  Epoch 1/50
+  2021-07-25 00:06:40.488944: I tensorflow/core/profiler/lib/profiler_session.cc:136] Profiler session initializing.
+  2021-07-25 00:06:40.488990: I tensorflow/core/profiler/lib/profiler_session.cc:155] Profiler session started.
+  2021-07-25 00:06:40.489041: E tensorflow/core/profiler/internal/gpu/cupti_tracer.cc:1415] function cupti_interface_->Subscribe( &subscriber_, (CUpti_CallbackFunc)ApiCallback, this)failed with error CUPTI could not be loaded or symbol could not be found.
+  2021-07-25 00:06:40.515677: I tensorflow/core/profiler/lib/profiler_session.cc:71] Profiler session collecting data.
+  2021-07-25 00:06:40.515758: E tensorflow/core/profiler/internal/gpu/cupti_tracer.cc:1496] function cupti_interface_->Finalize()failed with error CUPTI could not be loaded or symbol could not be found.
+  2021-07-25 00:06:40.516279: I tensorflow/core/profiler/internal/gpu/cupti_collector.cc:228]  GpuTracer has collected 0 callback api events and 0 activity events. 
+  2021-07-25 00:06:40.517294: I tensorflow/core/profiler/lib/profiler_session.cc:172] Profiler session tear down.
+  2021-07-25 00:06:40.518843: I tensorflow/core/profiler/rpc/client/save_profile.cc:137] Creating directory: ../logs/scalars/20210725-000632/train/plugins/profile/2021_07_25_00_06_40
+  2021-07-25 00:06:40.519653: I tensorflow/core/profiler/rpc/client/save_profile.cc:143] Dumped gzipped tool data for trace.json.gz to ../logs/scalars/20210725-000632/train/plugins/profile/2021_07_25_00_06_40/BigArch.trace.json.gz
+  2021-07-25 00:06:40.520995: I tensorflow/core/profiler/rpc/client/save_profile.cc:137] Creating directory: ../logs/scalars/20210725-000632/train/plugins/profile/2021_07_25_00_06_40
+  2021-07-25 00:06:40.521103: I tensorflow/core/profiler/rpc/client/save_profile.cc:143] Dumped gzipped tool data for memory_profile.json.gz to ../logs/scalars/20210725-000632/train/plugins/profile/2021_07_25_00_06_40/BigArch.memory_profile.json.gz
+  2021-07-25 00:06:40.521374: I tensorflow/core/profiler/rpc/client/capture_profile.cc:251] Creating directory: ../logs/scalars/20210725-000632/train/plugins/profile/2021_07_25_00_06_40Dumped tool data for xplane.pb to ../logs/scalars/20210725-000632/train/plugins/profile/2021_07_25_00_06_40/BigArch.xplane.pb
+  Dumped tool data for overview_page.pb to ../logs/scalars/20210725-000632/train/plugins/profile/2021_07_25_00_06_40/BigArch.overview_page.pb
+  Dumped tool data for input_pipeline.pb to ../logs/scalars/20210725-000632/train/plugins/profile/2021_07_25_00_06_40/BigArch.input_pipeline.pb
+  Dumped tool data for tensorflow_stats.pb to ../logs/scalars/20210725-000632/train/plugins/profile/2021_07_25_00_06_40/BigArch.tensorflow_stats.pb
+  Dumped tool data for kernel_stats.pb to ../logs/scalars/20210725-000632/train/plugins/profile/2021_07_25_00_06_40/BigArch.kernel_stats.pb
+
+  2717/2717 - 2s - loss: 0.5292 - accuracy: 0.8649 - recall: 0.6333
+  Epoch 2/50
+  2717/2717 - 2s - loss: 0.2411 - accuracy: 0.8756 - recall: 0.9167
+  Epoch 3/50
+  2717/2717 - 2s - loss: 0.2053 - accuracy: 0.8933 - recall: 0.9167
+  Epoch 4/50
+  2717/2717 - 2s - loss: 0.1809 - accuracy: 0.9032 - recall: 0.9444
+  Epoch 5/50
+  2717/2717 - 2s - loss: 0.1745 - accuracy: 0.9087 - recall: 0.9444
+  Epoch 6/50
+  2717/2717 - 2s - loss: 0.1655 - accuracy: 0.9179 - recall: 0.9667
+  Epoch 7/50
+  2717/2717 - 2s - loss: 0.1600 - accuracy: 0.9176 - recall: 0.9389
+  Epoch 8/50
+  2717/2717 - 2s - loss: 0.1611 - accuracy: 0.9157 - recall: 0.9500
+  Epoch 9/50
+  2717/2717 - 2s - loss: 0.1452 - accuracy: 0.9231 - recall: 0.9722
+  Epoch 10/50
+  2717/2717 - 2s - loss: 0.1334 - accuracy: 0.9282 - recall: 0.9722
+  Epoch 11/50
+  2717/2717 - 2s - loss: 0.1396 - accuracy: 0.9245 - recall: 0.9611
+  Epoch 12/50
+  2717/2717 - 2s - loss: 0.1388 - accuracy: 0.9315 - recall: 0.9778
+  Epoch 13/50
+  2717/2717 - 2s - loss: 0.1251 - accuracy: 0.9341 - recall: 0.9778
+  Epoch 14/50
+  2717/2717 - 2s - loss: 0.1326 - accuracy: 0.9360 - recall: 0.9667
+  Epoch 15/50
+  2717/2717 - 2s - loss: 0.1338 - accuracy: 0.9356 - recall: 0.9611
+  Epoch 16/50
+  2717/2717 - 2s - loss: 0.1205 - accuracy: 0.9389 - recall: 0.9722
+  Epoch 17/50
+  2717/2717 - 2s - loss: 0.1133 - accuracy: 0.9418 - recall: 0.9722
+  Epoch 18/50
+  2717/2717 - 2s - loss: 0.1175 - accuracy: 0.9444 - recall: 0.9611
+  Epoch 19/50
+  2717/2717 - 2s - loss: 0.1034 - accuracy: 0.9492 - recall: 0.9833
+  Epoch 20/50
+  2717/2717 - 2s - loss: 0.1097 - accuracy: 0.9437 - recall: 0.9778
+  Epoch 21/50
+  2717/2717 - 2s - loss: 0.1121 - accuracy: 0.9481 - recall: 0.9667
+  Epoch 22/50
+  2717/2717 - 2s - loss: 0.1096 - accuracy: 0.9430 - recall: 0.9778
+  Epoch 23/50
+  2717/2717 - 2s - loss: 0.0990 - accuracy: 0.9496 - recall: 0.9833
+  Epoch 24/50
+  2717/2717 - 2s - loss: 0.1051 - accuracy: 0.9492 - recall: 0.9889
+  Epoch 25/50
+  2717/2717 - 2s - loss: 0.0884 - accuracy: 0.9562 - recall: 0.9833
+  Epoch 26/50
+  2717/2717 - 2s - loss: 0.0970 - accuracy: 0.9510 - recall: 0.9722
+  Epoch 27/50
+  2717/2717 - 2s - loss: 0.0831 - accuracy: 0.9595 - recall: 0.9889
+  Epoch 28/50
+  2717/2717 - 2s - loss: 0.0817 - accuracy: 0.9584 - recall: 0.9889
+  Epoch 29/50
+  2717/2717 - 2s - loss: 0.1072 - accuracy: 0.9488 - recall: 0.9722
+  Epoch 30/50
+  2717/2717 - 2s - loss: 0.0794 - accuracy: 0.9606 - recall: 0.9944
+  Epoch 31/50
+  2717/2717 - 2s - loss: 0.0791 - accuracy: 0.9595 - recall: 0.9889
+  Epoch 32/50
+  2717/2717 - 2s - loss: 0.0805 - accuracy: 0.9610 - recall: 0.9889
+  Epoch 33/50
+  2717/2717 - 2s - loss: 0.0870 - accuracy: 0.9588 - recall: 0.9722
+  Epoch 34/50
+  2717/2717 - 2s - loss: 0.0800 - accuracy: 0.9599 - recall: 0.9889
+  Epoch 35/50
+  2717/2717 - 2s - loss: 0.0799 - accuracy: 0.9588 - recall: 0.9722
+  Epoch 36/50
+  2717/2717 - 2s - loss: 0.0902 - accuracy: 0.9628 - recall: 0.9833
+  Epoch 37/50
+  2717/2717 - 2s - loss: 0.1179 - accuracy: 0.9628 - recall: 0.9889
+  Epoch 38/50
+  2717/2717 - 2s - loss: 0.0657 - accuracy: 0.9672 - recall: 1.0000
+  Epoch 39/50
+  2717/2717 - 2s - loss: 0.0664 - accuracy: 0.9702 - recall: 0.9833
+  Epoch 40/50
+  2717/2717 - 2s - loss: 0.0619 - accuracy: 0.9731 - recall: 0.9889
+  Epoch 41/50
+  2717/2717 - 2s - loss: 0.0609 - accuracy: 0.9687 - recall: 0.9944
+  Epoch 42/50
+  2717/2717 - 2s - loss: 0.0658 - accuracy: 0.9680 - recall: 0.9889
+  Epoch 43/50
+  2717/2717 - 2s - loss: 0.0904 - accuracy: 0.9614 - recall: 0.9722
+  Epoch 44/50
+  2717/2717 - 2s - loss: 0.0754 - accuracy: 0.9628 - recall: 0.9889
+  Epoch 45/50
+  2717/2717 - 2s - loss: 0.0497 - accuracy: 0.9742 - recall: 0.9944
+  Epoch 46/50
+  2717/2717 - 2s - loss: 0.0601 - accuracy: 0.9724 - recall: 0.9889
+  Epoch 47/50
+  2717/2717 - 2s - loss: 0.0524 - accuracy: 0.9739 - recall: 1.0000
+  Epoch 48/50
+  2717/2717 - 2s - loss: 0.0833 - accuracy: 0.9683 - recall: 0.9833
+  Epoch 49/50
+  2717/2717 - 2s - loss: 0.1226 - accuracy: 0.9676 - recall: 0.9889
+  Epoch 50/50
+  2717/2717 - 2s - loss: 0.0567 - accuracy: 0.9724 - recall: 0.9944
+  #+end_example
+
+*** Saving or Loading the Classifier
+    Both of these blocks can be uncommented to save or load models as desired.
+**** Saving the Model
+  #+begin_src python :session SESSION_1 :results output :exports both
+    ### Saving Entire Model
+    # save_model(nn_model, "test_final_check")
+    # model.model.save("nn_model_test_final_different.h5")
+  #+end_src
+
+  #+RESULTS:
+
+**** Loading the Model
+  #+begin_src python :session SESSION_1 :results output :exports both
+    ### Loading Entire Model
+    # model = load_model(nn_model, "test_final")
+    # model.load("nn_model_test_final_different.h5")
+  #+end_src
+
+  #+RESULTS:
+
+*** Generating Predictions and Prediction Probabilities 
+  The ~model.predict()~ will return the class predictions for the input data put
+  in the function. The ~model.predict_proba()~ will return the probability
+  predictions for the classes, and is the likelihood of the observation
+  belonging to the different classes.
+
+#+begin_src python :session SESSION_1 :results output :exports both
+  # Testing the model
+  nn_pred = nn_model.predict(test_X)
+  nn_y_score = nn_model.predict_proba(test_X, batch_size=HP['BATCH_SIZE'])
   # y_score = model.predict_proba(test_X)
 #+end_src
 
 #+RESULTS:
 : /home/olav/gitRepos/TTK28-project/venv/lib/python3.8/site-packages/tensorflow/python/keras/engine/sequential.py:450: UserWarning: `model.predict_classes()` is deprecated and will be removed after 2021-01-01. Please use instead:* `np.argmax(model.predict(x), axis=-1)`,   if your model does multi-class classification   (e.g. if it uses a `softmax` last-layer activation).* `(model.predict(x) > 0.5).astype("int32")`,   if your model does binary classification   (e.g. if it uses a `sigmoid` last-layer activation).
 :   warnings.warn('`model.predict_classes()` is deprecated and '
-: 683/683 - 0s
+: 679/679 - 0s
 : /home/olav/gitRepos/TTK28-project/venv/lib/python3.8/site-packages/tensorflow/python/keras/engine/sequential.py:425: UserWarning: `model.predict_proba()` is deprecated and will be removed after 2021-01-01. Please use `model.predict()` instead.
 :   warnings.warn('`model.predict_proba()` is deprecated and '
-: 683/683 - 0s
-
-** Metrics
+: 679/679 - 0s
+    
+* Metrics
    Since the data set is imbalanced, there are other metrics to consider beyond
    the typical accuracy. In this dataset the ratio of HoF players vs. non-HoF
    players is ~14:1~ after preprocessing. Without class weights there could be a
    bias towards never selecting the HoF players resulting an accuracy over 90%
    while always predicting them as non-HoF players.
+   
 #+begin_src python :session SESSION_1 :results output :exports both
   # Calculating overall metrics
-  accuracy = accuracy_score(test_y, pred)
-  mcc = matthews_corrcoef(test_y, pred)
-  tn, fp, fn, tp = confusion_matrix(test_y, pred).ravel()
-  confusion_mat = [tn, fp, fn, tp]
-  auroc = roc_auc_score(test_y, y_score[:,0])
-  precision = tp/(tp+fp)
-  recall = tp/(tp+fn)
-  f1 = (2*precision*recall)/(precision+recall)
+  def print_metrics(test_y, pred, y_score, model_name):
+      accuracy = accuracy_score(test_y, pred)
+      mcc = matthews_corrcoef(test_y, pred)
+      tn, fp, fn, tp = confusion_matrix(test_y, pred).ravel()
+      confusion_mat = [tn, fp, fn, tp]
+      auroc = roc_auc_score(test_y, y_score[:,0])
+      precision = tp/(tp+fp)
+      recall = tp/(tp+fn)
+      f1 = (2*precision*recall)/(precision+recall)
 
-  # Showing numerical results
-  confusion_label = ["tn", "fp", "fn", "tp"]
-  for i in range(0,len(confusion_mat)):
-      print(confusion_label[i], ': ', confusion_mat[i])
-  print("###### ---------Overall Results --------- ######")
-  print("accuracy: ", accuracy)
-  print("MCC: ", mcc)
-  print("confusion_mat: ", confusion_mat)
-  print("auroc: ", auroc)
-  print("precision: ", precision)
-  print("recall: ", recall)
-  print("f1: ", f1)
+      # Showing numerical results
+      confusion_label = ["tn", "fp", "fn", "tp"]
+      for i in range(0,len(confusion_mat)):
+          print(confusion_label[i], ': ', confusion_mat[i])
+      print("###### ---------Overall Results --------- ######")
+      print("model_name: ", model_name)
+      print("accuracy: ", accuracy)
+      print("MCC: ", mcc)
+      print("confusion_mat: ", confusion_mat)
+      print("auroc: ", auroc)
+      print("precision: ", precision)
+      print("recall: ", recall)
+      print("f1: ", f1)
 
-  # Saving the metrics
-  metric_dict = {
-      'True Negative': tn,
-      'True Positive': tp,
-      'False Negative': fn,
-      'False Positive': fp,
-      'AUROC': auroc,
-      'Accuracy': accuracy,
-      'Precision': precision,
-      'Recall': recall,
-      'F1': f1
-  }
-  with open("../result/master_log.txt", "a") as file:
-      print(metric_dict, file=file)
+      # Saving the metrics
+      metric_dict = {
+          'Model Name': model_name,
+          'True Negative': tn,
+          'True Positive': tp,
+          'False Negative': fn,
+          'False Positive': fp,
+          'AUROC': auroc,
+          'Accuracy': accuracy,
+          'Precision': precision,
+          'Recall': recall,
+          'F1': f1
+      }
+      with open("../result/master_log.txt", "a") as file:
+          print(metric_dict, file=file)
+        
+  print_metrics(test_y, decision_tree_pred, decision_tree_y_score, "Decision Tree")
+  print_metrics(test_y, logistic_regression_pred, logistic_regression_y_score, "Logistic Regression")
+  print_metrics(test_y, nn_pred, nn_y_score, "Neural Network")
 #+end_src
 
 #+RESULTS:
 #+begin_example
-tn :  597
-fp :  41
-fn :  11
-tp :  34
+tn :  579
+fp :  55
+fn :  24
+tp :  21
 ###### ---------Overall Results --------- ######
-accuracy:  0.9238653001464129
-MCC:  0.5485242750356047
-confusion_mat:  [597, 41, 11, 34]
-auroc:  0.03974225008707767
-precision:  0.4533333333333333
-recall:  0.7555555555555555
-f1:  0.5666666666666667
+model_name:  Decision Tree
+accuracy:  0.8836524300441826
+MCC:  0.29975944655419967
+confusion_mat:  [579, 55, 24, 21]
+auroc:  0.30552050473186126
+precision:  0.27631578947368424
+recall:  0.4666666666666667
+f1:  0.347107438016529
+tn :  572
+fp :  62
+fn :  8
+tp :  37
+###### ---------Overall Results --------- ######
+model_name:  Logistic Regression
+accuracy:  0.8969072164948454
+MCC:  0.5106413422190602
+confusion_mat:  [572, 62, 8, 37]
+auroc:  0.05341745531019977
+precision:  0.37373737373737376
+recall:  0.8222222222222222
+f1:  0.513888888888889
+tn :  588
+fp :  46
+fn :  14
+tp :  31
+###### ---------Overall Results --------- ######
+model_name:  Neural Network
+accuracy:  0.9116347569955817
+MCC:  0.4835297289342375
+confusion_mat:  [588, 46, 14, 31]
+auroc:  0.0923764458464774
+precision:  0.4025974025974026
+recall:  0.6888888888888889
+f1:  0.5081967213114754
 #+end_example
 
-* Plots
+* TODO Plots
   Three metrics that are smart to include for imbalanced datasets are:
   - ROC curve
   - Confusion Matrix
@@ -750,52 +896,105 @@ f1:  0.5666666666666667
 
 #+begin_src python :session SESSION_1 :results output :exports both
   # ROC curve
-  fper, tper, thresholds = roc_curve(test_y, y_score[:,1])
+  decision_tree_fper, decision_tree_tper, thresholds = roc_curve(test_y, decision_tree_y_score[:,1])
+  logistic_regression_fper, logistic_regression_tper, thresholds = roc_curve(test_y, logistic_regression_y_score[:,1])
+  nn_fper, nn_tper, thresholds = roc_curve(test_y, nn_y_score[:,1])
 
-  plot_roc_curve(fper, tper, HP['NAME'])
-  man_auroc = auc(fper, tper)
-  print("man_auroc: ", man_auroc)
+  plt.plot(decision_tree_fper, decision_tree_tper, color='orange', label='Decision Tree ROC')
+  plt.plot(logistic_regression_fper, logistic_regression_tper, color='red', label='Logistic Regression ROC')
+  plt.plot(nn_fper, nn_tper, color='green', label='Neural Network ROC')
+  plt.plot([0, 1], [0, 1], color='darkblue', linestyle='--')
+  plt.xlabel('False Positive Rate')
+  plt.ylabel('True Positive Rate')
+  plt.title('Receiver Operating Characteristic (ROC) Curve')
+  plt.legend()
+  file_name = '../result/ROC_curve_' + HP['NAME'] + datetime.now().strftime("%Y%m%d-%H%M%S") + '.png'
+  plt.savefig(file_name)
+  plt.savefig("../result/ROC_curve_latest.png")
+  plt.clf()
+
+  # plot_roc_curve(fper, tper, HP['NAME'] + '_decision_tree')
+  # plot_roc_curve(fper, tper, HP['NAME'] + '_logistic_regression')
+  # plot_roc_curve(fper, tper, HP['NAME'] + '_neural_network')
+
+  decision_tree_man_auroc = auc(decision_tree_fper, decision_tree_tper)
+  logistic_regression_man_auroc = auc(logistic_regression_fper, logistic_regression_tper)
+  nn_man_auroc = auc(nn_fper, nn_tper)
+  print("decision_tree_man_auroc: ", decision_tree_man_auroc)
+  print("logistic_regression_man_auroc: ", logistic_regression_man_auroc)
+  print("nn_man_auroc: ", nn_man_auroc)
 #+end_src
 
 #+RESULTS:
-: man_auroc:  0.9602577499129223
-
+: decision_tree_man_auroc:  0.6944794952681388
+: logistic_regression_man_auroc:  0.9465825446898002
+: nn_man_auroc:  0.920837714686295
 
 The latest ROC_plot is the following plot.
 
-[[file:ROC_curve_latest.png]]
+[[file:../result/ROC_curve_latest.png]]
 
 
 #+begin_src python :session SESSION_1 :results output :exports both
-# Generating a confusion matrix
-skplt.metrics.plot_confusion_matrix(test_y, pred, normalize=True)
-confusion_mat_string = "../result/confusion_mat_" + HP['NAME']+ datetime.now().strftime("%Y%m%d-%H%M%S") + ".png"
-plt.savefig(confusion_mat_string)
-plt.savefig("../result/confusion_mat_latest.png")
-plt.clf()
+  # Generating a confusion matrix
+  def create_confusion_matrix(test_y, pred, model_name):
+      skplt.metrics.plot_confusion_matrix(test_y, pred, normalize=True)
+      confusion_mat_string = "../result/confusion_mat_" + HP['NAME'] + model_name + datetime.now().strftime("%Y%m%d-%H%M%S") + ".png"
+      plt.savefig(confusion_mat_string)
+      latest_model_name = "../result/confusion_mat_" + model_name + "_latest.png"
+      plt.savefig(latest_model_name)
+      plt.clf()
+
+  create_confusion_matrix(test_y, decision_tree_pred, "decision_tree")
+  create_confusion_matrix(test_y, logistic_regression_pred, "logistic_regression")
+  create_confusion_matrix(test_y, nn_pred, "nn")
 #+end_src
 
 #+RESULTS:
+: /home/olav/gitRepos/TTK28-project/venv/lib/python3.8/site-packages/scikitplot/metrics.py:115: RuntimeWarning: More than 20 figures have been opened. Figures created through the pyplot interface (`matplotlib.pyplot.figure`) are retained until explicitly closed and may consume too much memory. (To control this warning, see the rcParam `figure.max_open_warning`).
+:   fig, ax = plt.subplots(1, 1, figsize=figsize)
 
 
-The confusion matrix for the last run.
+ This is the confusion matrix for the Decision Tree Classifier
+[[file:../result/confusion_mat_decision_tree_latest.png]]
 
-[[file:confusion_mat_latest.png]]
+ This is the confusion matrix for the Logistic Regression Classifier
+[[file:../result/confusion_mat_logistic_regression_latest.png]]
+
+ This is the confusion matrix for the Neural Network Model
+[[file:../result/confusion_mat_nn_latest.png]]
 
 
 #+begin_src python :session SESSION_1 :results output :exports both
 # Generating precision-recall curve
-skplt.metrics.plot_precision_recall(test_y, y_score)
-precision_recall_curve_string = "../result/precision_recall_curve_" + HP['NAME'] + datetime.now().strftime("%Y%m%d-%H%M%S") + ".png"
+skplt.metrics.plot_precision_recall(test_y, decision_tree_y_score)
+precision_recall_curve_string = "../result/precision_recall_curve_" + HP['NAME'] + "_decision_tree_" + datetime.now().strftime("%Y%m%d-%H%M%S") + ".png"
 plt.savefig(precision_recall_curve_string)
-plt.savefig("../result/precision_recall_curve_latest.png")
+plt.savefig("../result/precision_recall_curve_decision_tree_latest.png")
+plt.clf()
+skplt.metrics.plot_precision_recall(test_y, logistic_regression_y_score)
+precision_recall_curve_string = "../result/precision_recall_curve_" + HP['NAME'] + "_logistic_regression_" + datetime.now().strftime("%Y%m%d-%H%M%S") + ".png"
+plt.savefig(precision_recall_curve_string)
+plt.savefig("../result/precision_recall_curve_logistic_regression_latest.png")
+plt.clf()
+skplt.metrics.plot_precision_recall(test_y, nn_y_score)
+precision_recall_curve_string = "../result/precision_recall_curve_" + HP['NAME'] + "_nn_" + datetime.now().strftime("%Y%m%d-%H%M%S") + ".png"
+plt.savefig("../result/precision_recall_curve_nn_latest.png")
+plt.savefig(precision_recall_curve_string)
 plt.clf()
 #+end_src
 
 #+RESULTS:
 
 
-[[file:precision_recall_curve_latest.png]]
+ This is the Precision Recall Curve for the Decision Tree Classifier
+[[file:../result/precision_recall_curve_decision_tree_latest.png]]
+
+ This is the Precision Recall Curve for the Logistic Regression
+[[file:../result/precision_recall_curve_logistic_regression_latest.png]]
+
+ This is the Precision Recall Curve for the Neural Network
+[[file:../result/precision_recall_curve_nn_latest.png]]
 
 
 * Links to Other Files in Project
