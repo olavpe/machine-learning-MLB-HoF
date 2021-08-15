@@ -20,7 +20,7 @@
 
 #+RESULTS:
 
-* Importing dependencies
+* Importing Dependencies
   This project is primarily uses ~Keras~ and ~Sklearn~ for the data analysis
   itself. For data storage and manipulation ~pandas~ and ~numpy~ are the primary
   libraries used. The graphics are generated via ~matplotlib~.
@@ -209,7 +209,7 @@
 : value counts of Y in train_y:  180
 : value counts of N in train_y:  2537
 
-* Grid Search for choosing models
+* Grid Search for Choosing Models
 
    A few different attempts were made to try to compare some different binary
    classifiers. This is mainly to keep track a backup of notes from the code.
@@ -235,135 +235,7 @@
    Coefficient, which considers an equal weighting of false positive and false
    negative rates.
 
-** Overview of results
-*** Decision Tree Grid Search
-
-    The following results are from when only using the original 10 features.
-    The following pipeline also uses Principal Component Analysis (PCA) first
-    and finds the best number of components for the decision tree.
-
-    *PCA Components*:
-    - Best number of components: From 1 to the max number of features (10).
-
-    *Decision Tree*:
-    - Different Class Weights ~class_weight=[{0: 1.0, 1: w} for w in [10, 12, 14, 15, 16, 17, 18]],~
-    - Criterion = ~['gini', 'entropy']~
-    - Max Depth = ~[2, 4, 6, 8, 10, 12]~
-
-#+begin_example
- : Best Score: 0.5178250609559948
- : Best Criterion: gini
- : Best max_depth: 12
- : Best Number Of Components: 6
- :
- : DecisionTreeClassifier(class_weight={0: 1.0, 1: 16}, max_depth=12)
-#+end_example
-
-*** Logistic Regression Grid Search
-
-     The following results are from when only using the original 10 features.
-
-     - Penalty = ~['l1', 'l2']~
-     - C = ~np.logspace(-4, 4, 20),~
-     - Different Class Weights ~class_weight=[{0: 1.0, 1: w} for w in [10, 12, 14, 15, 16, 17, 18]],~
-     - Solver = ~['liblinear']~
-
- #+begin_example
-Fitting 5 folds for each of 280 candidates, totalling 1400 fits
-Best Score: 0.5373897826007131
-
-Best Estimator: LogisticRegression(C=1.623776739188721, class_weight={0: 1.0, 1: 10},
-                   penalty='l1', random_state=0, solver='liblinear')
- #+end_example
-
-*** Neural Network Grid Search
-
-**** For the original 10 input features
-
-     The following results are from when only using the original 10 features.
-     There were a few iterations since the optimal solutions were endpoints.
-
-     The dataset for this was not balanced! There were no class weights for the
-     following result
-     - Batch Size = ~[2, 4, 6, 8, 10]~
-     - Epochs = ~[100, 125, 150, 175, 200]~
-
- #+begin_example
- Best Score: 0.6292982089131982
- Best Estimator: {'verbose': 0, 'batch_size': 4, 'epochs': 200, 'build_fn': <function create_model at 0x7f440e43d9d0>}
- #+end_example
-
-     The ~class weights~ parameter were set to 'balanced' for this run.
-     - Batch Size = ~[3, 4, 5]~
-     - Epochs = ~[190, 200, 210]~
-
- #+begin_example
- Best Score: 0.589460143563261
-
- Best Estimator: {'verbose': 0, 'batch_size': 5, 'epochs': 210, 'build_fn': <function create_model at 0x7f938bf6a9d0>}
- #+end_example
-
-     The ~class weights~ parameter were set to 'balanced' for this run.
-     - Batch Size = ~[4, 6, 10, 20]~
-     - Epochs = ~[200, 250, 300, 400]~
-
- #+begin_example
- Best Score: 0.5824397099036812
- Best Estimator: {'verbose': 0, 'batch_size': 6, 'epochs': 250, 'build_fn': <function create_model at 0x7f938bf5a280>}
- #+end_example
-
-**** For the added 26 input features with 26,13,1 structure
-
-     The ~class weights~ parameter were set to 'balanced' for this run.
-     - Batch Size = ~[5, 6, 7]~
-     - Epochs = ~[230, 235, 240, 245, 250]~
-
- #+begin_example
- Best Score: 0.6141709069236523
-
- Best Estimator: {'verbose': 0, 'batch_size': 6, 'epochs': 240, 'build_fn': <function create_model at 0x7fe6b47933a0>}
- #+end_example
-
-**** For the added 26 input features with 26,17,9,1 structure
-
-     The ~class weights~ parameter were set to 'balanced' for this run.
-     - Batch Size = ~[2, 4, 6, 8, 10]~
-     - Epochs = ~[100, 125, 150, 175, 200]~
-
- #+begin_example
- Best Score: 0.6292286798742979
-
- Best Estimator: {'verbose': 0, 'batch_size': 2, 'epochs': 100, 'build_fn': <function create_model at 0x7fe6b4648670>}
- #+end_example
-
-     The ~class weights~ parameter were set to 'balanced' for this run.
-     - Batch Size = ~[1, 2, 4]~
-     - Epochs = ~[25, 50, 75, 100, 125]~
-
- #+begin_example
- Best Score: 0.5979329942840022
-
- Best Estimator: {'verbose': 0, 'batch_size': 1, 'epochs': 125, 'build_fn': <function create_model at 0x7fe634937040>}
- #+end_example
-
-     The ~class weights~ parameter were set to 'balanced' for this run.
-     - Batch Size = ~[1, 2, 4]~
-     - Epochs = ~[125, 150, 200, 250, 300]~
-
- #+begin_example
- Best Score: 0.6079706322981303
-
- Best Estimator: {'verbose': 0, 'batch_size': 4, 'epochs': 125, 'build_fn': <function create_model at 0x7fe6b47933a0>}
- #+end_example
-
- It turns out that for this structure, it seems to be peaking at around 0.60 -
- 0.63 with:
-
-  - Batch Size: 4
-  - Epochs: 125
-
-** Actual Code
-*** Using Grid Search for the Decision Tree Classifier
+** Decision Tree Classifier
 
 #+begin_src python :session SESSION_1 :results output :exports both :eval no
   pca = decomposition.PCA()
@@ -396,7 +268,7 @@ Best Estimator: LogisticRegression(C=1.623776739188721, class_weight={0: 1.0, 1:
  : DecisionTreeClassifier(class_weight={0: 1.0, 1: 10}, criterion='entropy',
  :                        max_depth=8)
 
-*** Using Grid Search for the Logistic Regression
+** Logistic Regression
 
 #+begin_src python :session SESSION_1 :results output :exports both :eval no
   logistic_regression = LogisticRegression(random_state=0)
@@ -421,7 +293,7 @@ Best Estimator: LogisticRegression(C=29.763514416313132, class_weight={0: 1.0, 1
                    random_state=0, solver='liblinear')
 #+end_example
 
-*** Using Grid Search for Neural Network
+** Neural Network
     
      Some different model structures were tested for this model, but there were
      some '[[https://stats.stackexchange.com/questions/181/how-to-choose-the-number-of-hidden-layers-and-nodes-in-a-feedforward-neural-netw#:~:text=There%20are%20many%20rule-of,size%20of%20the%20output%20layer.][rules of thumb]]' which were considered. For the number of hidden nodes
@@ -474,20 +346,19 @@ Best Estimator: LogisticRegression(C=29.763514416313132, class_weight={0: 1.0, 1
  #+end_example
 
 * The Final Models
+
+  Before each of these models are defined and trained, the checkpointing is set up.
+  These are for setting up the checkpoints while running the model. They are not really
+  in use right now as they are not added in the ~model.fit~ callbacks.
+  
 ** Decision Tree Model
-*** Checkpointing Model Weights
-     This for setting up the checkpoints while running the model. It is not really
-     in use right now as it is not added in the ~model.fit~ callbacks.
+
   #+begin_src python :session SESSION_1 :results output :exports both
+    # Checkpointing
     model_weights_name = HP['NAME'] + '_decision_tree_model.h5'
     checkpointer = ModelCheckpoint(model_weights_name, monitor='Recall', verbose=0)
-  #+end_src
 
-  #+RESULTS:
-
-*** Defining and Training the Classifier
-
-  #+begin_src python :session SESSION_1 :results output :exports both
+    # Defining and Training the Model
     pca = decomposition.PCA(n_components=22)
     pca.fit(train_X)
     train_X_pca = pca.transform(train_X)
@@ -499,7 +370,7 @@ Best Estimator: LogisticRegression(C=29.763514416313132, class_weight={0: 1.0, 1
 
   #+RESULTS:
 
-*** Saving or Loading the Classifier
+*** COMMENT Saving or Loading the Classifier
     Both of these blocks can be uncommented to save or load models as desired.
 **** Saving the Model
   #+begin_src python :session SESSION_1 :results output :exports both
@@ -520,19 +391,13 @@ Best Estimator: LogisticRegression(C=29.763514416313132, class_weight={0: 1.0, 1
   #+RESULTS:
 
 ** Logistic Regression Model
-*** Checkpointing Model Weights
-     This for setting up the checkpoints while running the model. It is not really
-     in use right now as it is not added in the ~model.fit~ callbacks.
-  #+begin_src python :session SESSION_1 :results output :exports both
-    model_weights_name = HP['NAME'] + '_logistic_regression_model.h5'
-    checkpointer = ModelCheckpoint(model_weights_name, monitor='Recall', verbose=0)
-  #+end_src
-
-  #+RESULTS:
-
-*** Defining and Training the Classifier
 
 #+begin_src python :session SESSION_1 :results output :exports both
+  # Checkpointing
+  model_weights_name = HP['NAME'] + '_logistic_regression_model.h5'
+  checkpointer = ModelCheckpoint(model_weights_name, monitor='Recall', verbose=0)
+
+  # Defining and Training the Model
   logistic_regression_model = LogisticRegression(C=29.763514416313132, class_weight={0: 1.0, 1: 10},
                                                   random_state=0, solver='liblinear')
   logistic_regression_model.fit(train_X, train_y)
@@ -540,7 +405,7 @@ Best Estimator: LogisticRegression(C=29.763514416313132, class_weight={0: 1.0, 1
 
 #+RESULTS:
 
-*** Saving or Loading the Classifier
+*** COMMENT Saving or Loading the Classifier
     Both of these blocks can be uncommented to save or load models as desired.
 **** Saving the Model
   #+begin_src python :session SESSION_1 :results output :exports both
@@ -561,19 +426,13 @@ Best Estimator: LogisticRegression(C=29.763514416313132, class_weight={0: 1.0, 1
   #+RESULTS:
 
 ** Neural Network Model
-*** Checkpointing Model Weights
-     This for setting up the checkpoints while running the model. It is not really
-     in use right now as it is not added in the ~model.fit~ callbacks.
+
   #+begin_src python :session SESSION_1 :results output :exports both
+    # Checkpointing
     model_weights_name = HP['NAME'] + '_NN_model.h5'
     checkpointer = ModelCheckpoint(model_weights_name, monitor='Recall', verbose=0)
-  #+end_src
 
-  #+RESULTS:
-
-*** Defining and Training the Classifier
-
-  #+begin_src python :session SESSION_1 :results output :exports both
+    # Defining and Training the Model
     def create_model():
         model = Sequential([
             Dense(26, activation='relu', input_shape=(26,)),
@@ -696,7 +555,7 @@ Best Estimator: LogisticRegression(C=29.763514416313132, class_weight={0: 1.0, 1
   2717/2717 - 2s - loss: 0.0742 - accuracy: 0.9713 - recall: 0.9889
   #+end_example
 
-*** Saving or Loading the Classifier
+*** COMMENT Saving or Loading the Classifier
     Both of these blocks can be uncommented to save or load models as desired.
 **** Saving the Model
   #+begin_src python :session SESSION_1 :results output :exports both
@@ -735,12 +594,6 @@ Best Estimator: LogisticRegression(C=29.763514416313132, class_weight={0: 1.0, 1
 #+end_src
 
 #+RESULTS:
-: /home/olav/gitRepos/TTK28-project/venv/lib/python3.8/site-packages/tensorflow/python/keras/engine/sequential.py:450: UserWarning: `model.predict_classes()` is deprecated and will be removed after 2021-01-01. Please use instead:* `np.argmax(model.predict(x), axis=-1)`,   if your model does multi-class classification   (e.g. if it uses a `softmax` last-layer activation).* `(model.predict(x) > 0.5).astype("int32")`,   if your model does binary classification   (e.g. if it uses a `sigmoid` last-layer activation).
-:   warnings.warn('`model.predict_classes()` is deprecated and '
-: 679/679 - 0s
-: /home/olav/gitRepos/TTK28-project/venv/lib/python3.8/site-packages/tensorflow/python/keras/engine/sequential.py:425: UserWarning: `model.predict_proba()` is deprecated and will be removed after 2021-01-01. Please use `model.predict()` instead.
-:   warnings.warn('`model.predict_proba()` is deprecated and '
-: 679/679 - 0s
     
 * Metrics
    Since the data set is imbalanced, there are other metrics to consider beyond
@@ -774,6 +627,7 @@ Best Estimator: LogisticRegression(C=29.763514416313132, class_weight={0: 1.0, 1
       print("precision: ", precision)
       print("recall: ", recall)
       print("f1: ", f1)
+      print("")
 
       # Saving the metrics
       metric_dict = {
@@ -811,6 +665,7 @@ auroc:  0.2860848229933403
 precision:  0.2839506172839506
 recall:  0.5111111111111111
 f1:  0.3650793650793651
+
 tn :  572
 fp :  62
 fn :  8
@@ -824,6 +679,7 @@ auroc:  0.05341745531019977
 precision:  0.37373737373737376
 recall:  0.8222222222222222
 f1:  0.513888888888889
+
 tn :  596
 fp :  38
 fn :  15
@@ -837,6 +693,7 @@ auroc:  0.07173151069050122
 precision:  0.4411764705882353
 recall:  0.6666666666666666
 f1:  0.5309734513274336
+
 #+end_example
 
 * Plots
@@ -900,13 +757,16 @@ The latest ROC_plot is the following plot.
 #+RESULTS:
 
 
- This is the confusion matrix for the Decision Tree Classifier
+ Confusion Matrix for the Decision Tree Classifier
+ 
 [[file:../result/confusion_mat_decision_tree_latest.png]]
 
- This is the confusion matrix for the Logistic Regression Classifier
+Confusion Matrix for the Logistic Regression Classifier
+
 [[file:../result/confusion_mat_logistic_regression_latest.png]]
 
- This is the confusion matrix for the Neural Network Model
+ Confusion Matrix for the Neural Network Model
+ 
 [[file:../result/confusion_mat_nn_latest.png]]
 
 
@@ -928,13 +788,16 @@ The latest ROC_plot is the following plot.
 #+RESULTS:
 
 
- This is the Precision Recall Curve for the Decision Tree Classifier
+Precision-Recall Curve for the Decision Tree Classifier
+
 [[file:../result/precision_recall_curve_decision_tree_latest.png]]
 
- This is the Precision Recall Curve for the Logistic Regression
+Precision-Recall Curve for the Logistic Regression
+
 [[file:../result/precision_recall_curve_logistic_regression_latest.png]]
 
- This is the Precision Recall Curve for the Neural Network
+Precision-Recall Curve for the Neural Network
+
 [[file:../result/precision_recall_curve_nn_latest.png]]
 
 
@@ -943,6 +806,7 @@ The latest ROC_plot is the following plot.
   1. [[https://www.olavpedersen.com/standalone_hof/extract_data.html][extract_data]]: Extracting data from Lahman's raw data.
   2. [[https://www.olavpedersen.com/standalone_hof/filter_data.html][filter_data]]: Data manipulation, feature creation and feature selection.
   3. [[https://www.olavpedersen.com/standalone_hof/hall_of_fame_model.html][hof_model]]: Creation of the model and training of the neural network.
+  4. [[https://www.olavpedersen.com/standalone_hof/grid_search_results.html][grid_search_results]]: Storing some of the results for the best Grid Searches
 
 * Local Variables                                          :noexport:ARCHIVE:
 # Local Variables:

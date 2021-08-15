@@ -188,8 +188,8 @@ for k,v in years_played.items():
 
    This adds the position stats for the different players. The ~player_stats~
    dictionary is where the player information is aggregated until setting it to
-   the ~master_df~. 
-   
+   the ~master_df~.
+
 #+begin_src python :session SESSION_1 :results output :exports both
   fielding_df_pos = fielding_df[['playerID', 'POS']]
   fielding_df_pos = fielding_df_pos.drop_duplicates(subset=['playerID'])
@@ -427,6 +427,7 @@ master_df.to_csv('../data/final_data.csv')
   1. [[https://www.olavpedersen.com/standalone_hof/extract_data.html][extract_data]]: Extracting data from Lahman's raw data.
   2. [[https://www.olavpedersen.com/standalone_hof/filter_data.html][filter_data]]: Data manipulation, feature creation and feature selection.
   3. [[https://www.olavpedersen.com/standalone_hof/hall_of_fame_model.html][hof_model]]: Creation of the model and training of the neural network.
+  4. [[https://www.olavpedersen.com/standalone_hof/grid_search_results.html][grid_search_results]]: Storing some of the results for the best Grid Searches
 
 
 * Local Variables                                          :noexport:ARCHIVE:
