@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2021-07-04 Sun 20:08 -->
+<!-- 2021-08-15 Sun 22:15 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Filtering the Data from the Aggregated Player Data</title>
@@ -230,32 +230,33 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org1f50da0">1. Activating Python Environment</a></li>
-<li><a href="#org952f8af">2. Importing dependencies</a></li>
-<li><a href="#org8cd340d">3. Hyperparameters</a></li>
-<li><a href="#orgade2ac3">4. Helper Function</a></li>
-<li><a href="#org7c47ada">5. Importing and Cleaning the Data</a></li>
-<li><a href="#org3d50ca0">6. Creating Additional Statistics</a></li>
-<li><a href="#orgdf1b917">7. Fulfilling criteria for HoF eligibility</a></li>
-<li><a href="#orgf05a264">8. Preparing to Feed Data into Model</a>
+<li><a href="#orgc69c339">1. Activating Python Environment</a></li>
+<li><a href="#org048f0af">2. Importing dependencies</a></li>
+<li><a href="#orge7d98ed">3. Hyperparameters</a></li>
+<li><a href="#orge4c527a">4. Helper Function</a></li>
+<li><a href="#org5d4484f">5. Importing and Cleaning the Data</a></li>
+<li><a href="#orgd304acb">6. Creating Additional Statistics</a></li>
+<li><a href="#org6feaf58">7. Fulfilling criteria for HoF eligibility</a></li>
+<li><a href="#org5827419">8. Preparing to Feed Data into Model</a>
 <ul>
-<li><a href="#org311fe58">8.1. Selecting Variables to use in training</a></li>
-<li><a href="#orga5afc12">8.2. Standardizing the Data</a></li>
-<li><a href="#org84a2f86">8.3. Converting HoF back to strings</a></li>
-<li><a href="#org593cb66">8.4. Splitting dataset by HoF players</a></li>
-<li><a href="#orged1f1e2">8.5. Under-sampling the non-HoF players</a></li>
-<li><a href="#org400f47d">8.6. Splitting reg and HoF into train and test</a></li>
-<li><a href="#org5d1466a">8.7. Merging the test and training datasets</a></li>
+<li><a href="#org22b3807">8.1. Selecting Variables to use in training</a></li>
+<li><a href="#org7237659">8.2. One Hot Encoding for Player Position Data</a></li>
+<li><a href="#orgb7a7589">8.3. Standardizing the Data</a></li>
+<li><a href="#org609d56e">8.4. Converting HoF back to strings</a></li>
+<li><a href="#org4514ba5">8.5. Splitting dataset by HoF players</a></li>
+<li><a href="#orgd71f4b9">8.6. Under-sampling the non-HoF players</a></li>
+<li><a href="#orgd7b3308">8.7. Splitting reg and HoF into train and test</a></li>
+<li><a href="#org7e18cbc">8.8. Merging the test and training datasets</a></li>
 </ul>
 </li>
-<li><a href="#orga0f8a57">9. Save the different testing and validation data sets</a></li>
-<li><a href="#orga651bb5">10. Links to Other Files in Project</a></li>
+<li><a href="#orgf51f0bf">9. Save the different testing and validation data sets</a></li>
+<li><a href="#orgfcff4ff">10. Links to Other Files in Project</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org1f50da0" class="outline-2">
-<h2 id="org1f50da0"><span class="section-number-2">1</span> Activating Python Environment</h2>
+<div id="outline-container-orgc69c339" class="outline-2">
+<h2 id="orgc69c339"><span class="section-number-2">1</span> Activating Python Environment</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 This code block must be run to activate python virtual environment for
@@ -270,8 +271,8 @@ org session "SESSION_1". The following Python code blocks are run in
 </div>
 </div>
 
-<div id="outline-container-org952f8af" class="outline-2">
-<h2 id="org952f8af"><span class="section-number-2">2</span> Importing dependencies</h2>
+<div id="outline-container-org048f0af" class="outline-2">
+<h2 id="org048f0af"><span class="section-number-2">2</span> Importing dependencies</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 This filtering of data typically uses <code>pandas</code> and <code>numpy</code> for data storage
@@ -283,14 +284,15 @@ the data. The data is standardized using <code>Sklearn</code> and the <code>Stan
 <pre class="src src-python"><span style="color: #5e7e9b; font-weight: bold;">import</span> pandas <span style="color: #5e7e9b; font-weight: bold;">as</span> pd
 <span style="color: #5e7e9b; font-weight: bold;">import</span> numpy <span style="color: #5e7e9b; font-weight: bold;">as</span> np
 <span style="color: #5e7e9b; font-weight: bold;">from</span> numpy.random <span style="color: #5e7e9b; font-weight: bold;">import</span> RandomState
-<span style="color: #5e7e9b; font-weight: bold;">from</span> sklearn.preprocessing <span style="color: #5e7e9b; font-weight: bold;">import</span> StandardScaler
+<span style="color: #5e7e9b; font-weight: bold;">from</span> icecream <span style="color: #5e7e9b; font-weight: bold;">import</span> ic
+<span style="color: #5e7e9b; font-weight: bold;">from</span> sklearn.preprocessing <span style="color: #5e7e9b; font-weight: bold;">import</span> StandardScaler, OneHotEncoder
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org8cd340d" class="outline-2">
-<h2 id="org8cd340d"><span class="section-number-2">3</span> Hyperparameters</h2>
+<div id="outline-container-orge7d98ed" class="outline-2">
+<h2 id="orge7d98ed"><span class="section-number-2">3</span> Hyperparameters</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 In order to more easily configure the model and keep track of the setting,
@@ -307,8 +309,8 @@ where needed.
 </div>
 </div>
 
-<div id="outline-container-orgade2ac3" class="outline-2">
-<h2 id="orgade2ac3"><span class="section-number-2">4</span> Helper Function</h2>
+<div id="outline-container-orge4c527a" class="outline-2">
+<h2 id="orge4c527a"><span class="section-number-2">4</span> Helper Function</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 This function determines the number of samples to extract based on a
@@ -324,8 +326,8 @@ percentage how imbalanced the dataset should be.
 </div>
 </div>
 
-<div id="outline-container-org7c47ada" class="outline-2">
-<h2 id="org7c47ada"><span class="section-number-2">5</span> Importing and Cleaning the Data</h2>
+<div id="outline-container-org5d4484f" class="outline-2">
+<h2 id="org5d4484f"><span class="section-number-2">5</span> Importing and Cleaning the Data</h2>
 <div class="outline-text-2" id="text-5">
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #7e97af;">df</span> = pd.read_csv<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">'../data/final_data.csv'</span><span style="color: #5e7e9b;">)</span>
@@ -333,7 +335,7 @@ percentage how imbalanced the dataset should be.
 </div>
 
 <pre class="example">
-sys:1: DtypeWarning: Columns (25) have mixed types.Specify dtype option on import or set low_memory=False.
+sys:1: DtypeWarning: Columns (48) have mixed types.Specify dtype option on import or set low_memory=False.
 </pre>
 
 
@@ -360,7 +362,8 @@ Fixing parts that cannot have NaN.
 <pre class="src src-python"><span style="color: #48485e;"># </span><span style="color: #48485e;">Replacing NaN in each column with 0 and adding back as type</span>
 <span style="color: #7e97af;">award_names</span> = <span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'Most Valuable Player'</span>, <span style="color: #5a7273;">'World Series MVP'</span>, <span style="color: #5a7273;">'AS_games'</span>, <span style="color: #5a7273;">'Gold Glove'</span>,
                <span style="color: #5a7273;">'Rookie of the Year'</span>, <span style="color: #5a7273;">'Silver Slugger'</span>,<span style="color: #5a7273;">'G'</span>, <span style="color: #5a7273;">'AB'</span>, <span style="color: #5a7273;">'R'</span>, <span style="color: #5a7273;">'H'</span>, <span style="color: #5a7273;">'2B'</span>, <span style="color: #5a7273;">'3B'</span>,
-               <span style="color: #5a7273;">'HR'</span>, <span style="color: #5a7273;">'RBI'</span>, <span style="color: #5a7273;">'SB'</span>, <span style="color: #5a7273;">'BB'</span>, <span style="color: #5a7273;">'SO'</span>, <span style="color: #5a7273;">'IBB'</span>, <span style="color: #5a7273;">'HBP'</span>, <span style="color: #5a7273;">'SH'</span>, <span style="color: #5a7273;">'SF'</span><span style="color: #5e7e9b;">]</span>
+               <span style="color: #5a7273;">'HR'</span>, <span style="color: #5a7273;">'RBI'</span>, <span style="color: #5a7273;">'SB'</span>, <span style="color: #5a7273;">'BB'</span>, <span style="color: #5a7273;">'SO'</span>, <span style="color: #5a7273;">'IBB'</span>, <span style="color: #5a7273;">'HBP'</span>, <span style="color: #5a7273;">'SH'</span>, <span style="color: #5a7273;">'SF'</span>, <span style="color: #5a7273;">'BB-A'</span>, <span style="color: #5a7273;">'H-A'</span>,
+               <span style="color: #5a7273;">'IPouts'</span>, <span style="color: #5a7273;">'SO-A'</span>, <span style="color: #5a7273;">'BB-A'</span>, <span style="color: #5a7273;">'IBB-A'</span>, <span style="color: #5a7273;">'PO'</span>, <span style="color: #5a7273;">'A'</span>, <span style="color: #5a7273;">'E'</span>, <span style="color: #5a7273;">'DP'</span>, <span style="color: #5a7273;">'ERA'</span><span style="color: #5e7e9b;">]</span>
 <span style="color: #5e7e9b; font-weight: bold;">for</span> col <span style="color: #5e7e9b; font-weight: bold;">in</span> award_names:
     <span style="color: #7e97af;">df</span><span style="color: #5e7e9b;">[</span>col<span style="color: #5e7e9b;">]</span> = df<span style="color: #5e7e9b;">[</span>col<span style="color: #5e7e9b;">]</span>.fillna<span style="color: #5e7e9b;">(</span><span style="color: #cb8986;">0</span><span style="color: #5e7e9b;">)</span>
     <span style="color: #7e97af;">df</span><span style="color: #5e7e9b;">[</span>col<span style="color: #5e7e9b;">]</span> = df<span style="color: #5e7e9b;">[</span>col<span style="color: #5e7e9b;">]</span>.astype<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">'float32'</span><span style="color: #5e7e9b;">)</span>
@@ -369,8 +372,8 @@ Fixing parts that cannot have NaN.
 </div>
 </div>
 
-<div id="outline-container-org3d50ca0" class="outline-2">
-<h2 id="org3d50ca0"><span class="section-number-2">6</span> Creating Additional Statistics</h2>
+<div id="outline-container-orgd304acb" class="outline-2">
+<h2 id="orgd304acb"><span class="section-number-2">6</span> Creating Additional Statistics</h2>
 <div class="outline-text-2" id="text-6">
 <p>
 In order to aggregate the data into stats which are considered features/stats
@@ -381,27 +384,27 @@ SLG, OBS, OPS.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #7e97af;">df</span><span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'1B'</span><span style="color: #5e7e9b;">]</span> = df<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'H'</span><span style="color: #5e7e9b;">]</span> - df<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'2B'</span><span style="color: #5e7e9b;">]</span> - df<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'3B'</span><span style="color: #5e7e9b;">]</span> - df<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'HR'</span><span style="color: #5e7e9b;">]</span>
+<pre class="src src-python"><span style="color: #48485e;"># </span><span style="color: #48485e;">Adding the Batting Stats</span>
+<span style="color: #7e97af;">df</span><span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'1B'</span><span style="color: #5e7e9b;">]</span> = df<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'H'</span><span style="color: #5e7e9b;">]</span> - df<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'2B'</span><span style="color: #5e7e9b;">]</span> - df<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'3B'</span><span style="color: #5e7e9b;">]</span> - df<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'HR'</span><span style="color: #5e7e9b;">]</span>
 <span style="color: #7e97af;">df</span><span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'SLG'</span><span style="color: #5e7e9b;">]</span> = <span style="color: #5e7e9b;">(</span>df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'1B'</span><span style="color: #bf6c68;">]</span> + <span style="color: #cb8986;">2</span>*df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'2B'</span><span style="color: #bf6c68;">]</span> + <span style="color: #cb8986;">3</span>*df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'3B'</span><span style="color: #bf6c68;">]</span> + <span style="color: #cb8986;">4</span>*df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'HR'</span><span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">)</span>/df<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'AB'</span><span style="color: #5e7e9b;">]</span>
 <span style="color: #7e97af;">df</span><span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'OBS'</span><span style="color: #5e7e9b;">]</span> = <span style="color: #5e7e9b;">(</span>df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'H'</span><span style="color: #bf6c68;">]</span> + df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'BB'</span><span style="color: #bf6c68;">]</span> + df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'HBP'</span><span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">)</span>/<span style="color: #5e7e9b;">(</span>df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'AB'</span><span style="color: #bf6c68;">]</span> + df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'BB'</span><span style="color: #bf6c68;">]</span>+ df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'HBP'</span><span style="color: #bf6c68;">]</span>+ df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'SF'</span><span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">)</span>
 <span style="color: #7e97af;">df</span><span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'OPS'</span><span style="color: #5e7e9b;">]</span> = df<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'SLG'</span><span style="color: #5e7e9b;">]</span> + df<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'OBS'</span><span style="color: #5e7e9b;">]</span>
 
-<span style="color: #7e97af;">new_stats</span> = <span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'1B'</span>, <span style="color: #5a7273;">'SLG'</span>, <span style="color: #5a7273;">'OBS'</span>, <span style="color: #5a7273;">'OPS'</span><span style="color: #5e7e9b;">]</span>
+<span style="color: #48485e;"># </span><span style="color: #48485e;">Adding the Pitching Stats</span>
+<span style="color: #7e97af;">df</span><span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'WHIP'</span><span style="color: #5e7e9b;">]</span> = <span style="color: #5e7e9b;">round</span><span style="color: #5e7e9b;">(</span><span style="color: #cb8986;">3</span>*<span style="color: #bf6c68;">(</span>df<span style="color: #5a7273;">[</span><span style="color: #5a7273;">'BB-A'</span><span style="color: #5a7273;">]</span> + df<span style="color: #5a7273;">[</span><span style="color: #5a7273;">'H-A'</span><span style="color: #5a7273;">]</span><span style="color: #bf6c68;">)</span>/df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'IPouts'</span><span style="color: #bf6c68;">]</span>, <span style="color: #cb8986;">2</span><span style="color: #5e7e9b;">)</span>
+<span style="color: #7e97af;">df</span><span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'KperBB'</span><span style="color: #5e7e9b;">]</span> = <span style="color: #5e7e9b;">round</span><span style="color: #5e7e9b;">(</span>df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'SO-A'</span><span style="color: #bf6c68;">]</span>/<span style="color: #bf6c68;">(</span>df<span style="color: #5a7273;">[</span><span style="color: #5a7273;">'BB-A'</span><span style="color: #5a7273;">]</span> - df<span style="color: #5a7273;">[</span><span style="color: #5a7273;">'IBB-A'</span><span style="color: #5a7273;">]</span><span style="color: #bf6c68;">)</span>, <span style="color: #cb8986;">2</span><span style="color: #5e7e9b;">)</span>
+
+<span style="color: #7e97af;">new_stats</span> = <span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'1B'</span>, <span style="color: #5a7273;">'SLG'</span>, <span style="color: #5a7273;">'OBS'</span>, <span style="color: #5a7273;">'OPS'</span>, <span style="color: #5a7273;">'WHIP'</span>, <span style="color: #5a7273;">'KperBB'</span><span style="color: #5e7e9b;">]</span>
 <span style="color: #5e7e9b; font-weight: bold;">for</span> col <span style="color: #5e7e9b; font-weight: bold;">in</span> new_stats:
     <span style="color: #7e97af;">df</span><span style="color: #5e7e9b;">[</span>col<span style="color: #5e7e9b;">]</span> = df<span style="color: #5e7e9b;">[</span>col<span style="color: #5e7e9b;">]</span>.fillna<span style="color: #5e7e9b;">(</span><span style="color: #cb8986;">0</span><span style="color: #5e7e9b;">)</span>
     <span style="color: #7e97af;">df</span><span style="color: #5e7e9b;">[</span>col<span style="color: #5e7e9b;">]</span> = df<span style="color: #5e7e9b;">[</span>col<span style="color: #5e7e9b;">]</span>.astype<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">'float32'</span><span style="color: #5e7e9b;">)</span>
-
-<span style="color: #7e97af;">stat_names</span> = <span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'G'</span>, <span style="color: #5a7273;">'AB'</span>, <span style="color: #5a7273;">'R'</span>, <span style="color: #5a7273;">'H'</span>, <span style="color: #5a7273;">'2B'</span>, <span style="color: #5a7273;">'3B'</span>, <span style="color: #5a7273;">'HR'</span>, <span style="color: #5a7273;">'RBI'</span>, <span style="color: #5a7273;">'SB'</span>,
-              <span style="color: #5a7273;">'BB'</span>, <span style="color: #5a7273;">'SO'</span>, <span style="color: #5a7273;">'IBB'</span>, <span style="color: #5a7273;">'HBP'</span>, <span style="color: #5a7273;">'SH'</span>, <span style="color: #5a7273;">'SF'</span>, <span style="color: #5a7273;">'1B'</span>, <span style="color: #5a7273;">'OPS'</span>, <span style="color: #5a7273;">'SLG'</span>, <span style="color: #5a7273;">'OBS'</span><span style="color: #5e7e9b;">]</span>
-<span style="color: #5e7e9b; font-weight: bold;">for</span> name <span style="color: #5e7e9b; font-weight: bold;">in</span> stat_names:
-    <span style="color: #7e97af;">string</span> = <span style="color: #5a7273;">'number of NaN values in '</span>+ name
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgdf1b917" class="outline-2">
-<h2 id="orgdf1b917"><span class="section-number-2">7</span> Fulfilling criteria for HoF eligibility</h2>
+<div id="outline-container-org6feaf58" class="outline-2">
+<h2 id="org6feaf58"><span class="section-number-2">7</span> Fulfilling criteria for HoF eligibility</h2>
 <div class="outline-text-2" id="text-7">
 <p>
 Removing players who have played less than 10 years as these players are not
@@ -415,38 +418,72 @@ eligible for the MLB Hall of Fame.
 </div>
 </div>
 
-<div id="outline-container-orgf05a264" class="outline-2">
-<h2 id="orgf05a264"><span class="section-number-2">8</span> Preparing to Feed Data into Model</h2>
+<div id="outline-container-org5827419" class="outline-2">
+<h2 id="org5827419"><span class="section-number-2">8</span> Preparing to Feed Data into Model</h2>
 <div class="outline-text-2" id="text-8">
 </div>
-<div id="outline-container-org311fe58" class="outline-3">
-<h3 id="org311fe58"><span class="section-number-3">8.1</span> Selecting Variables to use in training</h3>
+<div id="outline-container-org22b3807" class="outline-3">
+<h3 id="org22b3807"><span class="section-number-3">8.1</span> Selecting Variables to use in training</h3>
 <div class="outline-text-3" id="text-8-1">
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #7e97af;">pre_std_df</span> = df
-<span style="color: #7e97af;">df</span> = df<span style="color: #5e7e9b;">[</span><span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'G_all'</span>, <span style="color: #5a7273;">'finalGame'</span>, <span style="color: #5a7273;">'OPS'</span>,
+<pre class="src src-python"><span style="color: #7e97af;">hof_label_df</span> = df<span style="color: #5e7e9b;">[</span><span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'playerID'</span>, <span style="color: #5a7273;">'HoF'</span>, <span style="color: #5a7273;">'POS'</span><span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">]</span>
+<span style="color: #7e97af;">df_inf_containing</span> = df<span style="color: #5e7e9b;">[</span><span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'WHIP'</span>, <span style="color: #5a7273;">'KperBB'</span><span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">]</span>
+<span style="color: #7e97af;">df</span> = df<span style="color: #5e7e9b;">[</span><span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'G_all'</span>, <span style="color: #5a7273;">'finalGame'</span>, <span style="color: #5a7273;">'OPS'</span>, <span style="color: #5a7273;">'SB'</span>, <span style="color: #5a7273;">'HR'</span>,
          <span style="color: #5a7273;">'Years_Played'</span>, <span style="color: #5a7273;">'Most Valuable Player'</span>, <span style="color: #5a7273;">'AS_games'</span>,
-         <span style="color: #5a7273;">'Gold Glove'</span>, <span style="color: #5a7273;">'Rookie of the Year'</span>, <span style="color: #5a7273;">'World Series MVP'</span>, <span style="color: #5a7273;">'Silver Slugger'</span>,<span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">]</span>
+         <span style="color: #5a7273;">'Gold Glove'</span>, <span style="color: #5a7273;">'Rookie of the Year'</span>, <span style="color: #5a7273;">'World Series MVP'</span>, <span style="color: #5a7273;">'Silver Slugger'</span>,
+         <span style="color: #5a7273;">'WHIP'</span>, <span style="color: #5a7273;">'ERA'</span>, <span style="color: #5a7273;">'KperBB'</span>, <span style="color: #5a7273;">'PO'</span>, <span style="color: #5a7273;">'A'</span>, <span style="color: #5a7273;">'E'</span>, <span style="color: #5a7273;">'DP'</span><span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">]</span>
+
+<span style="color: #7e97af;">df_inf</span> = np.isinf<span style="color: #5e7e9b;">(</span>df_inf_containing<span style="color: #5e7e9b;">)</span>
+<span style="color: #48485e;"># </span><span style="color: #48485e;">Removing index of values with infinity values from both data to be</span>
+<span style="color: #48485e;"># </span><span style="color: #48485e;">standardized and the label data</span>
+<span style="color: #7e97af;">df</span> = df<span style="color: #5e7e9b;">[</span>~df_inf<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'WHIP'</span><span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">]</span>
+<span style="color: #7e97af;">df</span> = df<span style="color: #5e7e9b;">[</span>~df_inf<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'KperBB'</span><span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">]</span>
+<span style="color: #7e97af;">hof_label_df</span> = hof_label_df<span style="color: #5e7e9b;">[</span>~df_inf<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'WHIP'</span><span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">]</span>
+<span style="color: #7e97af;">hof_label_df</span> = hof_label_df<span style="color: #5e7e9b;">[</span>~df_inf<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'KperBB'</span><span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">]</span>
+</pre>
+</div>
+
+<pre class="example">
+/tmp/babel-aDvIBM/python-PmDC6f:12: UserWarning: Boolean Series key will be reindexed to match DataFrame index.
+  df = df[~df_inf['KperBB']]
+/tmp/babel-aDvIBM/python-PmDC6f:14: UserWarning: Boolean Series key will be reindexed to match DataFrame index.
+  hof_label_df = hof_label_df[~df_inf['KperBB']]
 </pre>
 </div>
 </div>
-</div>
 
-<div id="outline-container-orga5afc12" class="outline-3">
-<h3 id="orga5afc12"><span class="section-number-3">8.2</span> Standardizing the Data</h3>
+<div id="outline-container-org7237659" class="outline-3">
+<h3 id="org7237659"><span class="section-number-3">8.2</span> One Hot Encoding for Player Position Data</h3>
 <div class="outline-text-3" id="text-8-2">
 <div class="org-src-container">
-<pre class="src src-python"><span style="color: #7e97af;">df</span> = pd.DataFrame<span style="color: #5e7e9b;">(</span>StandardScaler<span style="color: #bf6c68;">()</span>.fit_transform<span style="color: #bf6c68;">(</span>df<span style="color: #bf6c68;">)</span>, columns=df.columns<span style="color: #5e7e9b;">)</span>
-<span style="color: #48485e;">### </span><span style="color: #48485e;">Adding back the HoF data</span>
-df.insert<span style="color: #5e7e9b;">(</span>df.shape<span style="color: #bf6c68;">[</span><span style="color: #cb8986;">1</span><span style="color: #bf6c68;">]</span>, <span style="color: #5a7273;">'HoF'</span>, pre_std_df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'HoF'</span><span style="color: #bf6c68;">]</span>.to_numpy<span style="color: #bf6c68;">()</span><span style="color: #5e7e9b;">)</span>
+<pre class="src src-python"><span style="color: #48485e;"># </span><span style="color: #48485e;">creating one hot encoder object </span>
+<span style="color: #7e97af;">onehotencoder</span> = OneHotEncoder<span style="color: #5e7e9b;">()</span>
+<span style="color: #48485e;">#</span><span style="color: #48485e;">reshape the 1-D country array to 2-D as fit_transform expects 2-D and finally fit the object </span>
+<span style="color: #7e97af;">X</span> = onehotencoder.fit_transform<span style="color: #5e7e9b;">(</span>hof_label_df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">[</span><span style="color: #5a7273;">'POS'</span><span style="color: #5a7273;">]</span><span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">)</span>.toarray<span style="color: #5e7e9b;">()</span>
+<span style="color: #48485e;">#</span><span style="color: #48485e;">To add this back into the original dataframe </span>
+<span style="color: #7e97af;">dfOneHot</span> = pd.DataFrame<span style="color: #5e7e9b;">(</span>X, columns = <span style="color: #bf6c68;">[</span><span style="color: #5a7273;">"POS_"</span>+<span style="color: #5e7e9b;">str</span><span style="color: #5a7273;">(</span><span style="color: #5e7e9b;">int</span><span style="color: #aabf7f;">(</span>i<span style="color: #aabf7f;">)</span><span style="color: #5a7273;">)</span> <span style="color: #5e7e9b; font-weight: bold;">for</span> i <span style="color: #5e7e9b; font-weight: bold;">in</span> <span style="color: #5e7e9b;">range</span><span style="color: #5a7273;">(</span>X.shape<span style="color: #aabf7f;">[</span><span style="color: #cb8986;">1</span><span style="color: #aabf7f;">]</span><span style="color: #5a7273;">)</span><span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">)</span> 
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org84a2f86" class="outline-3">
-<h3 id="org84a2f86"><span class="section-number-3">8.3</span> Converting HoF back to strings</h3>
+<div id="outline-container-orgb7a7589" class="outline-3">
+<h3 id="orgb7a7589"><span class="section-number-3">8.3</span> Standardizing the Data</h3>
 <div class="outline-text-3" id="text-8-3">
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #7e97af;">df</span> = pd.DataFrame<span style="color: #5e7e9b;">(</span>StandardScaler<span style="color: #bf6c68;">()</span>.fit_transform<span style="color: #bf6c68;">(</span>df<span style="color: #bf6c68;">)</span>, columns=df.columns<span style="color: #5e7e9b;">)</span>
+<span style="color: #48485e;"># </span><span style="color: #48485e;">Joining the one hot encoded dummy variables to standardized data set</span>
+<span style="color: #7e97af;">df</span> = df.join<span style="color: #5e7e9b;">(</span>dfOneHot<span style="color: #5e7e9b;">)</span>
+<span style="color: #48485e;"># </span><span style="color: #48485e;">Adding back the HoF data</span>
+df.insert<span style="color: #5e7e9b;">(</span>df.shape<span style="color: #bf6c68;">[</span><span style="color: #cb8986;">1</span><span style="color: #bf6c68;">]</span>, <span style="color: #5a7273;">'HoF'</span>, hof_label_df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'HoF'</span><span style="color: #bf6c68;">]</span>.to_numpy<span style="color: #bf6c68;">()</span><span style="color: #5e7e9b;">)</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org609d56e" class="outline-3">
+<h3 id="org609d56e"><span class="section-number-3">8.4</span> Converting HoF back to strings</h3>
+<div class="outline-text-3" id="text-8-4">
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #7e97af;">df</span><span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'HoF'</span><span style="color: #5e7e9b;">]</span> = df<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'HoF'</span><span style="color: #5e7e9b;">]</span>.replace<span style="color: #5e7e9b;">(</span><span style="color: #cb8986;">1</span>.<span style="color: #cb8986;">0</span>, <span style="color: #5a7273;">'Y'</span>, regex=<span style="color: #cb8986;">True</span><span style="color: #5e7e9b;">)</span>
 <span style="color: #7e97af;">df</span><span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'HoF'</span><span style="color: #5e7e9b;">]</span> = df<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'HoF'</span><span style="color: #5e7e9b;">]</span>.replace<span style="color: #5e7e9b;">(</span>np.nan, <span style="color: #5a7273;">'N'</span>, regex=<span style="color: #cb8986;">True</span><span style="color: #5e7e9b;">)</span>
@@ -456,9 +493,9 @@ df.insert<span style="color: #5e7e9b;">(</span>df.shape<span style="color: #bf6c
 </div>
 </div>
 
-<div id="outline-container-org593cb66" class="outline-3">
-<h3 id="org593cb66"><span class="section-number-3">8.4</span> Splitting dataset by HoF players</h3>
-<div class="outline-text-3" id="text-8-4">
+<div id="outline-container-org4514ba5" class="outline-3">
+<h3 id="org4514ba5"><span class="section-number-3">8.5</span> Splitting dataset by HoF players</h3>
+<div class="outline-text-3" id="text-8-5">
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #7e97af;">reg_df</span> = df<span style="color: #5e7e9b;">[</span>df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'HoF'</span><span style="color: #bf6c68;">]</span> == <span style="color: #5a7273;">'N'</span><span style="color: #5e7e9b;">]</span>
 <span style="color: #7e97af;">hof_df</span> = df<span style="color: #5e7e9b;">[</span>df<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'HoF'</span><span style="color: #bf6c68;">]</span> == <span style="color: #5a7273;">'Y'</span><span style="color: #5e7e9b;">]</span>
@@ -467,9 +504,9 @@ df.insert<span style="color: #5e7e9b;">(</span>df.shape<span style="color: #bf6c
 </div>
 </div>
 
-<div id="outline-container-orged1f1e2" class="outline-3">
-<h3 id="orged1f1e2"><span class="section-number-3">8.5</span> Under-sampling the non-HoF players</h3>
-<div class="outline-text-3" id="text-8-5">
+<div id="outline-container-orgd71f4b9" class="outline-3">
+<h3 id="orgd71f4b9"><span class="section-number-3">8.6</span> Under-sampling the non-HoF players</h3>
+<div class="outline-text-3" id="text-8-6">
 <p>
 Currently, the non-HoF players are not undersampled.
 </p>
@@ -483,9 +520,9 @@ Currently, the non-HoF players are not undersampled.
 </div>
 </div>
 
-<div id="outline-container-org400f47d" class="outline-3">
-<h3 id="org400f47d"><span class="section-number-3">8.6</span> Splitting reg and HoF into train and test</h3>
-<div class="outline-text-3" id="text-8-6">
+<div id="outline-container-orgd7b3308" class="outline-3">
+<h3 id="orgd7b3308"><span class="section-number-3">8.7</span> Splitting reg and HoF into train and test</h3>
+<div class="outline-text-3" id="text-8-7">
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #7e97af;">sep_seeded_random</span> = RandomState<span style="color: #5e7e9b;">(</span><span style="color: #cb8986;">1</span><span style="color: #5e7e9b;">)</span>
 <span style="color: #7e97af;">train_reg_df</span> = sampled_reg_df.sample<span style="color: #5e7e9b;">(</span>frac=TRAINING_DATA_FRACTION, random_state=sep_seeded_random<span style="color: #5e7e9b;">)</span>
@@ -501,17 +538,17 @@ Currently, the non-HoF players are not undersampled.
 </div>
 
 <pre class="example">
-length of train_reg_df:  2552
-length of test_reg_df:  638
-length of train_hof_df:  181
+length of train_reg_df:  2537
+length of test_reg_df:  634
+length of train_hof_df:  180
 length of test_hof_df:  45
 </pre>
 </div>
 </div>
 
-<div id="outline-container-org5d1466a" class="outline-3">
-<h3 id="org5d1466a"><span class="section-number-3">8.7</span> Merging the test and training datasets</h3>
-<div class="outline-text-3" id="text-8-7">
+<div id="outline-container-org7e18cbc" class="outline-3">
+<h3 id="org7e18cbc"><span class="section-number-3">8.8</span> Merging the test and training datasets</h3>
+<div class="outline-text-3" id="text-8-8">
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #7e97af;">train_df</span> = pd.concat<span style="color: #5e7e9b;">(</span><span style="color: #bf6c68;">[</span>train_hof_df, train_reg_df<span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">)</span>
 <span style="color: #7e97af;">test_df</span> = pd.concat<span style="color: #5e7e9b;">(</span><span style="color: #bf6c68;">[</span>test_hof_df, test_reg_df<span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">)</span>
@@ -524,8 +561,8 @@ length of test_hof_df:  45
 </div>
 </div>
 
-<div id="outline-container-orga0f8a57" class="outline-2">
-<h2 id="orga0f8a57"><span class="section-number-2">9</span> Save the different testing and validation data sets</h2>
+<div id="outline-container-orgf51f0bf" class="outline-2">
+<h2 id="orgf51f0bf"><span class="section-number-2">9</span> Save the different testing and validation data sets</h2>
 <div class="outline-text-2" id="text-9">
 <div class="org-src-container">
 <pre class="src src-python">train_df.to_csv<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">'../data/train_data_'</span> + NAME + <span style="color: #5a7273;">'.csv'</span>, index=<span style="color: #cb8986;">False</span><span style="color: #5e7e9b;">)</span>
@@ -535,20 +572,22 @@ test_df.to_csv<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;
 </div>
 </div>
 
-<div id="outline-container-orga651bb5" class="outline-2">
-<h2 id="orga651bb5"><span class="section-number-2">10</span> Links to Other Files in Project</h2>
+
+<div id="outline-container-orgfcff4ff" class="outline-2">
+<h2 id="orgfcff4ff"><span class="section-number-2">10</span> Links to Other Files in Project</h2>
 <div class="outline-text-2" id="text-10">
 <ol class="org-ol">
 <li><a href="https://www.olavpedersen.com/standalone_hof/extract_data.html">extract_data</a>: Extracting data from Lahman's raw data.</li>
 <li><a href="https://www.olavpedersen.com/standalone_hof/filter_data.html">filter_data</a>: Data manipulation, feature creation and feature selection.</li>
 <li><a href="https://www.olavpedersen.com/standalone_hof/hall_of_fame_model.html">hof_model</a>: Creation of the model and training of the neural network.</li>
+<li><a href="https://www.olavpedersen.com/standalone_hof/grid_search_results.html">grid_search_results</a>: Storing some of the results for the best Grid Searches</li>
 </ol>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Olav Landmark Pedersen</p>
-<p class="date">Created: 2021-07-04 Sun 20:08</p>
+<p class="date">Created: 2021-08-15 Sun 22:15</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

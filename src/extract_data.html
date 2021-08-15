@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2021-07-04 Sun 13:16 -->
+<!-- 2021-08-15 Sun 22:24 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Extracting from Lahman's Raw Data</title>
@@ -230,27 +230,29 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org3c23e5e">1. Activating Python Environment</a></li>
-<li><a href="#orgd845e32">2. Importing dependencies</a></li>
-<li><a href="#org81842bc">3. Importing Raw Data</a></li>
-<li><a href="#org759d5a2">4. Cleaning and Joining the Different Datasets</a>
+<li><a href="#orgebb3758">1. Activating Python Environment</a></li>
+<li><a href="#orgaf2020d">2. Importing dependencies</a></li>
+<li><a href="#org0cce06e">3. Importing Raw Data</a></li>
+<li><a href="#org46608f0">4. Cleaning and Joining the Different Datasets</a>
 <ul>
-<li><a href="#org767b33f">4.1. Batting Data</a></li>
-<li><a href="#org0436658">4.2. Awards Data</a></li>
-<li><a href="#org017a928">4.3. All-Start Data</a></li>
-<li><a href="#org5660366">4.4. Hall of Fame Data</a></li>
-<li><a href="#org26d7a5b">4.5. Player Data</a></li>
-<li><a href="#orga213086">4.6. Appearance Data</a></li>
+<li><a href="#org24dbb63">4.1. Batting Data</a></li>
+<li><a href="#orgd9a4cc7">4.2. Pitching Data</a></li>
+<li><a href="#org8052aef">4.3. Fielding Data</a></li>
+<li><a href="#org83c3a44">4.4. Awards Data</a></li>
+<li><a href="#orga480a11">4.5. All-Start Data</a></li>
+<li><a href="#org07c6146">4.6. Hall of Fame Data</a></li>
+<li><a href="#org60957fd">4.7. Player Data</a></li>
+<li><a href="#org56e5648">4.8. Appearance Data</a></li>
 </ul>
 </li>
-<li><a href="#org5418f5c">5. Joining and Saving the Datasets</a></li>
-<li><a href="#org3765858">6. Links to Other Files in Project</a></li>
+<li><a href="#org3624b97">5. Joining and Saving the Datasets</a></li>
+<li><a href="#org4a11fb9">6. Links to Other Files in Project</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org3c23e5e" class="outline-2">
-<h2 id="org3c23e5e"><span class="section-number-2">1</span> Activating Python Environment</h2>
+<div id="outline-container-orgebb3758" class="outline-2">
+<h2 id="orgebb3758"><span class="section-number-2">1</span> Activating Python Environment</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 This code block must be run to activate python virtual environment for
@@ -265,8 +267,8 @@ org session "SESSION_1". The following Python code blocks are run in
 </div>
 </div>
 
-<div id="outline-container-orgd845e32" class="outline-2">
-<h2 id="orgd845e32"><span class="section-number-2">2</span> Importing dependencies</h2>
+<div id="outline-container-orgaf2020d" class="outline-2">
+<h2 id="orgaf2020d"><span class="section-number-2">2</span> Importing dependencies</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 This project only uses <code>pandas</code> and built in python functions for data manipulation.
@@ -274,13 +276,14 @@ This project only uses <code>pandas</code> and built in python functions for dat
 
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #5e7e9b; font-weight: bold;">import</span> pandas <span style="color: #5e7e9b; font-weight: bold;">as</span> pd
+<span style="color: #5e7e9b; font-weight: bold;">from</span> icecream <span style="color: #5e7e9b; font-weight: bold;">import</span> ic
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org81842bc" class="outline-2">
-<h2 id="org81842bc"><span class="section-number-2">3</span> Importing Raw Data</h2>
+<div id="outline-container-org0cce06e" class="outline-2">
+<h2 id="org0cce06e"><span class="section-number-2">3</span> Importing Raw Data</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 Importing the datasets from the raw Sean Lahman's Baseball Database, from
@@ -291,6 +294,8 @@ those files that contain relevant data for determining MLB Hall of Fame Players.
 <pre class="src src-python"><span style="color: #7e97af;">master_df</span> = pd.read_csv<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">'../data/core/People.csv'</span>,
                         usecols=<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'playerID'</span>,<span style="color: #5a7273;">'nameFirst'</span>,<span style="color: #5a7273;">'nameLast'</span>,<span style="color: #5a7273;">'bats'</span>,<span style="color: #5a7273;">'throws'</span>,<span style="color: #5a7273;">'debut'</span>,<span style="color: #5a7273;">'finalGame'</span><span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">)</span>
 <span style="color: #7e97af;">batting_df</span> = pd.read_csv<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">'../data/core/Batting.csv'</span><span style="color: #5e7e9b;">)</span>
+<span style="color: #7e97af;">pitching_df</span> = pd.read_csv<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">'../data/core/Pitching.csv'</span><span style="color: #5e7e9b;">)</span>
+<span style="color: #7e97af;">fielding_df</span> = pd.read_csv<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">'../data/core/Fielding.csv'</span><span style="color: #5e7e9b;">)</span>
 <span style="color: #7e97af;">awards_df</span> = pd.read_csv<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">'../data/core/AwardsPlayers.csv'</span>,
                         usecols=<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'playerID'</span>,<span style="color: #5a7273;">'awardID'</span>,<span style="color: #5a7273;">'yearID'</span><span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">)</span>
 <span style="color: #7e97af;">allstar_df</span> = pd.read_csv<span style="color: #5e7e9b;">(</span><span style="color: #5a7273;">'../data/core/AllstarFull.csv'</span>,
@@ -303,8 +308,8 @@ those files that contain relevant data for determining MLB Hall of Fame Players.
 </div>
 </div>
 
-<div id="outline-container-org759d5a2" class="outline-2">
-<h2 id="org759d5a2"><span class="section-number-2">4</span> Cleaning and Joining the Different Datasets</h2>
+<div id="outline-container-org46608f0" class="outline-2">
+<h2 id="org46608f0"><span class="section-number-2">4</span> Cleaning and Joining the Different Datasets</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 Since data is spread over several files and is stored differently in the
@@ -313,8 +318,8 @@ information and aggreating it for each player.
 </p>
 </div>
 
-<div id="outline-container-org767b33f" class="outline-3">
-<h3 id="org767b33f"><span class="section-number-3">4.1</span> Batting Data</h3>
+<div id="outline-container-org24dbb63" class="outline-3">
+<h3 id="org24dbb63"><span class="section-number-3">4.1</span> Batting Data</h3>
 <div class="outline-text-3" id="text-4-1">
 <p>
 This adds the batting stats for the different players. The <code>player_stats</code>
@@ -375,9 +380,143 @@ the <code>master_df</code>.
 </div>
 </div>
 
-<div id="outline-container-org0436658" class="outline-3">
-<h3 id="org0436658"><span class="section-number-3">4.2</span> Awards Data</h3>
+<div id="outline-container-orgd9a4cc7" class="outline-3">
+<h3 id="orgd9a4cc7"><span class="section-number-3">4.2</span> Pitching Data</h3>
 <div class="outline-text-3" id="text-4-2">
+<p>
+This adds the pitching stats for the different players. The <code>player_stats</code>
+dictionary is where the player information is aggregated until setting it to
+the <code>master_df</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #7e97af;">pitching_keys_list</span> = <span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'IPouts'</span>, <span style="color: #5a7273;">'H-A'</span>, <span style="color: #5a7273;">'ER-A'</span>, <span style="color: #5a7273;">'HR-A'</span>, <span style="color: #5a7273;">'BB-A'</span>, <span style="color: #5a7273;">'SO-A'</span>,
+                      <span style="color: #5a7273;">'BAOpp'</span>, <span style="color: #5a7273;">'ERA'</span>, <span style="color: #5a7273;">'IBB-A'</span>, <span style="color: #5a7273;">'WP'</span>, <span style="color: #5a7273;">'HBP-A'</span>, <span style="color: #5a7273;">'BK'</span>,
+                      <span style="color: #5a7273;">'BFP'</span>, <span style="color: #5a7273;">'GF'</span>, <span style="color: #5a7273;">'R-A'</span>, <span style="color: #5a7273;">'SH-A'</span>, <span style="color: #5a7273;">'SF-A'</span>, <span style="color: #5a7273;">'GIDP'</span><span style="color: #5e7e9b;">]</span>
+<span style="color: #7e97af;">pitching_col_list</span> = <span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'IPouts'</span>, <span style="color: #5a7273;">'H'</span>, <span style="color: #5a7273;">'ER'</span>, <span style="color: #5a7273;">'HR'</span>, <span style="color: #5a7273;">'BB'</span>, <span style="color: #5a7273;">'SO'</span>, <span style="color: #5a7273;">'BAOpp'</span>, <span style="color: #5a7273;">'ERA'</span>,
+                     <span style="color: #5a7273;">'IBB'</span>, <span style="color: #5a7273;">'WP'</span>, <span style="color: #5a7273;">'HBP'</span>, <span style="color: #5a7273;">'BK'</span>, <span style="color: #5a7273;">'BFP'</span>, <span style="color: #5a7273;">'GF'</span>, <span style="color: #5a7273;">'R'</span>,
+                     <span style="color: #5a7273;">'SH'</span>, <span style="color: #5a7273;">'SF'</span>, <span style="color: #5a7273;">'GIDP'</span><span style="color: #5e7e9b;">]</span>
+<span style="color: #7e97af;">pitching_col_to_avg</span> = <span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'BAOpp'</span>, <span style="color: #5a7273;">'ERA'</span><span style="color: #5e7e9b;">]</span>
+
+<span style="color: #5e7e9b; font-weight: bold;">for</span> i, pitch_row <span style="color: #5e7e9b; font-weight: bold;">in</span> pitching_df.iterrows<span style="color: #5e7e9b;">()</span>:
+    <span style="color: #7e97af;">playerID</span> = pitch_row<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'playerID'</span><span style="color: #5e7e9b;">]</span>
+    <span style="color: #5e7e9b; font-weight: bold;">if</span> playerID <span style="color: #5e7e9b; font-weight: bold;">not</span> <span style="color: #5e7e9b; font-weight: bold;">in</span> player_stats:
+        <span style="color: #7e97af;">player_stats</span><span style="color: #5e7e9b;">[</span>playerID<span style="color: #5e7e9b;">]</span> = <span style="color: #5e7e9b;">{}</span>
+    <span style="color: #5e7e9b; font-weight: bold;">for</span> stat_key, stat_col <span style="color: #5e7e9b; font-weight: bold;">in</span> <span style="color: #5e7e9b;">zip</span><span style="color: #5e7e9b;">(</span>pitching_keys_list, pitching_col_list<span style="color: #5e7e9b;">)</span>:
+        <span style="color: #5e7e9b; font-weight: bold;">if</span> stat_key <span style="color: #5e7e9b; font-weight: bold;">in</span> player_stats<span style="color: #5e7e9b;">[</span>playerID<span style="color: #5e7e9b;">]</span>:
+            <span style="color: #5e7e9b; font-weight: bold;">if</span> stat_col <span style="color: #5e7e9b; font-weight: bold;">in</span> pitching_col_to_avg:
+                player_stats<span style="color: #5e7e9b;">[</span>playerID<span style="color: #5e7e9b;">][</span>stat_key<span style="color: #5e7e9b;">]</span> = <span style="color: #5e7e9b;">(</span>player_stats<span style="color: #bf6c68;">[</span>playerID<span style="color: #bf6c68;">][</span>stat_key<span style="color: #bf6c68;">]</span> + pitch_row<span style="color: #bf6c68;">[</span>stat_col<span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">)</span>/<span style="color: #cb8986;">2</span>
+            <span style="color: #5e7e9b; font-weight: bold;">else</span>:
+                player_stats<span style="color: #5e7e9b;">[</span>playerID<span style="color: #5e7e9b;">][</span>stat_key<span style="color: #5e7e9b;">]</span> += pitch_row<span style="color: #5e7e9b;">[</span>stat_col<span style="color: #5e7e9b;">]</span>
+        <span style="color: #5e7e9b; font-weight: bold;">else</span>:
+            player_stats<span style="color: #5e7e9b;">[</span>playerID<span style="color: #5e7e9b;">][</span>stat_key<span style="color: #5e7e9b;">]</span> = pitch_row<span style="color: #5e7e9b;">[</span>stat_col<span style="color: #5e7e9b;">]</span>
+
+            <span style="color: #48485e;"># </span><span style="color: #48485e;">player_stats[playerID]['IPouts'] = player_stats[playerID]['IPouts'] + pitch_row['IPouts']</span>
+            <span style="color: #48485e;"># </span><span style="color: #48485e;">player_stats[playerID]['H-A'] = player_stats[playerID]['H-A']     + pitch_row['H']</span>
+            <span style="color: #48485e;"># </span><span style="color: #48485e;">player_stats[playerID]['ER-A'] = player_stats[playerID]['ER-A']   + pitch_row['ER']</span>
+            <span style="color: #48485e;"># </span><span style="color: #48485e;">player_stats[playerID]['HR-A'] = player_stats[playerID]['HR-A']   + pitch_row['HR']</span>
+            <span style="color: #48485e;"># </span><span style="color: #48485e;">player_stats[playerID]['BB-A'] = player_stats[playerID]['BB-A']   + pitch_row['BB']</span>
+            <span style="color: #48485e;"># </span><span style="color: #48485e;">player_stats[playerID]['SO-A'] = player_stats[playerID]['SO-A']   + pitch_row['SO']</span>
+            <span style="color: #48485e;"># </span><span style="color: #48485e;">player_stats[playerID]['BAOpp'] = (player_stats[playerID]['BAOpp']+ pitch_row['BAOpp'])/2</span>
+            <span style="color: #48485e;"># </span><span style="color: #48485e;">player_stats[playerID]['ERA'] = (player_stats[playerID]['ERA']    + pitch_row['ERA'])/2</span>
+            <span style="color: #48485e;"># </span><span style="color: #48485e;">player_stats[playerID]['IBB-A'] = player_stats[playerID]['IBB-A'] + pitch_row['IBB']</span>
+            <span style="color: #48485e;"># </span><span style="color: #48485e;">player_stats[playerID]['WP'] = player_stats[playerID]['WP']       + pitch_row['WP']</span>
+            <span style="color: #48485e;"># </span><span style="color: #48485e;">player_stats[playerID]['HBP-A'] = player_stats[playerID]['HBP-A'] + pitch_row['HBP']</span>
+            <span style="color: #48485e;"># </span><span style="color: #48485e;">player_stats[playerID]['BK'] = player_stats[playerID]['BK']       + pitch_row['BK']</span>
+            <span style="color: #48485e;"># </span><span style="color: #48485e;">player_stats[playerID]['BFP'] = player_stats[playerID]['BFP']     + pitch_row['BFP']</span>
+            <span style="color: #48485e;"># </span><span style="color: #48485e;">player_stats[playerID]['GF'] = player_stats[playerID]['GF']       + pitch_row['GF']</span>
+            <span style="color: #48485e;"># </span><span style="color: #48485e;">player_stats[playerID]['R-A'] = player_stats[playerID]['R-A']     + pitch_row['R']</span>
+            <span style="color: #48485e;"># </span><span style="color: #48485e;">player_stats[playerID]['SH-A'] = player_stats[playerID]['SH-A']   + pitch_row['SH']</span>
+            <span style="color: #48485e;"># </span><span style="color: #48485e;">player_stats[playerID]['SF-A'] = player_stats[playerID]['SF-A']   + pitch_row['SF']</span>
+            <span style="color: #48485e;"># </span><span style="color: #48485e;">player_stats[playerID]['GIDP'] = player_stats[playerID]['GIDP']   + pitch_row['GIDP']</span>
+        <span style="color: #48485e;"># </span><span style="color: #48485e;">else:</span>
+        <span style="color: #48485e;">#   </span><span style="color: #48485e;">player_stats[playerID]['IPouts'] = pitch_row['IPouts']</span>
+        <span style="color: #48485e;">#   </span><span style="color: #48485e;">player_stats[playerID]['H-A'] = pitch_row['H']</span>
+        <span style="color: #48485e;">#   </span><span style="color: #48485e;">player_stats[playerID]['ER-A'] = pitch_row['ER']</span>
+        <span style="color: #48485e;">#   </span><span style="color: #48485e;">player_stats[playerID]['HR-A'] = pitch_row['HR']</span>
+        <span style="color: #48485e;">#   </span><span style="color: #48485e;">player_stats[playerID]['BB-A'] = pitch_row['BB']</span>
+        <span style="color: #48485e;">#   </span><span style="color: #48485e;">player_stats[playerID]['SO-A'] = pitch_row['SO']</span>
+        <span style="color: #48485e;">#   </span><span style="color: #48485e;">player_stats[playerID]['BAOpp'] = pitch_row['BAOpp']</span>
+        <span style="color: #48485e;">#   </span><span style="color: #48485e;">player_stats[playerID]['ERA'] = pitch_row['ERA']</span>
+        <span style="color: #48485e;">#   </span><span style="color: #48485e;">player_stats[playerID]['IBB-A'] = pitch_row['IBB']</span>
+        <span style="color: #48485e;">#   </span><span style="color: #48485e;">player_stats[playerID]['WP'] = pitch_row['WP']</span>
+        <span style="color: #48485e;">#   </span><span style="color: #48485e;">player_stats[playerID]['HBP-A'] = pitch_row['HBP']</span>
+        <span style="color: #48485e;">#   </span><span style="color: #48485e;">player_stats[playerID]['BK'] = pitch_row['BK']</span>
+        <span style="color: #48485e;">#   </span><span style="color: #48485e;">player_stats[playerID]['BFP'] = pitch_row['BFP']</span>
+        <span style="color: #48485e;">#   </span><span style="color: #48485e;">player_stats[playerID]['GF'] = pitch_row['GF']</span>
+        <span style="color: #48485e;">#   </span><span style="color: #48485e;">player_stats[playerID]['R-A'] = pitch_row['R']</span>
+        <span style="color: #48485e;">#   </span><span style="color: #48485e;">player_stats[playerID]['SH-A'] = pitch_row['SH']</span>
+        <span style="color: #48485e;">#   </span><span style="color: #48485e;">player_stats[playerID]['SF-A'] = pitch_row['SF']</span>
+        <span style="color: #48485e;">#   </span><span style="color: #48485e;">player_stats[playerID]['GIDP'] = pitch_row['GIDP']</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org8052aef" class="outline-3">
+<h3 id="org8052aef"><span class="section-number-3">4.3</span> Fielding Data</h3>
+<div class="outline-text-3" id="text-4-3">
+<p>
+This adds the position stats for the different players. The <code>player_stats</code>
+dictionary is where the player information is aggregated until setting it to
+the <code>master_df</code>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #7e97af;">fielding_df_pos</span> = fielding_df<span style="color: #5e7e9b;">[</span><span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'playerID'</span>, <span style="color: #5a7273;">'POS'</span><span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">]</span>
+<span style="color: #7e97af;">fielding_df_pos</span> = fielding_df_pos.drop_duplicates<span style="color: #5e7e9b;">(</span>subset=<span style="color: #bf6c68;">[</span><span style="color: #5a7273;">'playerID'</span><span style="color: #bf6c68;">]</span><span style="color: #5e7e9b;">)</span>
+
+<span style="color: #5e7e9b; font-weight: bold;">for</span> i, field_row <span style="color: #5e7e9b; font-weight: bold;">in</span> fielding_df_pos.iterrows<span style="color: #5e7e9b;">()</span>:
+    <span style="color: #7e97af;">playerID</span> = field_row<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'playerID'</span><span style="color: #5e7e9b;">]</span>
+    <span style="color: #5e7e9b; font-weight: bold;">if</span> playerID <span style="color: #5e7e9b; font-weight: bold;">not</span> <span style="color: #5e7e9b; font-weight: bold;">in</span> player_stats:
+        <span style="color: #7e97af;">player_stats</span><span style="color: #5e7e9b;">[</span>playerID<span style="color: #5e7e9b;">]</span> = <span style="color: #5e7e9b;">{}</span>
+    player_stats<span style="color: #5e7e9b;">[</span>playerID<span style="color: #5e7e9b;">][</span><span style="color: #5a7273;">'POS'</span><span style="color: #5e7e9b;">]</span> = field_row<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'POS'</span><span style="color: #5e7e9b;">]</span>
+</pre>
+</div>
+
+<p>
+This adds some of the fielding stats to the <code>player_stats</code> like the previous
+pitching and fielding data.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #7e97af;">fielding_keys_list</span> = <span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'PO'</span>, <span style="color: #5a7273;">'A'</span>, <span style="color: #5a7273;">'E'</span>, <span style="color: #5a7273;">'DP'</span><span style="color: #5e7e9b;">]</span>
+<span style="color: #7e97af;">fielding_col_list</span> = <span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'PO'</span>, <span style="color: #5a7273;">'A'</span>, <span style="color: #5a7273;">'E'</span>, <span style="color: #5a7273;">'DP'</span><span style="color: #5e7e9b;">]</span>
+<span style="color: #48485e;"># </span><span style="color: #48485e;">fielding_col_to_avg = ['ZR']</span>
+
+<span style="color: #5e7e9b; font-weight: bold;">for</span> i, field_row <span style="color: #5e7e9b; font-weight: bold;">in</span> fielding_df.iterrows<span style="color: #5e7e9b;">()</span>:
+    <span style="color: #7e97af;">playerID</span> = field_row<span style="color: #5e7e9b;">[</span><span style="color: #5a7273;">'playerID'</span><span style="color: #5e7e9b;">]</span>
+    <span style="color: #5e7e9b; font-weight: bold;">if</span> playerID <span style="color: #5e7e9b; font-weight: bold;">not</span> <span style="color: #5e7e9b; font-weight: bold;">in</span> player_stats:
+        <span style="color: #7e97af;">player_stats</span><span style="color: #5e7e9b;">[</span>playerID<span style="color: #5e7e9b;">]</span> = <span style="color: #5e7e9b;">{}</span>
+    <span style="color: #5e7e9b; font-weight: bold;">for</span> stat_key, stat_col <span style="color: #5e7e9b; font-weight: bold;">in</span> <span style="color: #5e7e9b;">zip</span><span style="color: #5e7e9b;">(</span>fielding_keys_list, fielding_col_list<span style="color: #5e7e9b;">)</span>:
+        <span style="color: #5e7e9b; font-weight: bold;">if</span> stat_key <span style="color: #5e7e9b; font-weight: bold;">in</span> player_stats<span style="color: #5e7e9b;">[</span>playerID<span style="color: #5e7e9b;">]</span>:
+            player_stats<span style="color: #5e7e9b;">[</span>playerID<span style="color: #5e7e9b;">][</span>stat_key<span style="color: #5e7e9b;">]</span> += field_row<span style="color: #5e7e9b;">[</span>stat_col<span style="color: #5e7e9b;">]</span>
+        <span style="color: #5e7e9b; font-weight: bold;">else</span>:
+            player_stats<span style="color: #5e7e9b;">[</span>playerID<span style="color: #5e7e9b;">][</span>stat_key<span style="color: #5e7e9b;">]</span> = field_row<span style="color: #5e7e9b;">[</span>stat_col<span style="color: #5e7e9b;">]</span>
+
+<span style="color: #48485e;"># </span><span style="color: #48485e;">for i, field_row in fielding_df.iterrows():</span>
+<span style="color: #48485e;">#     </span><span style="color: #48485e;">playerID = field_row['playerID']</span>
+<span style="color: #48485e;">#     </span><span style="color: #48485e;">if playerID in player_stats:</span>
+<span style="color: #48485e;">#         </span><span style="color: #48485e;">player_stats[playerID]['PO'] = player_stats[playerID]['PO'] + field_row['PO']</span>
+<span style="color: #48485e;">#         </span><span style="color: #48485e;">player_stats[playerID]['A'] = player_stats[playerID]['A'] + field_row['A']</span>
+<span style="color: #48485e;">#         </span><span style="color: #48485e;">player_stats[playerID]['E'] = player_stats[playerID]['E'] + field_row['E']</span>
+<span style="color: #48485e;">#         </span><span style="color: #48485e;">player_stats[playerID]['DP'] = player_stats[playerID]['DP'] + field_row['DP']</span>
+<span style="color: #48485e;">#         </span><span style="color: #48485e;">player_stats[playerID]['ZR'] = (player_stats[playerID]['ZR'] + field_row['ZR'])/2</span>
+<span style="color: #48485e;">#     </span><span style="color: #48485e;">else:</span>
+<span style="color: #48485e;">#         </span><span style="color: #48485e;">player_stats[playerID] = {}</span>
+<span style="color: #48485e;">#         </span><span style="color: #48485e;">player_stats[playerID]['PO'] = field_row['PO']</span>
+<span style="color: #48485e;">#         </span><span style="color: #48485e;">player_stats[playerID]['A'] = field_row['A']</span>
+<span style="color: #48485e;">#         </span><span style="color: #48485e;">player_stats[playerID]['E'] = field_row['E']</span>
+<span style="color: #48485e;">#         </span><span style="color: #48485e;">player_stats[playerID]['DP'] = field_row['DP']</span>
+<span style="color: #48485e;">#         </span><span style="color: #48485e;">player_stats[playerID]['ZR'] = field_row['ZR']</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org83c3a44" class="outline-3">
+<h3 id="org83c3a44"><span class="section-number-3">4.4</span> Awards Data</h3>
+<div class="outline-text-3" id="text-4-4">
 <p>
 Selecting 5 of the <code>awardID</code> to be used as features.
 </p>
@@ -414,9 +553,9 @@ Selecting 5 of the <code>awardID</code> to be used as features.
 </div>
 </div>
 
-<div id="outline-container-org017a928" class="outline-3">
-<h3 id="org017a928"><span class="section-number-3">4.3</span> All-Start Data</h3>
-<div class="outline-text-3" id="text-4-3">
+<div id="outline-container-orga480a11" class="outline-3">
+<h3 id="orga480a11"><span class="section-number-3">4.5</span> All-Start Data</h3>
+<div class="outline-text-3" id="text-4-5">
 <p>
 Add a count of appearances in All-Star game for players in <code>player_stats</code>.
 </p>
@@ -436,9 +575,9 @@ Add a count of appearances in All-Star game for players in <code>player_stats</c
 </div>
 </div>
 
-<div id="outline-container-org5660366" class="outline-3">
-<h3 id="org5660366"><span class="section-number-3">4.4</span> Hall of Fame Data</h3>
-<div class="outline-text-3" id="text-4-4">
+<div id="outline-container-org07c6146" class="outline-3">
+<h3 id="org07c6146"><span class="section-number-3">4.6</span> Hall of Fame Data</h3>
+<div class="outline-text-3" id="text-4-6">
 <p>
 Adding Hall of Fame information to <code>master_df</code>.
 </p>
@@ -456,9 +595,9 @@ Adding Hall of Fame information to <code>master_df</code>.
 </div>
 </div>
 
-<div id="outline-container-org26d7a5b" class="outline-3">
-<h3 id="org26d7a5b"><span class="section-number-3">4.5</span> Player Data</h3>
-<div class="outline-text-3" id="text-4-5">
+<div id="outline-container-org60957fd" class="outline-3">
+<h3 id="org60957fd"><span class="section-number-3">4.7</span> Player Data</h3>
+<div class="outline-text-3" id="text-4-7">
 <p>
 Until now, I have collected data from batting_df, fielding_df, awards_df,
 allstar_df, and hof_df into the player_stats dictionary. Then, I will
@@ -477,9 +616,9 @@ convert it to a dataframe stats_df.
 </div>
 </div>
 
-<div id="outline-container-orga213086" class="outline-3">
-<h3 id="orga213086"><span class="section-number-3">4.6</span> Appearance Data</h3>
-<div class="outline-text-3" id="text-4-6">
+<div id="outline-container-org56e5648" class="outline-3">
+<h3 id="org56e5648"><span class="section-number-3">4.8</span> Appearance Data</h3>
+<div class="outline-text-3" id="text-4-8">
 <p>
 Aggregating information about appearances at each position for players for
 different years.
@@ -568,8 +707,8 @@ different years.
 </div>
 </div>
 
-<div id="outline-container-org5418f5c" class="outline-2">
-<h2 id="org5418f5c"><span class="section-number-2">5</span> Joining and Saving the Datasets</h2>
+<div id="outline-container-org3624b97" class="outline-2">
+<h2 id="org3624b97"><span class="section-number-2">5</span> Joining and Saving the Datasets</h2>
 <div class="outline-text-2" id="text-5">
 <p>
 Simply adding appearance data to the <code>master_df</code>.
@@ -584,20 +723,21 @@ master_df.to_csv<span style="color: #5e7e9b;">(</span><span style="color: #5a727
 </div>
 </div>
 
-<div id="outline-container-org3765858" class="outline-2">
-<h2 id="org3765858"><span class="section-number-2">6</span> Links to Other Files in Project</h2>
+<div id="outline-container-org4a11fb9" class="outline-2">
+<h2 id="org4a11fb9"><span class="section-number-2">6</span> Links to Other Files in Project</h2>
 <div class="outline-text-2" id="text-6">
 <ol class="org-ol">
 <li><a href="https://www.olavpedersen.com/standalone_hof/extract_data.html">extract_data</a>: Extracting data from Lahman's raw data.</li>
 <li><a href="https://www.olavpedersen.com/standalone_hof/filter_data.html">filter_data</a>: Data manipulation, feature creation and feature selection.</li>
 <li><a href="https://www.olavpedersen.com/standalone_hof/hall_of_fame_model.html">hof_model</a>: Creation of the model and training of the neural network.</li>
+<li><a href="https://www.olavpedersen.com/standalone_hof/grid_search_results.html">grid_search_results</a>: Storing some of the results for the best Grid Searches</li>
 </ol>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Olav Landmark Pedersen</p>
-<p class="date">Created: 2021-07-04 Sun 13:16</p>
+<p class="date">Created: 2021-08-15 Sun 22:24</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
